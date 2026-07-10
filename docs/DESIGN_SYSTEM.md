@@ -24,11 +24,11 @@ The first public version must feel like a **premium client/workflow OS for artis
 
 ## Palette
 
-| Token | Role |
-|---|---|
-| white | primary surface |
-| black | primary text, primary CTA |
-| zinc scale | borders, secondary text, subtle fills |
+| Token       | Role                                                          |
+| ----------- | ------------------------------------------------------------- |
+| white       | primary surface                                               |
+| black       | primary text, primary CTA                                     |
+| zinc scale  | borders, secondary text, subtle fills                         |
 | pastel blue | main accent, focus, active state, subtle glow behind previews |
 
 No beige/cream. Accent used tastefully, not everywhere.

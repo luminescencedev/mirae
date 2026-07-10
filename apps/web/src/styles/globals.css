@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Mirae base surface: pure white, zinc text, light UI by default.
+   Full design tokens (palette, pastel-blue accent) land in Sprint 1 (UI-001). */
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-white text-zinc-950 antialiased;
+}

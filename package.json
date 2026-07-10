@@ -2,6 +2,7 @@
   "name": "mirae",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "packageManager": "pnpm@11.10.0",
   "engines": {
     "node": ">=24"
@@ -9,11 +10,16 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "format": "turbo run format"
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "turbo": "2.10.4"
+    "@mirae/config": "workspace:*",
+    "eslint": "10.6.0",
+    "prettier": "3.9.4",
+    "turbo": "2.10.4",
+    "typescript": "6.0.3"
   }
 }

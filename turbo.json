@@ -10,14 +10,8 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".output/**"]
     },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
     "typecheck": {
       "dependsOn": ["^build"]
-    },
-    "format": {
-      "cache": false
     }
   }
 }

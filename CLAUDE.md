@@ -8,7 +8,7 @@ Operating guide for Claude Code in this repo. Docs in `docs/` are the source of 
 
 > Mirae helps digital artists manage requests, quotes, queues, revisions and deliveries in one calm workspace.
 
-Positioning: **Calendly, not VGen.** Manages the relationship *after* artist and client already agreed to work together; never finds clients. Not a marketplace, social network, discovery/matching platform, AI-first product, or escrow. Subscription-only; never takes a cut of commission revenue.
+Positioning: **Calendly, not VGen.** Manages the relationship _after_ artist and client already agreed to work together; never finds clients. Not a marketplace, social network, discovery/matching platform, AI-first product, or escrow. Subscription-only; never takes a cut of commission revenue.
 
 ## Source of truth (`docs/`)
 

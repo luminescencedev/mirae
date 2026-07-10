@@ -1,6 +1,6 @@
 # Architecture
 
-> Canonical source for repo structure, deployment model, and module rules. See `docs/DECISIONS.md` for the *why* behind the locked choices.
+> Canonical source for repo structure, deployment model, and module rules. See `docs/DECISIONS.md` for the _why_ behind the locked choices.
 
 ## Deployment model — single Cloudflare Worker
 

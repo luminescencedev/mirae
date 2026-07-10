@@ -12,7 +12,7 @@ Sprint 0 — Repository foundation
 - [x] REPO-002 Create apps/web with Vite + React
 - [x] REPO-003 Create apps/api with Hono, wrangler.toml, and /health
 - [x] REPO-004 Create packages/db, shared, ui, config
-- [ ] REPO-005 Add TypeScript, ESLint, Prettier, Tailwind base
+- [x] REPO-005 Add TypeScript, ESLint, Prettier, Tailwind base
 - [ ] REPO-006 Add root scripts: dev, build, lint, typecheck, format
 - [ ] REPO-007 Add README and .env.example
 

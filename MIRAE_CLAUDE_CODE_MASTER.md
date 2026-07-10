@@ -8,7 +8,7 @@
 
 Domains: marketing `usemirae.com` · app `app.usemirae.com` · public artist pages `usemirae.com/@artist` · request form `usemirae.com/@artist/request` · client portal `usemirae.com/portal/:token` · delivery `usemirae.com/delivery/:token`.
 
-Positioning: **Calendly, not VGen.** Mirae takes over *after* an artist and client already agreed to work together — it never helps find clients. Not a marketplace, not a social network, not a discovery/matching platform, not AI-first, not escrow. Subscription-only business model; Mirae never takes a cut of commission revenue.
+Positioning: **Calendly, not VGen.** Mirae takes over _after_ an artist and client already agreed to work together — it never helps find clients. Not a marketplace, not a social network, not a discovery/matching platform, not AI-first, not escrow. Subscription-only business model; Mirae never takes a cut of commission revenue.
 
 ## Source of truth
 

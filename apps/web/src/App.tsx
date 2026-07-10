@@ -1,21 +1,9 @@
 export function App() {
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "grid",
-        placeItems: "center",
-        fontFamily:
-          "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
-        background: "#ffffff",
-        color: "#09090b",
-      }}
-    >
-      <div style={{ textAlign: "center" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 600, margin: 0 }}>Mirae</h1>
-        <p style={{ color: "#71717a", marginTop: "0.5rem" }}>
-          Your private commission studio.
-        </p>
+    <main className="grid min-h-screen place-items-center">
+      <div className="text-center">
+        <h1 className="text-2xl font-semibold">Mirae</h1>
+        <p className="mt-2 text-zinc-500">Your private commission studio.</p>
       </div>
     </main>
   );
