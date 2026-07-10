@@ -34,7 +34,7 @@ Completion notes (2026-07-09):
 - [x] UI-004 Build Radix-based Dialog, Dropdown, Tooltip, Tabs skins
 - [x] UI-005 Build AppShell prototype
 - [x] UI-006 Build Landing hero prototype
-- [ ] UI-007 Build dashboard preview mockup with seed data
+- [x] UI-007 Build dashboard preview mockup with seed data
 
 ## Sprint 2 — Static product screens
 

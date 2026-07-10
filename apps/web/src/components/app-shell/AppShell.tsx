@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import {
   animate,
-  motion,
   useMotionValue,
   useReducedMotion,
+  motion,
 } from "motion/react";
 import {
   Badge,
@@ -19,7 +19,6 @@ import {
   CubeIcon,
   DashboardSquare01Icon,
   InboxIcon,
-  MoreHorizontalIcon,
   Notification03Icon,
   Package01Icon,
   PaintBrush01Icon,
@@ -29,16 +28,15 @@ import {
   Store01Icon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
+import type { IconData } from "../mockups/seed.ts";
+import { OverviewView } from "./views/OverviewView.tsx";
+import { QueueView } from "./views/QueueView.tsx";
 
-type IconType = typeof InboxIcon;
-type TagVariant = "blue" | "violet" | "teal" | "amber" | "emerald";
-
-const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 const NAV_ROW = 36; // h-9
 const NAV_STEP = NAV_ROW + 2; // + gap-0.5
 
 // Mirae's real product nav (mirrors the /app/* routes in docs/ARCHITECTURE.md).
-const NAV: { label: string; icon: IconType; badge?: number }[] = [
+const NAV: { label: string; icon: IconData; badge?: number }[] = [
   { label: "Overview", icon: DashboardSquare01Icon },
   { label: "Requests", icon: InboxIcon, badge: 3 },
   { label: "Queue", icon: PaintBrush01Icon },
@@ -48,7 +46,7 @@ const NAV: { label: string; icon: IconType; badge?: number }[] = [
 ];
 
 // Collapsing label: the icon lives in a fixed slot; only the text retracts in
-// width + opacity (CSS), so nothing ever jumps. Matches the 4esElo sidebar.
+// width + opacity (CSS), so nothing ever jumps.
 function Label({
   collapsed,
   className,
@@ -71,8 +69,6 @@ function Label({
   );
 }
 
-/** Vertical nav: one bar springs behind the hovered row, resting on the active
- *  row. Icons in fixed slots; collapsed → icons only + hover tooltip. */
 function NavList({
   collapsed,
   active,
@@ -141,122 +137,24 @@ function NavList({
   );
 }
 
-type Commission = {
-  client: string;
-  type: string;
-  tags: { label: string; variant: TagVariant }[];
-  price: string;
-  due: string;
-  statusDot: string;
-  statusLabel: string;
+const HEADERS: Record<
+  number,
+  { title: string; subtitle: string; tabs?: boolean }
+> = {
+  0: { title: "Hello, Sandra", subtitle: "Here's your studio today." },
+  2: {
+    title: "Commission queue",
+    subtitle: "5 active commissions · 2 awaiting your quote",
+    tabs: true,
+  },
 };
 
-const COLUMNS: { name: string; count: number; items: Commission[] }[] = [
-  {
-    name: "New request",
-    count: 2,
-    items: [
-      {
-        client: "Ava Chen",
-        type: "Full-body character",
-        tags: [
-          { label: "Illustration", variant: "violet" },
-          { label: "Commercial", variant: "amber" },
-        ],
-        price: "$180",
-        due: "Quote due 2d",
-        statusDot: "bg-amber-500",
-        statusLabel: "Needs quote",
-      },
-      {
-        client: "Marco",
-        type: "Chibi pair",
-        tags: [{ label: "Illustration", variant: "violet" }],
-        price: "$90",
-        due: "1d",
-        statusDot: "bg-amber-500",
-        statusLabel: "Needs quote",
-      },
-    ],
-  },
-  {
-    name: "In progress",
-    count: 2,
-    items: [
-      {
-        client: "Stellar Co.",
-        type: "Key visual",
-        tags: [
-          { label: "Illustration", variant: "violet" },
-          { label: "Commercial", variant: "amber" },
-        ],
-        price: "$420",
-        due: "5d",
-        statusDot: "bg-emerald-500",
-        statusLabel: "Sketch",
-      },
-      {
-        client: "Rin",
-        type: "Emote set (5)",
-        tags: [{ label: "Twitch", variant: "teal" }],
-        price: "$150",
-        due: "3d",
-        statusDot: "bg-emerald-500",
-        statusLabel: "Line art",
-      },
-    ],
-  },
-  {
-    name: "Review",
-    count: 1,
-    items: [
-      {
-        client: "Nadia",
-        type: "Album cover",
-        tags: [{ label: "Illustration", variant: "violet" }],
-        price: "$260",
-        due: "Client review",
-        statusDot: "bg-accent-500",
-        statusLabel: "Revision 1",
-      },
-    ],
-  },
-];
-
-function CommissionCard({ item }: { item: Commission }) {
-  return (
-    <div className="rounded-lg border border-border bg-surface p-3 shadow-soft transition-shadow hover:shadow-panel">
-      <div className="flex items-center gap-2">
-        <span className="size-5 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
-        <span className="text-xs text-fg-muted">{item.client}</span>
-      </div>
-      <h4 className="mt-2 text-sm font-medium tracking-tight text-fg">
-        {item.type}
-      </h4>
-      <div className="mt-2 flex flex-wrap items-center gap-1.5">
-        {item.tags.map((t) => (
-          <Badge key={t.label} variant={t.variant}>
-            {t.label}
-          </Badge>
-        ))}
-      </div>
-      <div className="mt-3 flex items-center gap-2 border-t border-border pt-2.5 text-xs text-fg-muted">
-        <span className="inline-flex items-center gap-1.5">
-          <span className={cn("size-1.5 rounded-full", item.statusDot)} />
-          {item.statusLabel}
-        </span>
-        <span className="ml-auto tabular-nums">{item.due}</span>
-        <span className="font-semibold text-fg tabular-nums">{item.price}</span>
-      </div>
-    </div>
-  );
-}
-
-/** AppShell prototype — collapsible sidebar + commission queue. UI-005. */
+/** AppShell prototype — collapsible sidebar + seeded Overview/Queue. UI-005/007. */
 export function AppShell() {
   const [open, setOpen] = useState(true);
-  const [active, setActive] = useState(2); // Queue
+  const [active, setActive] = useState(0); // Overview
   const collapsed = !open;
+  const head = HEADERS[active];
 
   return (
     <div className="flex h-full w-full overflow-hidden bg-canvas text-fg">
@@ -267,7 +165,6 @@ export function AppShell() {
           collapsed ? "w-[68px]" : "w-64",
         )}
       >
-        {/* Brand */}
         <div className="flex h-14 items-center px-4">
           <span className="grid size-9 shrink-0 place-items-center">
             <span className="flex size-8 items-center justify-center rounded-md bg-fg text-white">
@@ -282,7 +179,6 @@ export function AppShell() {
           </Label>
         </div>
 
-        {/* Search */}
         <div className="px-4">
           <button
             className={cn(
@@ -296,12 +192,10 @@ export function AppShell() {
           </button>
         </div>
 
-        {/* Nav */}
         <div className="mt-3 flex-1 px-4">
           <NavList collapsed={collapsed} active={active} onSelect={setActive} />
         </div>
 
-        {/* User */}
         <div className="flex h-14 items-center border-t border-border px-4">
           <span className="grid size-9 shrink-0 place-items-center">
             <span className="size-8 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
@@ -335,7 +229,7 @@ export function AppShell() {
           </Button>
           <span>Studio</span>
           <span className="text-fg-subtle">/</span>
-          <span className="text-fg">Queue</span>
+          <span className="text-fg">{NAV[active].label}</span>
           <div className="ml-auto flex items-center gap-2">
             <button className="rounded-md p-1.5 text-fg-subtle transition-colors hover:bg-surface-muted hover:text-fg">
               <Icon icon={Notification03Icon} size={18} strokeWidth={1.7} />
@@ -346,10 +240,10 @@ export function AppShell() {
         <div className="flex items-end justify-between px-6 pt-6">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
-              Commission queue
+              {head?.title ?? NAV[active].label}
             </h1>
             <p className="mt-1 text-sm text-fg-muted">
-              5 active commissions · 2 awaiting your quote
+              {head?.subtitle ?? "Coming soon."}
             </p>
           </div>
           <Button>
@@ -358,52 +252,28 @@ export function AppShell() {
           </Button>
         </div>
 
-        <div className="px-6 pt-5">
-          <Tabs defaultValue="board">
-            <TabsList>
-              <TabsTrigger value="board">Board</TabsTrigger>
-              <TabsTrigger value="list">List</TabsTrigger>
-              <TabsTrigger value="calendar">Calendar</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        {head?.tabs && (
+          <div className="px-6 pt-5">
+            <Tabs defaultValue="board">
+              <TabsList>
+                <TabsTrigger value="board">Board</TabsTrigger>
+                <TabsTrigger value="list">List</TabsTrigger>
+                <TabsTrigger value="calendar">Calendar</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        )}
 
         <div className="flex-1 overflow-auto px-6 py-6">
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {COLUMNS.map((col, ci) => (
-              <motion.section
-                key={col.name}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.35,
-                  delay: ci * 0.07,
-                  ease: EASE_OUT,
-                }}
-                className="flex flex-col gap-3"
-              >
-                <div className="flex items-center gap-2 px-1">
-                  <span className="text-sm font-semibold">{col.name}</span>
-                  <span className="text-xs text-fg-subtle">{col.count}</span>
-                  <div className="ml-auto flex items-center gap-1 text-fg-subtle">
-                    <button className="rounded p-0.5 hover:text-fg">
-                      <Icon icon={Add01Icon} size={16} strokeWidth={1.8} />
-                    </button>
-                    <button className="rounded p-0.5 hover:text-fg">
-                      <Icon
-                        icon={MoreHorizontalIcon}
-                        size={16}
-                        strokeWidth={1.8}
-                      />
-                    </button>
-                  </div>
-                </div>
-                {col.items.map((it) => (
-                  <CommissionCard key={it.client + it.type} item={it} />
-                ))}
-              </motion.section>
-            ))}
-          </div>
+          {active === 0 ? (
+            <OverviewView />
+          ) : active === 2 ? (
+            <QueueView />
+          ) : (
+            <div className="grid h-full place-items-center text-sm text-fg-subtle">
+              {NAV[active].label} — coming soon
+            </div>
+          )}
         </div>
       </main>
     </div>
