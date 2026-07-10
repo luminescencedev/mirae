@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   animate,
   useMotionValue,
@@ -16,11 +16,13 @@ import {
   PaintBrush01Icon,
   PanelLeftIcon,
   PanelRightIcon,
+  Logout01Icon,
   Search01Icon,
   Store01Icon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import type { IconData } from "../mockups/seed.ts";
+import { signOut, useSession } from "../../lib/auth-client.ts";
 
 const NAV_ROW = 36; // h-9
 const NAV_STEP = NAV_ROW + 2; // + gap-0.5
@@ -126,8 +128,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const collapsed = !open;
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { data: session } = useSession();
   const activeIndex = NAV.findIndex((n) => pathname.startsWith(n.to));
   const current = NAV[activeIndex]?.label ?? "Studio";
+  const userName = session?.user?.name ?? "Your studio";
+  const userEmail = session?.user?.email ?? "";
+
+  async function handleSignOut() {
+    await signOut();
+    navigate({ to: "/login" });
+  }
 
   return (
     <div className="flex h-full w-full overflow-hidden bg-canvas text-fg">
@@ -168,14 +179,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="grid size-9 shrink-0 place-items-center">
             <span className="size-8 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
           </span>
-          <Label collapsed={collapsed} className="min-w-0 pl-1">
+          <Label collapsed={collapsed} className="min-w-0 flex-1 pl-1">
             <span className="block truncate text-sm font-medium">
-              Rain Aoki
+              {userName}
             </span>
             <span className="block truncate text-xs text-fg-subtle">
-              Studio · Pro
+              {userEmail || "Studio"}
             </span>
           </Label>
+          {!collapsed && (
+            <button
+              onClick={handleSignOut}
+              aria-label="Sign out"
+              title="Sign out"
+              className="ml-1 flex size-8 shrink-0 items-center justify-center rounded-md text-fg-subtle outline-none transition-colors hover:bg-surface-muted hover:text-fg focus-visible:ring-2 focus-visible:ring-accent-500"
+            >
+              <Icon icon={Logout01Icon} size={17} strokeWidth={1.7} />
+            </button>
+          )}
         </div>
       </aside>
 

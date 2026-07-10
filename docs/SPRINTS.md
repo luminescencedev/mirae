@@ -78,7 +78,7 @@ Completion notes (2026-07-10):
 - [x] DB-004 Add seed script
 - [x] AUTH-001 Configure Better Auth inside the Hono app
 - [x] AUTH-002 Add login/signup pages
-- [ ] AUTH-003 Add protected app routes
+- [x] AUTH-003 Add protected app routes
 - [ ] AUTH-004 Add onboarding artist profile creation
 
 ## Sprint 4 — Commission types and public page
