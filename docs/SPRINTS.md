@@ -52,7 +52,7 @@ Completion notes (2026-07-10):
 - [x] WEB-001 Set up TanStack Router file-based route tree
 - [x] WEB-002 Create marketing routes
 - [x] WEB-003 Create /app layout
-- [ ] WEB-004 Create overview screen with mock data
+- [x] WEB-004 Create overview screen with mock data
 - [ ] WEB-005 Create requests inbox with mock data
 - [ ] WEB-006 Create queue screen with mock data
 - [ ] WEB-007 Create commission detail panel with mock data
@@ -132,6 +132,7 @@ Completion notes (2026-07-10):
 ## Backlog — future UX (not scheduled)
 
 - **Onboarding flow + first-run tour**: make the entry journey smooth and continuous — sign up → login → arriving in the app (not isolated pages) — and add a dismissible first-run **guided tour** on the dashboard for new artists. Design before building; revisit when auth (Sprint 3) + app screens are further along.
+- **Command palette (⌘K)**: wire the sidebar Search (and ⌘K) to a `cmdk`-based command palette — quick nav + actions across the app. Add `cmdk` (pin version) when built.
 
 ## Notes
 
