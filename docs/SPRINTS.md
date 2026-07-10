@@ -4,9 +4,9 @@
 
 ## Current sprint
 
-Sprint 0 — Repository foundation
+Sprint 1 — Brand UI foundation
 
-## Sprint 0 — Repository foundation
+## Sprint 0 — Repository foundation ✅ complete
 
 - [x] REPO-001 Initialize pnpm workspace and Turborepo
 - [x] REPO-002 Create apps/web with Vite + React
@@ -14,9 +14,17 @@ Sprint 0 — Repository foundation
 - [x] REPO-004 Create packages/db, shared, ui, config
 - [x] REPO-005 Add TypeScript, ESLint, Prettier, Tailwind base
 - [x] REPO-006 Add root scripts: dev, build, lint, typecheck, format
-- [ ] REPO-007 Add README and .env.example
+- [x] REPO-007 Add README and .env.example
 
-Acceptance: `pnpm install` works · `pnpm dev` runs web (vite) + api (wrangler dev) together · `pnpm build`/`pnpm lint`/`pnpm typecheck` work · `GET /health` returns ok.
+Acceptance: `pnpm install` works · `pnpm dev` runs web (vite) + api (wrangler dev) together · `pnpm build`/`pnpm lint`/`pnpm typecheck` work · `GET /health` returns ok. **All met.**
+
+Completion notes (2026-07-09):
+
+- End-to-end verified: `pnpm dev` → web :5173 (200), api :8787/health (`{"status":"ok"}`), proxy `/api/*` :5173 → wrangler (200). Build, lint, typecheck, format all green.
+- Deviations from plan, recorded in `docs/DECISIONS.md`: dropped `concurrently` (turbo orchestrates the two-process dev); `@cloudflare/vite-plugin` deferred.
+- Extra pins resolved & recorded in `docs/VERSIONS.md`: @vitejs/plugin-react, @types/react(-dom), the ESLint/Prettier ecosystem, @tailwindcss/vite.
+- Known issues / follow-ups: TanStack Router not yet wired (WEB-001); `@mirae/db` schema is a placeholder (DB-002); seed script pending (DB-004); apps don't consume the shared packages yet.
+- **Next sprint:** Sprint 1 — Brand UI foundation (first ticket UI-001).
 
 ## Sprint 1 — Brand UI foundation
 
