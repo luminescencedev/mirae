@@ -1,6 +1,5 @@
-// MVP schema tables land here in Sprint 3 (DB-002): users, artist_profiles,
-// clients, commission_types, commission_requests, commissions, quotes,
-// quote_items, files, deliveries, activity_logs. See docs/DATABASE.md.
-//
-// Placeholder export keeps `import * as schema` valid until tables exist.
-export {};
+// MVP schema (see docs/DATABASE.md). Enum values mirror packages/shared.
+export * from "./enums.ts";
+export * from "./auth.ts";
+export * from "./studio.ts";
+export * from "./commissions.ts";
