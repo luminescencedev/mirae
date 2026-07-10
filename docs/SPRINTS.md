@@ -32,7 +32,7 @@ Completion notes (2026-07-09):
 - [x] UI-002 Add cn utility and component variant helpers
 - [x] UI-003 Build Button, Input, Textarea, Badge, Card, Panel
 - [x] UI-004 Build Radix-based Dialog, Dropdown, Tooltip, Tabs skins
-- [ ] UI-005 Build AppShell prototype
+- [x] UI-005 Build AppShell prototype
 - [ ] UI-006 Build Landing hero prototype
 - [ ] UI-007 Build dashboard preview mockup with seed data
 
