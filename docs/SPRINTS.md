@@ -75,7 +75,7 @@ Completion notes (2026-07-10):
 - [x] DB-001 Create Neon project + dev branch, configure Drizzle
 - [x] DB-002 Create MVP schema
 - [x] DB-003 Generate migrations
-- [ ] DB-004 Add seed script
+- [x] DB-004 Add seed script
 - [ ] AUTH-001 Configure Better Auth inside the Hono app
 - [ ] AUTH-002 Add login/signup pages
 - [ ] AUTH-003 Add protected app routes
