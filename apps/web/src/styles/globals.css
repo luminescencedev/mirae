@@ -66,6 +66,22 @@
     transform: scale(0.96);
   }
 }
+@keyframes mirae-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes mirae-slide-out-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
 
 /* Class-based dark mode: `dark:` utilities key off a `.dark` ancestor
    (toggle .dark on <html>). Most theming is done via the token overrides

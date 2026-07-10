@@ -1,17 +1,23 @@
 import { Badge, cn } from "@mirae/ui";
-import { COLUMNS } from "../../mockups/seed.ts";
+import { COLUMNS, type Commission } from "../../mockups/seed.ts";
 
 const ROWS = COLUMNS.flatMap((c) =>
   c.items.map((item) => ({ ...item, stage: c.name, dot: c.dot })),
 );
 
-export function QueueListView() {
+export function QueueListView({
+  onSelect,
+}: {
+  onSelect?: (c: Commission) => void;
+}) {
   return (
     <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
       {ROWS.map((r) => (
-        <div
+        <button
+          type="button"
           key={r.client + r.type}
-          className="flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-muted"
+          onClick={() => onSelect?.(r)}
+          className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left outline-none transition-colors hover:bg-surface-muted focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-500"
         >
           <span className="size-7 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
           <div className="min-w-0 flex-1">
@@ -35,7 +41,7 @@ export function QueueListView() {
           <span className="w-14 text-right text-sm font-semibold tabular-nums text-fg">
             {r.price}
           </span>
-        </div>
+        </button>
       ))}
     </div>
   );

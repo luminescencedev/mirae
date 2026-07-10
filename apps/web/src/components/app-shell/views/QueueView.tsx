@@ -5,9 +5,19 @@ import { COLUMNS, type Commission } from "../../mockups/seed.ts";
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
-function CommissionCard({ item }: { item: Commission }) {
+function CommissionCard({
+  item,
+  onSelect,
+}: {
+  item: Commission;
+  onSelect?: (c: Commission) => void;
+}) {
   return (
-    <div className="rounded-lg border border-border bg-surface p-3 shadow-soft transition-shadow hover:shadow-panel">
+    <button
+      type="button"
+      onClick={() => onSelect?.(item)}
+      className="cursor-pointer rounded-lg border border-border bg-surface p-3 text-left shadow-soft outline-none transition-shadow hover:shadow-panel focus-visible:ring-2 focus-visible:ring-accent-500"
+    >
       <div className="flex items-center gap-2">
         <span className="size-5 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
         <span className="text-xs text-fg-muted">{item.client}</span>
@@ -30,11 +40,15 @@ function CommissionCard({ item }: { item: Commission }) {
         <span className="ml-auto tabular-nums">{item.due}</span>
         <span className="font-semibold text-fg tabular-nums">{item.price}</span>
       </div>
-    </div>
+    </button>
   );
 }
 
-export function QueueView() {
+export function QueueView({
+  onSelect,
+}: {
+  onSelect?: (c: Commission) => void;
+}) {
   return (
     <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
       {COLUMNS.map((col, ci) => (
@@ -59,7 +73,11 @@ export function QueueView() {
             </div>
           </div>
           {col.items.map((it) => (
-            <CommissionCard key={it.client + it.type} item={it} />
+            <CommissionCard
+              key={it.client + it.type}
+              item={it}
+              onSelect={onSelect}
+            />
           ))}
         </motion.section>
       ))}

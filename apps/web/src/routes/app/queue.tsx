@@ -1,25 +1,32 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import {
   Button,
   Icon,
+  Sheet,
+  SheetContent,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@mirae/ui";
 import { Add01Icon } from "@hugeicons/core-free-icons";
+import { PageHeader } from "../../components/app-shell/PageHeader.tsx";
+import { CommissionDetail } from "../../components/app-shell/CommissionDetail.tsx";
+import { QueueView } from "../../components/app-shell/views/QueueView.tsx";
+import { QueueListView } from "../../components/app-shell/views/QueueListView.tsx";
+import type { Commission } from "../../components/mockups/seed.ts";
 
 const ENTER = {
   initial: { opacity: 0, y: 8 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.3, ease: [0.23, 1, 0.32, 1] as const },
 };
-import { PageHeader } from "../../components/app-shell/PageHeader.tsx";
-import { QueueView } from "../../components/app-shell/views/QueueView.tsx";
-import { QueueListView } from "../../components/app-shell/views/QueueListView.tsx";
 
 function Queue() {
+  const [selected, setSelected] = useState<Commission | null>(null);
+
   return (
     <>
       <PageHeader
@@ -40,11 +47,11 @@ function Queue() {
             <TabsTrigger value="calendar">Calendar</TabsTrigger>
           </TabsList>
           <TabsContent value="board" className="mt-5">
-            <QueueView />
+            <QueueView onSelect={setSelected} />
           </TabsContent>
           <TabsContent value="list" className="mt-5">
             <motion.div {...ENTER}>
-              <QueueListView />
+              <QueueListView onSelect={setSelected} />
             </motion.div>
           </TabsContent>
           <TabsContent value="calendar" className="mt-5">
@@ -57,6 +64,15 @@ function Queue() {
           </TabsContent>
         </Tabs>
       </div>
+
+      <Sheet
+        open={selected !== null}
+        onOpenChange={(o) => !o && setSelected(null)}
+      >
+        <SheetContent>
+          {selected && <CommissionDetail item={selected} />}
+        </SheetContent>
+      </Sheet>
     </>
   );
 }
