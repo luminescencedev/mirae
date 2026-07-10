@@ -1,42 +1,16 @@
+import { Link } from "@tanstack/react-router";
 import { Button, Icon } from "@mirae/ui";
-import { ArrowUpRight01Icon, CubeIcon } from "@hugeicons/core-free-icons";
+import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons";
 import { DashboardPreview } from "./DashboardPreview.tsx";
-
-const NAV = ["Product", "Pricing", "Docs"];
+import { PricingSection } from "./PricingSection.tsx";
+import { SiteHeader } from "./SiteHeader.tsx";
 
 /** Marketing landing — Atlasflow-style: white, minimal header, headline +
  *  black/white CTAs, framed product preview on a pastel-blue glow. UI-006. */
 export function Landing() {
   return (
     <div className="min-h-screen bg-canvas">
-      {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-border/60 bg-canvas/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-6">
-          <a href="/" className="flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-md bg-fg text-white">
-              <Icon icon={CubeIcon} size={16} />
-            </span>
-            <span className="text-sm font-semibold tracking-tight">Mirae</span>
-          </a>
-          <nav className="ml-2 hidden items-center gap-1 md:flex">
-            {NAV.map((n) => (
-              <a
-                key={n}
-                href="#"
-                className="rounded-md px-3 py-1.5 text-sm font-medium text-fg-muted transition-colors hover:bg-surface-muted hover:text-fg"
-              >
-                {n}
-              </a>
-            ))}
-          </nav>
-          <div className="ml-auto flex items-center gap-2">
-            <Button variant="ghost" size="sm">
-              Log in
-            </Button>
-            <Button size="sm">Sign up</Button>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="px-6">
         {/* Hero */}
@@ -49,12 +23,14 @@ export function Landing() {
             revisions and deliveries in one calm workspace.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
-            <Button size="lg">
-              Open your studio
-              <Icon icon={ArrowUpRight01Icon} />
+            <Button asChild size="lg">
+              <Link to="/signup">
+                Open your studio
+                <Icon icon={ArrowUpRight01Icon} />
+              </Link>
             </Button>
-            <Button variant="outline" size="lg">
-              View demo
+            <Button asChild variant="outline" size="lg">
+              <Link to="/app">View demo</Link>
             </Button>
           </div>
         </section>
@@ -74,6 +50,35 @@ export function Landing() {
           </div>
         </section>
       </main>
+
+      {/* Pricing (single-page section) */}
+      <PricingSection />
+
+      {/* Closing CTA */}
+      <section className="mx-auto max-w-3xl px-6 pb-28 text-center">
+        <div className="rounded-2xl border border-border bg-surface-muted px-8 py-14">
+          <h2 className="text-2xl font-semibold tracking-tight text-fg">
+            Ready to run your studio calmly?
+          </h2>
+          <p className="mx-auto mt-3 max-w-md text-fg-muted">
+            Set up your public page, take requests, and manage every commission
+            in one place.
+          </p>
+          <Button asChild size="lg" className="mt-6">
+            <Link to="/signup">
+              Open your studio
+              <Icon icon={ArrowUpRight01Icon} />
+            </Link>
+          </Button>
+        </div>
+      </section>
+
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6 text-sm text-fg-subtle">
+          <span>© Mirae</span>
+          <span>Your private commission studio.</span>
+        </div>
+      </footer>
     </div>
   );
 }

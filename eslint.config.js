@@ -12,4 +12,9 @@ export default [
     files: ["packages/**/*.{ts,tsx}"],
     rules: { "react-refresh/only-export-components": "off" },
   },
+  // TanStack Router route files must export `Route` alongside the component.
+  {
+    files: ["apps/web/src/routes/**/*.{ts,tsx}"],
+    rules: { "react-refresh/only-export-components": "off" },
+  },
 ];
