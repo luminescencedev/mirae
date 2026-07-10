@@ -15,12 +15,22 @@ Hard nos:
 
 ```txt
 No beige / cream backgrounds.
-No heavy double bezel.
 No generic dark admin UI.
-No shadcn default look.
+No raw/unstyled shadcn look shipped as-is.
 ```
 
 The first public version must feel like a **premium client/workflow OS for artists**, not an enterprise SaaS template. Every screen should look good enough to be a product marketing screenshot.
+
+## Foundations (2026-07-10 — see docs/DECISIONS.md)
+
+- **Component base:** shadcn/ui architecture (Radix + `cva` + `cn`) restyled onto Mirae tokens. Not copied blocks; `Button` mirrors shadcn's variants/sizes/`asChild`.
+- **Bar:** clean light SaaS at shadcn/Linear polish — thin borders, small radii, calm whitespace, pastel tag chips, status dots. Reference boards: Taskk, widelab, logip, Shopeers.
+- **Double-bezel:** optional only (`<Card bezel>`), for a rare hero surface — not the default.
+- **Theme:** light only for now; dark tokens are dormant in `globals.css` (re-addable without touching components).
+- **Typography:** Inter, self-hosted (`apps/web/src/assets/fonts`, 400/500/600), `--font-sans`.
+- **Icons:** Hugeicons **Stroke Rounded** (house family) via `@mirae/ui` `Icon` (20 / 1.7; 16 / 1.8 in buttons). `react-icons` for brand logos only. Bespoke `BranchReturnIcon` / `EnterKeyIcon` as accents.
+- **Motion (emil-design-eng / apple-design):** strong custom easing tokens (`--ease-out`, `--ease-spring`), scale-on-press, spring `HoverBarList` (one bar slides behind the hovered row — horizontal tabs + vertical lists, no default selection). Respects `prefers-reduced-motion`.
+- **Tokens:** pastel-blue `accent-50..950`; semantic `canvas` / `surface` / `surface-muted` / `surface-sunken` / `border` / `border-strong` / `fg` / `fg-muted` / `fg-subtle`; radii `sm..3xl`; `shadow-soft` / `shadow-panel` / `shadow-bezel`.
 
 ## Palette
 

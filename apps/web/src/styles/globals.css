@@ -1,11 +1,206 @@
 @import "tailwindcss";
 
-/* Mirae base surface: pure white, zinc text, light UI by default.
-   Full design tokens (palette, pastel-blue accent) land in Sprint 1 (UI-001). */
-:root {
-  color-scheme: light;
+/* Inter (local) — Mirae's typeface. */
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/INTER_28PT-REGULAR.TTF") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/INTER_28PT-MEDIUM.TTF") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/INTER_28PT-SEMIBOLD.TTF") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
 }
 
-body {
-  @apply bg-white text-zinc-950 antialiased;
+/* Scan the shared UI package too — Tailwind v4 ignores node_modules by
+   default, and @mirae/ui resolves there via the workspace symlink, so its
+   component classes (borders, surfaces, variants) would otherwise be dropped. */
+@source "../../../../packages/ui/src/**/*.{ts,tsx}";
+
+/* Radix enter/exit keyframes (Presence detects CSS animations for exit).
+   Popovers scale from their trigger via transform-origin set in the skin. */
+@keyframes mirae-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes mirae-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes mirae-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes mirae-pop-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* Class-based dark mode: `dark:` utilities key off a `.dark` ancestor
+   (toggle .dark on <html>). Most theming is done via the token overrides
+   below, so components rarely need `dark:` directly. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ------------------------------------------------------------------ *
+ * Mirae design tokens (Tailwind v4, CSS-first). Light is the default;
+ * dark overrides the same semantic tokens so components flip for free.
+ * Pastel-blue accent throughout. See docs/DESIGN_SYSTEM.md.
+ * ------------------------------------------------------------------ */
+@theme {
+  /* Pastel-blue accent — soft, used tastefully (focus, active, glow). */
+  --color-accent-50: #f3f7ff;
+  --color-accent-100: #e6efff;
+  --color-accent-200: #cfe0ff;
+  --color-accent-300: #adc8ff;
+  --color-accent-400: #85a9fb;
+  --color-accent-500: #6b93f0;
+  --color-accent-600: #4f74e0;
+  --color-accent-700: #3f5cc0;
+  --color-accent-800: #364c98;
+  --color-accent-900: #2f4179;
+  --color-accent-950: #1e2749;
+
+  /* Semantic tokens — LIGHT defaults. Overridden under .dark below. */
+  --color-canvas: #ffffff; /* page background */
+  --color-surface: #ffffff; /* cards, panels */
+  --color-surface-muted: #fafafa; /* zinc-50 */
+  --color-surface-sunken: #f4f4f5; /* zinc-100 */
+  --color-border: #e4e4e7; /* zinc-200 */
+  --color-border-strong: #d4d4d8; /* zinc-300 */
+  --color-fg: #09090b; /* zinc-950 — primary text + primary CTA */
+  --color-fg-muted: #71717a; /* zinc-500 — secondary text */
+  --color-fg-subtle: #a1a1aa; /* zinc-400 — hints, placeholders */
+  --color-accent: var(--color-accent-500);
+
+  /* Radii — tight, premium; large containers still get xl/2xl. */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
+
+  /* Soft shadows only — never heavy. */
+  --shadow-soft:
+    0 1px 2px rgba(9, 9, 11, 0.04), 0 4px 16px rgba(9, 9, 11, 0.04);
+  --shadow-panel:
+    0 1px 2px rgba(9, 9, 11, 0.05), 0 8px 32px rgba(9, 9, 11, 0.06);
+  /* Double-bezel: inner top highlight + soft ambient depth (machined feel). */
+  --shadow-bezel:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 1px 2px rgba(9, 9, 11, 0.05),
+    0 14px 40px -12px rgba(9, 9, 11, 0.12);
+
+  /* Motion — strong custom curves (Emil Kowalski / high-end). Never rely on
+     the weak built-in CSS easings. Overriding --ease-out retargets the
+     `ease-out` utility; `ease-spring` is a new utility. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Typography — Inter (local), calm system fallback. */
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+/* Dark theme — cool near-black surfaces, canvas darker than cards so they
+   read as raised. Mirrors the premium dev-tool reference. */
+.dark {
+  --color-canvas: #09090b;
+  --color-surface: #131316;
+  --color-surface-muted: #1c1c21;
+  --color-surface-sunken: #0f0f12;
+  --color-border: #2a2a31;
+  --color-border-strong: #3a3a43;
+  --color-fg: #ededed;
+  --color-fg-muted: #a1a1aa;
+  --color-fg-subtle: #71717a;
+  /* Softer inner highlight + deeper ambient on dark surfaces. */
+  --shadow-bezel:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 16px 44px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* ------------------------------------------------------------------ *
+ * Base layer
+ * ------------------------------------------------------------------ */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Tailwind v4 defaults buttons to cursor:default; keep the pointer. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-200);
+    color: var(--color-accent-950); /* dark navy — readable in both themes */
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 2px;
+  }
+
+  /* Respect reduced-motion — kill non-essential animation. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }

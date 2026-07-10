@@ -59,3 +59,16 @@ concurrently 10.0.3
 **Reason:** The two-process setup maps directly onto the documented `apps/web` (builds to `dist/`) + `apps/api` (the Worker, `assets.directory = ../web/dist`) split and keeps the workspace boundaries clean. The vite-plugin (workerd inside Vite, single `vite dev`, tighter prod parity) would blur the app boundary by pulling the worker entry into the web Vite project.
 
 **Update (REPO-006):** originally recorded as `concurrently 10.0.3`, but Turborepo already runs both persistent `dev` tasks in parallel from one `pnpm dev`, so `concurrently` was dropped as a redundant dependency. Ports pinned deterministically (`strictPort` on vite, `[dev] port = 8787` in `wrangler.toml`). Revisit `@cloudflare/vite-plugin` if dev/prod parity issues appear; if adopted, update `docs/CONTRIBUTING.md` + `docs/ARCHITECTURE.md` and record here.
+
+## 2026-07-10 — Design system: shadcn-style base, clean light SaaS, Inter, Hugeicons
+
+**Decision (Sprint 1, UI-003):**
+
+- **Component base = shadcn/ui architecture** (Radix primitives + `cva` + `cn`), restyled onto Mirae tokens — not copied blocks. `Button` follows shadcn's variants/sizes/`asChild` API. Custom Mirae visuals ride on top.
+- **Direction = clean light SaaS** at shadcn/Linear polish (thin borders, small radii, calm whitespace, pastel tag chips, status dots). The heavy Awwwards **double-bezel is NOT the default** — kept only behind an optional `bezel` prop for a rare hero surface. (Supersedes the earlier "no double bezel" absolute and the agency-dark exploration.)
+- **Light theme only for now.** Dark tokens stay in `globals.css` (dormant `.dark` overrides + semantic tokens) so dark can be switched on later without touching components.
+- **Typography = Inter**, self-hosted locally (`apps/web/src/assets/fonts`, 400/500/600). Overrides the high-end skill's Inter ban — it's the chosen typeface.
+- **Icons = Hugeicons (Stroke Rounded)** as the single house family via a `@mirae/ui` `Icon` wrapper (default 20 / stroke 1.7; 16 / 1.8 in buttons). `react-icons` for brand logos only. `lucide-react` dropped. Bespoke crafted marks (`BranchReturnIcon`, `EnterKeyIcon`) kept as accents.
+- **Motion** per emil-design-eng / apple-design skills (installed user-global, see `CLAUDE.md`): strong custom easing tokens, scale-on-press, spring-based `HoverBarList` (one bar slides behind the hovered row; works horizontal tabs + vertical lists, no default selection).
+
+**Reason:** the user's dashboard references (Taskk, widelab, logip, Shopeers) are clean light premium SaaS; shadcn gives a reliable, familiar, restyle-able base while Hugeicons + Inter + the motion details supply a distinctive, non-generic identity.
