@@ -1,6 +1,7 @@
 import { Hono } from "hono";
+import { makeAuth, type AuthEnv } from "./auth.ts";
 
-type Bindings = {
+type Bindings = AuthEnv & {
   ASSETS: Fetcher;
 };
 
@@ -8,9 +9,12 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // Health check — hit directly on the Worker (wrangler dev: :8787/health).
 app.get("/health", (c) => c.json({ status: "ok" }));
-
-// API surface lives under /api/*. Real routes are mounted in later tickets.
 app.get("/api/health", (c) => c.json({ status: "ok" }));
+
+// Better Auth — handles /api/auth/* (sign-up, sign-in, session, …).
+app.on(["GET", "POST"], "/api/auth/*", (c) =>
+  makeAuth(c.env).handler(c.req.raw),
+);
 
 // SPA fallback: anything not handled above (and not an /api route) is served
 // from the static assets binding — the built Vite app in apps/web/dist.

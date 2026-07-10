@@ -6,6 +6,9 @@ export * as schema from "./schema/index.ts";
 
 import type {
   users,
+  sessions,
+  accounts,
+  verifications,
   artistProfiles,
   clients,
   commissionTypes,
@@ -20,6 +23,9 @@ import type {
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type Session = typeof sessions.$inferSelect;
+export type Account = typeof accounts.$inferSelect;
+export type Verification = typeof verifications.$inferSelect;
 export type ArtistProfile = typeof artistProfiles.$inferSelect;
 export type NewArtistProfile = typeof artistProfiles.$inferInsert;
 export type Client = typeof clients.$inferSelect;

@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@mirae/db": "workspace:*",
+    "better-auth": "1.6.23",
     "hono": "4.12.28"
   },
   "devDependencies": {

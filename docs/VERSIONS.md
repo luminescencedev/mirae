@@ -104,7 +104,8 @@ Radix UI primitives (pin each individually, same release wave):
 
 | Package     | Version |
 | ----------- | ------- |
-| better-auth | 1.6.23  |
+| better-auth | 1.6.23  | Wired into apps/api (Hono) + apps/web client (Sprint 3). |
+| @types/node | 24.13.3 | dev dep in @mirae/db for the Node scripts (seed/check).  |
 
 ## Payments / email
 
