@@ -33,6 +33,17 @@ ship it                        -> if checks pass + preview approved: commit, pus
 stop                           -> stop coding, summarize state
 ```
 
+## Skills (`.claude/skills/`)
+
+Encoded procedures for the recurring workflow — invoke the matching one:
+
+- `start-ticket` — env green, pick next ticket in `docs/SPRINTS.md`, get on the sprint branch, restate scope, implement only that ticket
+- `preview` — run `pnpm dev`, say what to inspect, wait for visual approval
+- `ship-it` — after approval: format, checks, tick SPRINTS, focused commit, push, open/update the **draft** PR (never merge)
+- `status` — current sprint, done/next ticket, open PR, blockers
+- `migration` — Drizzle schema change → generate/review/apply against the Neon branch
+- `finish-sprint` — close a sprint: acceptance, e2e, SPRINTS completion notes, refresh PR
+
 ## Workflow loop
 
 ```txt
