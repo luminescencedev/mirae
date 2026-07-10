@@ -1,14 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { RequestForm } from "../../components/public/RequestForm.tsx";
 
-function RequestForm() {
+function RequestRoute() {
   const { handle } = Route.useParams();
-  return (
-    <div className="grid min-h-screen place-items-center bg-surface-sunken px-6 text-sm text-fg-subtle">
-      Request form for {handle} — coming in WEB-009.
-    </div>
-  );
+  return <RequestForm handle={handle} />;
 }
 
+// Public request form — usemirae.com/@handle/request.
 export const Route = createFileRoute("/$handle/request")({
-  component: RequestForm,
+  component: RequestRoute,
 });
