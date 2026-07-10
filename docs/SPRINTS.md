@@ -9,7 +9,7 @@ Sprint 0 — Repository foundation
 ## Sprint 0 — Repository foundation
 
 - [x] REPO-001 Initialize pnpm workspace and Turborepo
-- [ ] REPO-002 Create apps/web with Vite + React
+- [x] REPO-002 Create apps/web with Vite + React
 - [ ] REPO-003 Create apps/api with Hono, wrangler.toml, and /health
 - [ ] REPO-004 Create packages/db, shared, ui, config
 - [ ] REPO-005 Add TypeScript, ESLint, Prettier, Tailwind base

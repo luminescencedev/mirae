@@ -30,8 +30,11 @@
 | Package | Version | Notes |
 |---|---|---|
 | vite | 8.1.3 | Rolldown-based; needs Node 20.19+/22.12+ (Node 24 OK). |
+| @vitejs/plugin-react | 6.0.3 | React plugin for Vite 8 (peer `vite ^8`). Resolved during REPO-002. |
 | react | 19.2.7 | |
 | react-dom | 19.2.7 | |
+| @types/react | 19.2.17 | dev dependency. Resolved during REPO-002. |
+| @types/react-dom | 19.2.3 | dev dependency. Resolved during REPO-002. |
 | @tanstack/react-router | 1.170.17 | |
 | @tanstack/router-plugin | 1.168.19 | Vite plugin for TanStack Router codegen. |
 | @tanstack/react-query | 5.101.2 | |
