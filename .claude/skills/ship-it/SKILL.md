@@ -57,16 +57,15 @@ gh pr create --draft --base main --head feat/sprint-<N>-<slug> \
 gh pr edit <pr> --body "<updated summary>"
 ```
 
-## 7. Never merge — hand the user the command
+## 7. Never merge
 
-`main` is the user's to merge. **Do not merge PRs yourself.** Do not push directly to `main`. Instead of just reporting the URL, give the user the exact ready-to-run command (prefixed with `!` so it runs in their session). A draft PR must be marked ready first; PowerShell has no `&&`, so give separate lines:
+`main` is the user's to merge. **Do not merge PRs yourself.** Do not push directly to `main`. Keep the PR a **draft** mid-sprint — it's marked ready only at sprint close (see the `finish-sprint` skill). Report the PR URL and stop.
+
+Only the **user** merges, with the one command (`!` runs in their session):
 
 ```
-! gh pr ready <n>
 ! gh pr merge <n> --squash --delete-branch
 ```
-
-`--delete-branch` cleans up the sprint branch so the next sprint branches fresh off the updated `main`. Then stop.
 
 ## Reminders
 
