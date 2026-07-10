@@ -1,8 +1,13 @@
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router";
 import { Button, Input } from "@mirae/ui";
 import { AuthLayout, Field } from "../components/marketing/AuthLayout.tsx";
-import { signUp } from "../lib/auth-client.ts";
+import { authClient, signUp } from "../lib/auth-client.ts";
 
 function Signup() {
   const navigate = useNavigate();
@@ -75,4 +80,10 @@ function Signup() {
   );
 }
 
-export const Route = createFileRoute("/signup")({ component: Signup });
+export const Route = createFileRoute("/signup")({
+  beforeLoad: async () => {
+    const { data } = await authClient.getSession();
+    if (data) throw redirect({ to: "/app" });
+  },
+  component: Signup,
+});
