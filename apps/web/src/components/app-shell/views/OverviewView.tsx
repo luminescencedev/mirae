@@ -1,8 +1,18 @@
 import { motion } from "motion/react";
-import { Badge, Button, Icon } from "@mirae/ui";
-import { ACTIVITY, NEEDS_ATTENTION, STATS } from "../../mockups/seed.ts";
+import { Badge, Button, Icon, cn } from "@mirae/ui";
+import {
+  ACTIVITY,
+  COLUMNS,
+  NEEDS_ATTENTION,
+  STATS,
+} from "../../mockups/seed.ts";
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
+
+// Commissions in flight (in progress + review — not new or delivered).
+const ACTIVE = COLUMNS.filter(
+  (c) => c.name === "In progress" || c.name === "Review",
+).flatMap((c) => c.items);
 
 export function OverviewView() {
   return (
@@ -97,6 +107,41 @@ export function OverviewView() {
           </div>
         </section>
       </div>
+
+      {/* Active commissions */}
+      <section>
+        <div className="mb-3 flex items-center gap-2">
+          <h2 className="text-sm font-semibold">Active commissions</h2>
+          <span className="text-xs text-fg-subtle">{ACTIVE.length}</span>
+        </div>
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
+          {ACTIVE.map((c, i) => (
+            <div
+              key={c.client + c.type}
+              className={cn(
+                "flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-muted",
+                i > 0 && "border-t border-border",
+              )}
+            >
+              <span className="size-7 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-fg">{c.type}</p>
+                <p className="truncate text-xs text-fg-muted">{c.client}</p>
+              </div>
+              <span className="hidden items-center gap-1.5 text-xs text-fg-muted sm:inline-flex">
+                <span className={cn("size-1.5 rounded-full", c.statusDot)} />
+                {c.statusLabel}
+              </span>
+              <span className="w-16 text-right text-xs tabular-nums text-fg-muted">
+                {c.due}
+              </span>
+              <span className="w-14 text-right text-sm font-semibold tabular-nums text-fg">
+                {c.price}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

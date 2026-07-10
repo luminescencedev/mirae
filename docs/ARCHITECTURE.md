@@ -70,6 +70,8 @@ src/
 /@:handle  /@:handle/request  /portal/:token  /delivery/:token
 ```
 
+**Domains vs paths.** Production: marketing on `usemirae.com`, the private dashboard on `app.usemirae.com`. The router uses the `/app/*` path prefix (dev: `localhost:5173/app/...`); the single Worker maps the `app.` host to the `/app` subtree at deploy time (Sprint 4). So `/app/*` is the internal path — the dashboard is reached at `app.usemirae.com` in production.
+
 ## API (`apps/api`, the Worker)
 
 ```txt

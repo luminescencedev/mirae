@@ -62,6 +62,17 @@ export {
   TooltipTrigger,
   TooltipContent,
 } from "./overlays/tooltip.tsx";
+export {
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetBody,
+  SheetFooter,
+} from "./overlays/sheet.tsx";
 
 // Icons — Hugeicons wrapper (house family) + bespoke crafted marks
 export { Icon, type IconProps } from "./icons/icon.tsx";
