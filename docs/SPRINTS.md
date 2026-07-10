@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 3 — Database and auth foundation
+Sprint 4 — Commission types and public page
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -70,7 +70,7 @@ Completion notes (2026-07-10):
 - Known issues / follow-ups: Clients / Deliveries / Studio page are **ComingSoon placeholders** (built at their sprints — Studio Sprint 4, Clients Sprint 6, Deliveries Sprint 8); all screens mock/seed-driven (no backend/auth yet — Sprint 3); subdomain→/app host mapping deferred to deploy (Sprint 4). Backlog: ⌘K cmdk palette, onboarding flow + first-run tour.
 - **Next sprint:** Sprint 3 — Database and auth foundation (first ticket DB-001: Neon project + dev branch, configure Drizzle).
 
-## Sprint 3 — Database and auth foundation
+## Sprint 3 — Database and auth foundation ✅ complete
 
 - [x] DB-001 Create Neon project + dev branch, configure Drizzle
 - [x] DB-002 Create MVP schema
@@ -80,6 +80,18 @@ Completion notes (2026-07-10):
 - [x] AUTH-002 Add login/signup pages
 - [x] AUTH-003 Add protected app routes
 - [x] AUTH-004 Add onboarding artist profile creation
+
+Acceptance: migrations run on the Neon dev branch · seed works · user can sign up/login · protected app routes work · artist profile created on onboarding. **All met.**
+
+Completion notes (2026-07-11):
+
+- End-to-end verified live: `pnpm db:check` (Neon Postgres 18, `neondb`) · `pnpm db:seed` (rows counted) · sign-up → session persisted → `get-session` · sign-in → `POST /api/artists` creates the profile → `GET /api/artists/me` 200 · unauthenticated `/me` → 401 · `/app` redirects to `/login` when logged out. lint/typecheck/build/format green.
+- **DB**: 11 MVP tables + Better Auth tables (sessions/accounts/verifications), enums mirror `@mirae/shared`, money in integer cents. Migrations `0000`+`0001` committed under `packages/db/drizzle` and applied to Neon.
+- **Auth**: Better Auth (email+password) built per-request in the Hono Worker with the Drizzle adapter (`usePlural`); `/api/auth/*`; web `auth-client`; login/signup/onboarding wired; `/app` protected via `beforeLoad`; sidebar sign-out.
+- **New pins** (docs/VERSIONS.md): better-auth 1.6.23, @types/node 24.13.3, drizzle-orm in apps/api.
+- Config: Worker secrets in `apps/api/.dev.vars` (gitignored: DATABASE_URL, BETTER_AUTH_SECRET/URL); tooling reads root `.env` via Node `loadEnvFile`.
+- Known issues / follow-ups: the **seed user has no password** (created via direct insert) — log in via `/signup` or the demo `demo@mirae.test` / `commissions123`. App screens still show seed/mock data (not yet the logged-in user's real commissions — later sprints). Prod deploy (wrangler secrets, subdomain→/app) = Sprint 4/deploy. Onboarding doesn't yet redirect existing-profile users or gate `/app` on profile presence.
+- **Next sprint:** Sprint 4 — Commission types and public page (first ticket CT-001: commission types API).
 
 ## Sprint 4 — Commission types and public page
 
