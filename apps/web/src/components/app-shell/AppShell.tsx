@@ -259,7 +259,7 @@ export function AppShell() {
   const collapsed = !open;
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-canvas text-fg">
+    <div className="flex h-full w-full overflow-hidden bg-canvas text-fg">
       {/* One collapsible sidebar — icons in fixed slots, labels retract */}
       <aside
         className={cn(

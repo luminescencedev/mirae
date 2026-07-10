@@ -1,10 +1,10 @@
 import { TooltipProvider } from "@mirae/ui";
-import { AppShell } from "./components/app-shell/AppShell.tsx";
+import { Landing } from "./components/marketing/Landing.tsx";
 
 export function App() {
   return (
     <TooltipProvider delayDuration={200}>
-      <AppShell />
+      <Landing />
     </TooltipProvider>
   );
 }
