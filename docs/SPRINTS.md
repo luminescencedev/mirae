@@ -49,7 +49,7 @@ Completion notes (2026-07-10):
 
 ## Sprint 2 — Static product screens
 
-- [ ] WEB-001 Set up TanStack Router file-based route tree
+- [x] WEB-001 Set up TanStack Router file-based route tree
 - [ ] WEB-002 Create marketing routes
 - [ ] WEB-003 Create /app layout
 - [ ] WEB-004 Create overview screen with mock data

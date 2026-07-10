@@ -1,6 +1,6 @@
 import { Button, Icon } from "@mirae/ui";
 import { ArrowUpRight01Icon, CubeIcon } from "@hugeicons/core-free-icons";
-import { AppShell } from "../app-shell/AppShell.tsx";
+import { DashboardPreview } from "./DashboardPreview.tsx";
 
 const NAV = ["Product", "Pricing", "Docs"];
 
@@ -69,7 +69,7 @@ export function Landing() {
               accent tint + ring; inner core holds the product preview. */}
           <div className="relative z-10 mx-auto max-w-7xl rounded-[28px] border border-white/60 bg-accent-50/40 p-2 shadow-panel ring-1 ring-inset ring-accent-300/30 backdrop-blur-md">
             <div className="h-[760px] overflow-hidden rounded-[20px] border border-border bg-surface">
-              <AppShell />
+              <DashboardPreview />
             </div>
           </div>
         </section>

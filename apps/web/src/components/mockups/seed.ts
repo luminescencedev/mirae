@@ -69,7 +69,7 @@ export const COLUMNS: { name: string; count: number; items: Commission[] }[] = [
         statusLabel: "Sketch",
       },
       {
-        client: "Rin",
+        client: "Mai Tanaka",
         type: "Emote set (5)",
         tags: [{ label: "Twitch", variant: "teal" }],
         price: "$150",
@@ -133,7 +133,7 @@ export const ACTIVITY: Activity[] = [
   { icon: InboxIcon, text: "Ava Chen sent a new request", time: "10m" },
   {
     icon: PaintBrush01Icon,
-    text: "Rin's emote set moved to Line art",
+    text: "Mai Tanaka's emote set moved to Line art",
     time: "1h",
   },
   {

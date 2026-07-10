@@ -141,7 +141,7 @@ const HEADERS: Record<
   number,
   { title: string; subtitle: string; tabs?: boolean }
 > = {
-  0: { title: "Hello, Sandra", subtitle: "Here's your studio today." },
+  0: { title: "Hello, Rain", subtitle: "Here's your studio today." },
   2: {
     title: "Commission queue",
     subtitle: "5 active commissions · 2 awaiting your quote",
@@ -202,7 +202,7 @@ export function AppShell() {
           </span>
           <Label collapsed={collapsed} className="min-w-0 pl-1">
             <span className="block truncate text-sm font-medium">
-              Sandra Marx
+              Rain Aoki
             </span>
             <span className="block truncate text-xs text-fg-subtle">
               Studio · Pro
