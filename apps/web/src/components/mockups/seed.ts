@@ -221,6 +221,61 @@ export type CommissionRequest = {
   status: RequestStatus;
 };
 
+// --- Public artist page -----------------------------------------------------
+
+export type StudioStatus = "open" | "closed" | "waitlist";
+
+export type CommissionType = {
+  name: string;
+  blurb: string;
+  from: string;
+  turnaround: string;
+  slots?: string;
+};
+
+export const ARTIST = {
+  handle: "rainaoki",
+  name: "Rain Aoki",
+  tagline: "Character illustrator · semi-realistic & anime",
+  bio: "I take on character illustrations, key visuals and emote sets. Two revision rounds included. Commercial licensing available.",
+  status: "open" as StudioStatus,
+  commissionTypes: [
+    {
+      name: "Character illustration",
+      blurb: "Full-body or half-body, rendered. Refs welcome.",
+      from: "€150",
+      turnaround: "~2 weeks",
+      slots: "3 slots open",
+    },
+    {
+      name: "Emote / sticker set",
+      blurb: "Sets of 3–10 for Twitch, Discord or Telegram.",
+      from: "€90",
+      turnaround: "~1 week",
+      slots: "2 slots open",
+    },
+    {
+      name: "Key visual (commercial)",
+      blurb: "Illustration for a launch, cover or campaign.",
+      from: "€400",
+      turnaround: "3–4 weeks",
+    },
+  ] satisfies CommissionType[],
+};
+
+export const STUDIO_STATUS_META: Record<
+  StudioStatus,
+  { label: string; dot: string; variant: "emerald" | "amber" | "neutral" }
+> = {
+  open: {
+    label: "Open for commissions",
+    dot: "bg-emerald-500",
+    variant: "emerald",
+  },
+  waitlist: { label: "Waitlist only", dot: "bg-amber-500", variant: "amber" },
+  closed: { label: "Closed", dot: "bg-fg-subtle", variant: "neutral" },
+};
+
 export const REQUESTS: CommissionRequest[] = [
   {
     id: "r1",

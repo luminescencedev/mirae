@@ -56,7 +56,7 @@ Completion notes (2026-07-10):
 - [x] WEB-005 Create requests inbox with mock data
 - [x] WEB-006 Create queue screen with mock data
 - [x] WEB-007 Create commission detail panel with mock data
-- [ ] WEB-008 Create public artist page mock
+- [x] WEB-008 Create public artist page mock
 - [ ] WEB-009 Create request form mock
 
 ## Sprint 3 — Database and auth foundation
