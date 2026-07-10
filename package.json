@@ -1,0 +1,28 @@
+{
+  "name": "mirae",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.10.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "db:generate": "pnpm --filter @mirae/db db:generate",
+    "db:migrate": "pnpm --filter @mirae/db db:migrate",
+    "db:studio": "pnpm --filter @mirae/db db:studio"
+  },
+  "devDependencies": {
+    "@mirae/config": "workspace:*",
+    "eslint": "10.6.0",
+    "prettier": "3.9.4",
+    "turbo": "2.10.4",
+    "typescript": "6.0.3"
+  }
+}
