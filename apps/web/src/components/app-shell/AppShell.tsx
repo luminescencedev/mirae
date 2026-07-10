@@ -1,21 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Link, useLocation } from "@tanstack/react-router";
 import {
   animate,
   useMotionValue,
   useReducedMotion,
   motion,
 } from "motion/react";
+import { Badge, Button, Icon, cn } from "@mirae/ui";
 import {
-  Badge,
-  Button,
-  Icon,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  cn,
-} from "@mirae/ui";
-import {
-  Add01Icon,
   CubeIcon,
   DashboardSquare01Icon,
   InboxIcon,
@@ -29,24 +21,20 @@ import {
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import type { IconData } from "../mockups/seed.ts";
-import { OverviewView } from "./views/OverviewView.tsx";
-import { QueueView } from "./views/QueueView.tsx";
 
 const NAV_ROW = 36; // h-9
 const NAV_STEP = NAV_ROW + 2; // + gap-0.5
 
-// Mirae's real product nav (mirrors the /app/* routes in docs/ARCHITECTURE.md).
-const NAV: { label: string; icon: IconData; badge?: number }[] = [
-  { label: "Overview", icon: DashboardSquare01Icon },
-  { label: "Requests", icon: InboxIcon, badge: 3 },
-  { label: "Queue", icon: PaintBrush01Icon },
-  { label: "Clients", icon: UserGroupIcon },
-  { label: "Deliveries", icon: Package01Icon },
-  { label: "Studio page", icon: Store01Icon },
+// Mirae's product nav → the /app/* routes.
+const NAV: { label: string; icon: IconData; to: string; badge?: number }[] = [
+  { label: "Overview", icon: DashboardSquare01Icon, to: "/app/overview" },
+  { label: "Requests", icon: InboxIcon, to: "/app/requests", badge: 3 },
+  { label: "Queue", icon: PaintBrush01Icon, to: "/app/queue" },
+  { label: "Clients", icon: UserGroupIcon, to: "/app/clients" },
+  { label: "Deliveries", icon: Package01Icon, to: "/app/deliveries" },
+  { label: "Studio page", icon: Store01Icon, to: "/app/studio-page" },
 ];
 
-// Collapsing label: the icon lives in a fixed slot; only the text retracts in
-// width + opacity (CSS), so nothing ever jumps.
 function Label({
   collapsed,
   className,
@@ -71,36 +59,29 @@ function Label({
 
 function NavList({
   collapsed,
-  active,
-  onSelect,
+  activeIndex,
 }: {
   collapsed: boolean;
-  active: number;
-  onSelect: (i: number) => void;
+  activeIndex: number;
 }) {
   const reduce = useReducedMotion();
   const [hovered, setHovered] = useState<number | null>(null);
-  const barIndex = hovered ?? active;
+  const barIndex = hovered ?? (activeIndex >= 0 ? activeIndex : 0);
   const y = useMotionValue(barIndex * NAV_STEP);
 
-  useEffect(() => {
-    const target = barIndex * NAV_STEP;
-    if (reduce) {
-      y.set(target);
-      return;
-    }
-    const controls = animate(y, target, {
-      type: "spring",
-      stiffness: 420,
-      damping: 38,
-    });
-    return () => controls.stop();
-  }, [barIndex, reduce, y]);
+  const move = (i: number) => {
+    const target = i * NAV_STEP;
+    if (reduce) y.set(target);
+    else animate(y, target, { type: "spring", stiffness: 420, damping: 38 });
+  };
 
   return (
     <nav
       className="relative flex flex-col gap-0.5"
-      onMouseLeave={() => setHovered(null)}
+      onMouseLeave={() => {
+        setHovered(null);
+        if (activeIndex >= 0) move(activeIndex);
+      }}
     >
       <motion.div
         aria-hidden
@@ -108,13 +89,16 @@ function NavList({
         style={{ y, height: NAV_ROW, width: collapsed ? NAV_ROW : "100%" }}
       />
       {NAV.map((item, i) => (
-        <button
+        <Link
           key={item.label}
-          onClick={() => onSelect(i)}
-          onMouseEnter={() => setHovered(i)}
+          to={item.to}
+          onMouseEnter={() => {
+            setHovered(i);
+            move(i);
+          }}
           className={cn(
             "group relative z-10 flex h-9 w-full items-center rounded-md text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent-500",
-            active === i ? "text-fg" : "text-fg-muted hover:text-fg",
+            i === activeIndex ? "text-fg" : "text-fg-muted hover:text-fg",
           )}
         >
           <span className="grid size-9 shrink-0 place-items-center">
@@ -131,34 +115,22 @@ function NavList({
               {item.label}
             </span>
           )}
-        </button>
+        </Link>
       ))}
     </nav>
   );
 }
 
-const HEADERS: Record<
-  number,
-  { title: string; subtitle: string; tabs?: boolean }
-> = {
-  0: { title: "Hello, Rain", subtitle: "Here's your studio today." },
-  2: {
-    title: "Commission queue",
-    subtitle: "5 active commissions · 2 awaiting your quote",
-    tabs: true,
-  },
-};
-
-/** AppShell prototype — collapsible sidebar + seeded Overview/Queue. UI-005/007. */
-export function AppShell() {
+/** /app layout — collapsible sidebar + top bar; pages render into the Outlet. */
+export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
-  const [active, setActive] = useState(0); // Overview
   const collapsed = !open;
-  const head = HEADERS[active];
+  const { pathname } = useLocation();
+  const activeIndex = NAV.findIndex((n) => pathname.startsWith(n.to));
+  const current = NAV[activeIndex]?.label ?? "Studio";
 
   return (
     <div className="flex h-full w-full overflow-hidden bg-canvas text-fg">
-      {/* One collapsible sidebar — icons in fixed slots, labels retract */}
       <aside
         className={cn(
           "flex shrink-0 flex-col overflow-hidden border-r border-border transition-[width] duration-200 ease-out",
@@ -180,11 +152,7 @@ export function AppShell() {
         </div>
 
         <div className="px-4">
-          <button
-            className={cn(
-              "flex h-9 w-full items-center rounded-md text-sm text-fg-subtle outline-none ring-1 ring-inset ring-border transition-[color,box-shadow] hover:text-fg hover:ring-border-strong focus-visible:ring-2 focus-visible:ring-accent-500",
-            )}
-          >
+          <button className="flex h-9 w-full items-center rounded-md text-sm text-fg-subtle outline-none ring-1 ring-inset ring-border transition-[color,box-shadow] hover:text-fg hover:ring-border-strong focus-visible:ring-2 focus-visible:ring-accent-500">
             <span className="grid size-9 shrink-0 place-items-center">
               <Icon icon={Search01Icon} size={16} strokeWidth={1.8} />
             </span>
@@ -193,7 +161,7 @@ export function AppShell() {
         </div>
 
         <div className="mt-3 flex-1 px-4">
-          <NavList collapsed={collapsed} active={active} onSelect={setActive} />
+          <NavList collapsed={collapsed} activeIndex={activeIndex} />
         </div>
 
         <div className="flex h-14 items-center border-t border-border px-4">
@@ -211,7 +179,6 @@ export function AppShell() {
         </div>
       </aside>
 
-      {/* Main */}
       <main className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center gap-2 border-b border-border px-4 py-3 text-sm text-fg-muted">
           <Button
@@ -229,52 +196,13 @@ export function AppShell() {
           </Button>
           <span>Studio</span>
           <span className="text-fg-subtle">/</span>
-          <span className="text-fg">{NAV[active].label}</span>
-          <div className="ml-auto flex items-center gap-2">
-            <button className="rounded-md p-1.5 text-fg-subtle transition-colors hover:bg-surface-muted hover:text-fg">
-              <Icon icon={Notification03Icon} size={18} strokeWidth={1.7} />
-            </button>
-          </div>
+          <span className="text-fg">{current}</span>
+          <button className="ml-auto rounded-md p-1.5 text-fg-subtle transition-colors hover:bg-surface-muted hover:text-fg">
+            <Icon icon={Notification03Icon} size={18} strokeWidth={1.7} />
+          </button>
         </header>
 
-        <div className="flex items-end justify-between px-6 pt-6">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              {head?.title ?? NAV[active].label}
-            </h1>
-            <p className="mt-1 text-sm text-fg-muted">
-              {head?.subtitle ?? "Coming soon."}
-            </p>
-          </div>
-          <Button>
-            <Icon icon={Add01Icon} strokeWidth={1.8} />
-            New commission
-          </Button>
-        </div>
-
-        {head?.tabs && (
-          <div className="px-6 pt-5">
-            <Tabs defaultValue="board">
-              <TabsList>
-                <TabsTrigger value="board">Board</TabsTrigger>
-                <TabsTrigger value="list">List</TabsTrigger>
-                <TabsTrigger value="calendar">Calendar</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-        )}
-
-        <div className="flex-1 overflow-auto px-6 py-6">
-          {active === 0 ? (
-            <OverviewView />
-          ) : active === 2 ? (
-            <QueueView />
-          ) : (
-            <div className="grid h-full place-items-center text-sm text-fg-subtle">
-              {NAV[active].label} — coming soon
-            </div>
-          )}
-        </div>
+        <div className="flex-1 overflow-auto">{children}</div>
       </main>
     </div>
   );
