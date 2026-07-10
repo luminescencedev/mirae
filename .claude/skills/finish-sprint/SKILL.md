@@ -31,11 +31,18 @@ Actually exercise the flow this sprint delivered (run the app, hit the routes/en
 gh pr edit <n> --title "Sprint <N> — <name>" --body "<all tickets + verified + decisions + follow-ups>"
 ```
 
-Keep it **draft**. Do not merge — the user reviews and merges, then the next sprint branches off the updated `main`.
+Keep it **draft**. Do not merge — the user reviews and merges.
 
-## 5. Report
+## 5. Report + hand over the merge command
 
-State the sprint is complete, the acceptance is met, the PR is ready for review, and name the next sprint's first ticket.
+State the sprint is complete, acceptance is met, and name the next sprint's first ticket. Give the user the exact commands to run themselves (`!` prefix runs in their session; PowerShell has no `&&`, so separate lines):
+
+```
+! gh pr ready <n>
+! gh pr merge <n> --squash --delete-branch
+```
+
+After they merge, the next sprint branches off the updated `main`.
 
 ## Reminder
 
