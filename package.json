@@ -13,7 +13,10 @@
     "typecheck": "turbo run typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:generate": "pnpm --filter @mirae/db db:generate",
+    "db:migrate": "pnpm --filter @mirae/db db:migrate",
+    "db:studio": "pnpm --filter @mirae/db db:studio"
   },
   "devDependencies": {
     "@mirae/config": "workspace:*",

@@ -13,7 +13,7 @@ Sprint 0 — Repository foundation
 - [x] REPO-003 Create apps/api with Hono, wrangler.toml, and /health
 - [x] REPO-004 Create packages/db, shared, ui, config
 - [x] REPO-005 Add TypeScript, ESLint, Prettier, Tailwind base
-- [ ] REPO-006 Add root scripts: dev, build, lint, typecheck, format
+- [x] REPO-006 Add root scripts: dev, build, lint, typecheck, format
 - [ ] REPO-007 Add README and .env.example
 
 Acceptance: `pnpm install` works · `pnpm dev` runs web (vite) + api (wrangler dev) together · `pnpm build`/`pnpm lint`/`pnpm typecheck` work · `GET /health` returns ok.

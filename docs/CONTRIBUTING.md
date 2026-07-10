@@ -30,10 +30,10 @@ Confirm they match `docs/VERSIONS.md`. Flag any mismatch instead of continuing.
 pnpm dev
 ```
 
-Runs both processes (via `concurrently`):
+Runs both processes in parallel via `turbo run dev`:
 
 ```txt
-web:  vite dev      -> http://localhost:5173   (proxies /api/* to wrangler)
+web:  vite dev      -> http://localhost:5173   (strictPort; proxies /api/* to wrangler)
 api:  wrangler dev  -> http://localhost:8787    (health: http://localhost:8787/health)
 ```
 

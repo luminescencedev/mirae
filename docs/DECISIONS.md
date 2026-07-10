@@ -52,8 +52,10 @@ concurrently 10.0.3
 
 **Reason:** Reproducible installs; avoid a bleeding-edge major (TS7) breaking ecosystem tooling mid-sprint. After `pnpm install`, run `pnpm ls --depth 0 -r` and confirm installed versions match; flag mismatches instead of continuing silently.
 
-## 2026-07-09 — Dev runtime: two-process (concurrently) over @cloudflare/vite-plugin
+## 2026-07-09 — Dev runtime: two-process, orchestrated by Turborepo (not concurrently), over @cloudflare/vite-plugin
 
-**Decision:** Local dev runs two processes — `vite dev` (web, :5173, proxies `/api/*`) and `wrangler dev` (Hono/API, :8787) — orchestrated by `concurrently 10.0.3` from a root script. `@cloudflare/vite-plugin 1.43.1` was considered and **deferred**.
+**Decision:** Local dev runs two processes — `vite dev` (web, :5173 `strictPort`, proxies `/api/*`) and `wrangler dev` (Hono/API, :8787) — orchestrated by **`turbo run dev`** (each app's persistent `dev` task run in parallel). `@cloudflare/vite-plugin 1.43.1` was considered and **deferred**.
 
-**Reason:** The two-process setup maps directly onto the documented `apps/web` (builds to `dist/`) + `apps/api` (the Worker, `assets.directory = ../web/dist`) split and keeps the workspace boundaries clean. The vite-plugin (workerd inside Vite, single `vite dev`, tighter prod parity) would blur the app boundary by pulling the worker entry into the web Vite project. Revisit if dev/prod parity issues appear; if adopted, update `docs/CONTRIBUTING.md` + `docs/ARCHITECTURE.md` and record here.
+**Reason:** The two-process setup maps directly onto the documented `apps/web` (builds to `dist/`) + `apps/api` (the Worker, `assets.directory = ../web/dist`) split and keeps the workspace boundaries clean. The vite-plugin (workerd inside Vite, single `vite dev`, tighter prod parity) would blur the app boundary by pulling the worker entry into the web Vite project.
+
+**Update (REPO-006):** originally recorded as `concurrently 10.0.3`, but Turborepo already runs both persistent `dev` tasks in parallel from one `pnpm dev`, so `concurrently` was dropped as a redundant dependency. Ports pinned deterministically (`strictPort` on vite, `[dev] port = 8787` in `wrangler.toml`). Revisit `@cloudflare/vite-plugin` if dev/prod parity issues appear; if adopted, update `docs/CONTRIBUTING.md` + `docs/ARCHITECTURE.md` and record here.

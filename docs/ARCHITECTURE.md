@@ -125,8 +125,8 @@ POST /webhooks/stripe
 Two-process setup (see `docs/DECISIONS.md` — `@cloudflare/vite-plugin` was considered and deferred):
 
 ```txt
-web:  vite dev      -> http://localhost:5173   (proxies /api/* to wrangler)
+web:  vite dev      -> http://localhost:5173   (strictPort; proxies /api/* to wrangler)
 api:  wrangler dev  -> http://localhost:8787    (health: /health)
 ```
 
-Run together from root via `concurrently`. See `docs/CONTRIBUTING.md`.
+Run together from root with `pnpm dev` (= `turbo run dev`, both persistent tasks in parallel). See `docs/CONTRIBUTING.md`.

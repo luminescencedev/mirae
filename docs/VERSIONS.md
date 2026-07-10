@@ -112,7 +112,7 @@ Radix UI primitives (pin each individually, same release wave):
 
 ## Dev-runtime choice
 
-- **Adopted:** `concurrently` **10.0.3** — two-process dev (`vite dev` + `wrangler dev`). See `docs/DECISIONS.md`.
+- **Adopted:** two-process dev (`vite dev` + `wrangler dev`) orchestrated by `turbo run dev` — no extra dependency (`concurrently` was dropped as redundant; Turborepo runs both persistent tasks). See `docs/DECISIONS.md`.
 - **Deferred:** `@cloudflare/vite-plugin` **1.43.1** — single `vite dev` running workerd for full prod parity. Considered, not adopted. If adopted later, update `docs/CONTRIBUTING.md` + `docs/ARCHITECTURE.md` and record in `docs/DECISIONS.md`.
 
 ## Verification
