@@ -28,6 +28,45 @@
    component classes (borders, surfaces, variants) would otherwise be dropped. */
 @source "../../../../packages/ui/src/**/*.{ts,tsx}";
 
+/* Radix enter/exit keyframes (Presence detects CSS animations for exit).
+   Popovers scale from their trigger via transform-origin set in the skin. */
+@keyframes mirae-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes mirae-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes mirae-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes mirae-pop-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
 /* Class-based dark mode: `dark:` utilities key off a `.dark` ancestor
    (toggle .dark on <html>). Most theming is done via the token overrides
    below, so components rarely need `dark:` directly. */
