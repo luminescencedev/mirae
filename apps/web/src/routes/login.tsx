@@ -1,8 +1,29 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Button, Input } from "@mirae/ui";
 import { AuthLayout, Field } from "../components/marketing/AuthLayout.tsx";
+import { signIn } from "../lib/auth-client.ts";
 
 function Login() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(e: React.SyntheticEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const res = await signIn.email({ email, password });
+    setLoading(false);
+    if (res.error) {
+      setError(res.error.message ?? "Invalid email or password.");
+      return;
+    }
+    navigate({ to: "/app" });
+  }
+
   return (
     <AuthLayout
       title="Welcome back"
@@ -16,15 +37,28 @@ function Login() {
         </>
       }
     >
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={onSubmit}>
         <Field label="Email">
-          <Input type="email" placeholder="you@studio.com" />
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@studio.com"
+            required
+          />
         </Field>
         <Field label="Password">
-          <Input type="password" placeholder="••••••••" />
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+          />
         </Field>
-        <Button asChild className="mt-1 w-full">
-          <Link to="/app">Log in</Link>
+        {error && <p className="text-sm text-red-600">{error}</p>}
+        <Button type="submit" className="mt-1 w-full" disabled={loading}>
+          {loading ? "Logging in…" : "Log in"}
         </Button>
       </form>
     </AuthLayout>
