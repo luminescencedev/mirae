@@ -150,3 +150,69 @@ export const ACTIVITY: Activity[] = [
 
 // Commissions that need the artist's attention now (awaiting a quote).
 export const NEEDS_ATTENTION = COLUMNS[0].items;
+
+// --- Requests inbox ---------------------------------------------------------
+
+export type RequestStatus = "new" | "accepted" | "declined";
+
+export type CommissionRequest = {
+  id: string;
+  client: string;
+  type: string;
+  budget: string;
+  message: string;
+  time: string;
+  status: RequestStatus;
+};
+
+export const REQUESTS: CommissionRequest[] = [
+  {
+    id: "r1",
+    client: "Ava Chen",
+    type: "Full-body character",
+    budget: "€150–200",
+    message:
+      "Hi! I'd love a full-body illustration of my OC in a dynamic pose. Semi-realistic, cool tones. Refs attached.",
+    time: "10m",
+    status: "new",
+  },
+  {
+    id: "r2",
+    client: "Marco",
+    type: "Chibi pair",
+    budget: "€80–100",
+    message:
+      "Two chibis of me and my partner for our anniversary. Cute, soft palette. No rush — end of month is fine.",
+    time: "1h",
+    status: "new",
+  },
+  {
+    id: "r3",
+    client: "Léa Fontaine",
+    type: "Profile banner",
+    budget: "€120",
+    message:
+      "Twitch banner matching my emote set. Purple/teal, my mascot cat included. Sizes in the brief.",
+    time: "3h",
+    status: "new",
+  },
+  {
+    id: "r4",
+    client: "Stellar Co.",
+    type: "Key visual",
+    budget: "€400+",
+    message:
+      "Commercial key visual for a game launch. Need a quote + timeline for a licensed illustration.",
+    time: "1d",
+    status: "accepted",
+  },
+  {
+    id: "r5",
+    client: "Anon",
+    type: "NSFW request",
+    budget: "—",
+    message: "Outside what I take on — declined politely.",
+    time: "2d",
+    status: "declined",
+  },
+];
