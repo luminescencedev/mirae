@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 1 — Brand UI foundation
+Sprint 2 — Static product screens
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -26,7 +26,7 @@ Completion notes (2026-07-09):
 - Known issues / follow-ups: TanStack Router not yet wired (WEB-001); `@mirae/db` schema is a placeholder (DB-002); seed script pending (DB-004); apps don't consume the shared packages yet.
 - **Next sprint:** Sprint 1 — Brand UI foundation (first ticket UI-001).
 
-## Sprint 1 — Brand UI foundation
+## Sprint 1 — Brand UI foundation ✅ complete
 
 - [x] UI-001 Add design tokens and global CSS
 - [x] UI-002 Add cn utility and component variant helpers
@@ -35,6 +35,17 @@ Completion notes (2026-07-09):
 - [x] UI-005 Build AppShell prototype
 - [x] UI-006 Build Landing hero prototype
 - [x] UI-007 Build dashboard preview mockup with seed data
+
+Acceptance: landing close to Mirae direction · app shell has one clear sidebar · preview uses white/black/zinc + pastel blue · no beige/cream · no shadcn default look · components reusable. **All met.**
+
+Completion notes (2026-07-10):
+
+- End-to-end verified: `pnpm dev` → landing at :5173 (200, renders the hero + framed AppShell preview), api :8787/health ok, proxy `/api/*` ok. lint/typecheck/build/format all green.
+- Direction locked (see `docs/DECISIONS.md` 2026-07-10): clean **light-only** SaaS at shadcn/Linear polish; shadcn-style base components on Mirae tokens; **Hugeicons** Stroke Rounded as the house icon family (lucide dropped); **Inter** self-hosted; premium motion (strong easing, scale-on-press, spring `HoverBarList`) per the user-global emil/apple design skills. Dark tokens kept dormant.
+- New pins in `docs/VERSIONS.md`: motion, @hugeicons/react + core-free-icons, react-icons, @radix-ui/{react-slot,dialog,dropdown-menu,tooltip,tabs}.
+- Built in `@mirae/ui`: Button, Input, Textarea, Badge (pastel tags), Card (+bezel), Panel, cn/cva helpers, HoverBarList, Icon wrapper, bespoke BranchReturn/EnterKey icons, Radix Dialog/Dropdown/Tooltip/Tabs skins. In `apps/web`: AppShell (collapsible sidebar + Overview/Queue views), Landing hero, seed data.
+- Known issues / follow-ups: still **prototype** — no router yet (TanStack Router = WEB-001, Sprint 2); AppShell/Landing are mock, seed-driven (no backend); `@mirae/db` schema still placeholder (Sprint 3); design-system business components (CommissionCard etc.) live in apps/web, graduate to `@mirae/ui` when stable.
+- **Next sprint:** Sprint 2 — Static product screens (first ticket WEB-001: set up TanStack Router file-based route tree).
 
 ## Sprint 2 — Static product screens
 
