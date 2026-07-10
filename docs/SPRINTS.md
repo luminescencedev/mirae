@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 2 — Static product screens
+Sprint 3 — Database and auth foundation
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -47,7 +47,7 @@ Completion notes (2026-07-10):
 - Known issues / follow-ups: still **prototype** — no router yet (TanStack Router = WEB-001, Sprint 2); AppShell/Landing are mock, seed-driven (no backend); `@mirae/db` schema still placeholder (Sprint 3); design-system business components (CommissionCard etc.) live in apps/web, graduate to `@mirae/ui` when stable.
 - **Next sprint:** Sprint 2 — Static product screens (first ticket WEB-001: set up TanStack Router file-based route tree).
 
-## Sprint 2 — Static product screens
+## Sprint 2 — Static product screens ✅ complete
 
 - [x] WEB-001 Set up TanStack Router file-based route tree
 - [x] WEB-002 Create marketing routes
@@ -58,6 +58,17 @@ Completion notes (2026-07-10):
 - [x] WEB-007 Create commission detail panel with mock data
 - [x] WEB-008 Create public artist page mock
 - [x] WEB-009 Create request form mock
+
+Acceptance: all routes load locally · UI matches direction · desktop-responsive · no backend. **All met.**
+
+Completion notes (2026-07-10):
+
+- End-to-end verified: `pnpm dev` → all 14 routes return 200 (marketing `/`, `/waitlist`, `/login`, `/signup`, `/onboarding`; app `/app` + overview/queue/requests/clients/deliveries/studio-page; public `/@handle` + `/@handle/request`), api `:8787/health` ok. lint/typecheck/build/format green.
+- TanStack Router (file-based, code-split); `/app` is a layout with nested routes + URL-driven sidebar; `/app` → `/app/overview`. Router pins: @tanstack/react-router 1.170.17, router-plugin 1.168.19.
+- Public artist routes use a `$handle` param (URL `@` is part of the value, stripped for display) — a literal `@`-prefixed segment made the plugin emit a non-param path.
+- New in `@mirae/ui`: Sheet (right slide-over). New screens: single-page landing (hero + framed static DashboardPreview + pricing + CTA), auth/marketing pages, `/app` Overview + Queue (board/list/calendar tabs, commission detail Sheet) + Requests inbox, public artist page + request form. Seed data in `apps/web/src/components/mockups/seed.ts`.
+- Known issues / follow-ups: Clients / Deliveries / Studio page are **ComingSoon placeholders** (built at their sprints — Studio Sprint 4, Clients Sprint 6, Deliveries Sprint 8); all screens mock/seed-driven (no backend/auth yet — Sprint 3); subdomain→/app host mapping deferred to deploy (Sprint 4). Backlog: ⌘K cmdk palette, onboarding flow + first-run tour.
+- **Next sprint:** Sprint 3 — Database and auth foundation (first ticket DB-001: Neon project + dev branch, configure Drizzle).
 
 ## Sprint 3 — Database and auth foundation
 
