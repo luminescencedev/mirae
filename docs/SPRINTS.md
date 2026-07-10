@@ -72,7 +72,7 @@ Completion notes (2026-07-10):
 
 ## Sprint 3 — Database and auth foundation
 
-- [ ] DB-001 Create Neon project + dev branch, configure Drizzle
+- [x] DB-001 Create Neon project + dev branch, configure Drizzle
 - [ ] DB-002 Create MVP schema
 - [ ] DB-003 Generate migrations
 - [ ] DB-004 Add seed script
