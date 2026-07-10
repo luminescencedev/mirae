@@ -52,14 +52,24 @@ ESLint/Prettier ecosystem (resolved during REPO-005, exact-pinned in `@mirae/con
 | @tanstack/react-query    | 5.101.2  |                                                                     |
 | @tanstack/react-table    | 8.21.3   |                                                                     |
 | tailwindcss              | 4.3.2    |                                                                     |
-| motion                   | 12.42.2  |                                                                     |
+| motion                   | 12.42.2  | Springs/gestures (HoverBarList). Installed in @mirae/ui.            |
 | react-hook-form          | 7.81.0   |                                                                     |
 | zod                      | 4.4.3    | Zod v4 — write validators against v4 docs, NOT v3 patterns.         |
-| lucide-react             | 1.23.0   |                                                                     |
 | class-variance-authority | 0.7.1    |                                                                     |
 | tailwind-merge           | 3.6.0    |                                                                     |
 | clsx                     | 2.1.1    |                                                                     |
 | date-fns                 | 4.4.0    |                                                                     |
+
+Icons + UI (resolved during Sprint 1, UI-003):
+
+| Package                    | Version | Notes                                                    |
+| -------------------------- | ------- | -------------------------------------------------------- |
+| @hugeicons/react           | 1.1.9   | Icon renderer (`Icon` wrapper in @mirae/ui).             |
+| @hugeicons/core-free-icons | 4.2.2   | Icon data (tree-shakable, imported per-icon in the app). |
+| react-icons                | 5.7.0   | Brand logos only (Discord/X/…) via `react-icons/si`.     |
+| @radix-ui/react-slot       | 1.3.0   | shadcn Button `asChild`.                                 |
+
+**Icon policy:** Hugeicons **Stroke Rounded** is the single house family (default 20px / stroke 1.7; 16 / 1.8 in buttons). Do NOT mix with Lucide in common screens — `lucide-react` was dropped in favour of Hugeicons for a more distinctive, less "generic dashboard" identity. Use `react-icons` only for platform logos absent from Hugeicons.
 
 Radix UI primitives (pin each individually, same release wave):
 

@@ -30,7 +30,7 @@ Completion notes (2026-07-09):
 
 - [x] UI-001 Add design tokens and global CSS
 - [x] UI-002 Add cn utility and component variant helpers
-- [ ] UI-003 Build Button, Input, Textarea, Badge, Card, Panel
+- [x] UI-003 Build Button, Input, Textarea, Badge, Card, Panel
 - [ ] UI-004 Build Radix-based Dialog, Dropdown, Tooltip, Tabs skins
 - [ ] UI-005 Build AppShell prototype
 - [ ] UI-006 Build Landing hero prototype

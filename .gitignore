@@ -32,3 +32,8 @@ Thumbs.db
 # misc
 *.tsbuildinfo
 coverage/
+
+# externally-installed skills (npx skills add) live in the user-global
+# ~/.agents/skills — never vendor them into the repo
+.agents/
+skills-lock.json

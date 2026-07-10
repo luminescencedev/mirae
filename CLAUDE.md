@@ -44,6 +44,16 @@ Encoded procedures for the recurring workflow — invoke the matching one:
 - `migration` — Drizzle schema change → generate/review/apply against the Neon branch
 - `finish-sprint` — close a sprint: acceptance, e2e, SPRINTS completion notes, refresh PR
 
+### Design references (user-global, not in the repo)
+
+UI work should draw on the design skills installed in the user-global `~/.agents/skills` and `~/.claude/skills` (kept out of the repo on purpose). Lean on them for polish/motion:
+
+- `emil-design-eng` — UI polish, animation decision framework, easing/spring, press feedback
+- `apple-design` · `animation-vocabulary` · `review-animations` — motion craft + review
+- `ui-ux-pro-max` · `tailwind-design-system` · `interaction-design` · `web-design-guidelines` — components, tokens, a11y
+
+Direction bar: **clean shadcn-level light SaaS** (thin borders, small radii, calm whitespace, pastel tag chips, status dots), premium motion (scale-on-press, strong ease-out). Light theme only for now; dark tokens are kept dormant.
+
 ## Workflow loop
 
 ```txt

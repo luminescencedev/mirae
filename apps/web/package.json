@@ -10,8 +10,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@hugeicons/core-free-icons": "4.2.2",
+    "@mirae/ui": "workspace:*",
     "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react-dom": "19.2.7",
+    "react-icons": "5.7.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.3.2",
