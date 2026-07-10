@@ -9,10 +9,10 @@ import {
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
-// Commissions in flight (everything past "New request").
-const ACTIVE = COLUMNS.filter((c) => c.name !== "New request").flatMap(
-  (c) => c.items,
-);
+// Commissions in flight (in progress + review — not new or delivered).
+const ACTIVE = COLUMNS.filter(
+  (c) => c.name === "In progress" || c.name === "Review",
+).flatMap((c) => c.items);
 
 export function OverviewView() {
   return (

@@ -24,9 +24,17 @@ export type Commission = {
   statusLabel: string;
 };
 
-export const COLUMNS: { name: string; count: number; items: Commission[] }[] = [
+export type Column = {
+  name: string;
+  dot: string;
+  count: number;
+  items: Commission[];
+};
+
+export const COLUMNS: Column[] = [
   {
     name: "New request",
+    dot: "bg-amber-500",
     count: 2,
     items: [
       {
@@ -54,7 +62,8 @@ export const COLUMNS: { name: string; count: number; items: Commission[] }[] = [
   },
   {
     name: "In progress",
-    count: 2,
+    dot: "bg-accent-500",
+    count: 3,
     items: [
       {
         client: "Stellar Co.",
@@ -65,7 +74,7 @@ export const COLUMNS: { name: string; count: number; items: Commission[] }[] = [
         ],
         price: "$420",
         due: "5d",
-        statusDot: "bg-emerald-500",
+        statusDot: "bg-accent-500",
         statusLabel: "Sketch",
       },
       {
@@ -74,14 +83,24 @@ export const COLUMNS: { name: string; count: number; items: Commission[] }[] = [
         tags: [{ label: "Twitch", variant: "teal" }],
         price: "$150",
         due: "3d",
-        statusDot: "bg-emerald-500",
+        statusDot: "bg-accent-500",
         statusLabel: "Line art",
+      },
+      {
+        client: "Ludo",
+        type: "Sticker sheet",
+        tags: [{ label: "Illustration", variant: "violet" }],
+        price: "$110",
+        due: "6d",
+        statusDot: "bg-accent-500",
+        statusLabel: "Sketch",
       },
     ],
   },
   {
     name: "Review",
-    count: 1,
+    dot: "bg-violet-500",
+    count: 2,
     items: [
       {
         client: "Nadia",
@@ -89,8 +108,45 @@ export const COLUMNS: { name: string; count: number; items: Commission[] }[] = [
         tags: [{ label: "Illustration", variant: "violet" }],
         price: "$260",
         due: "Client review",
-        statusDot: "bg-accent-500",
+        statusDot: "bg-violet-500",
         statusLabel: "Revision 1",
+      },
+      {
+        client: "Sora",
+        type: "Reference sheet",
+        tags: [{ label: "Illustration", variant: "violet" }],
+        price: "$200",
+        due: "2d",
+        statusDot: "bg-violet-500",
+        statusLabel: "Final review",
+      },
+    ],
+  },
+  {
+    name: "Delivered",
+    dot: "bg-emerald-500",
+    count: 2,
+    items: [
+      {
+        client: "Kenji",
+        type: "Profile icon",
+        tags: [{ label: "Illustration", variant: "violet" }],
+        price: "$60",
+        due: "Delivered",
+        statusDot: "bg-emerald-500",
+        statusLabel: "Delivered",
+      },
+      {
+        client: "Priya",
+        type: "Event poster",
+        tags: [
+          { label: "Illustration", variant: "violet" },
+          { label: "Commercial", variant: "amber" },
+        ],
+        price: "$340",
+        due: "Delivered",
+        statusDot: "bg-emerald-500",
+        statusLabel: "Delivered",
       },
     ],
   },

@@ -36,7 +36,7 @@ function CommissionCard({ item }: { item: Commission }) {
 
 export function QueueView() {
   return (
-    <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
       {COLUMNS.map((col, ci) => (
         <motion.section
           key={col.name}
@@ -46,6 +46,7 @@ export function QueueView() {
           className="flex flex-col gap-3"
         >
           <div className="flex items-center gap-2 px-1">
+            <span className={cn("size-1.5 rounded-full", col.dot)} />
             <span className="text-sm font-semibold">{col.name}</span>
             <span className="text-xs text-fg-subtle">{col.count}</span>
             <div className="ml-auto flex items-center gap-1 text-fg-subtle">
