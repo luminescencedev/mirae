@@ -28,7 +28,7 @@ Completion notes (2026-07-09):
 
 ## Sprint 1 — Brand UI foundation
 
-- [ ] UI-001 Add design tokens and global CSS
+- [x] UI-001 Add design tokens and global CSS
 - [ ] UI-002 Add cn utility and component variant helpers
 - [ ] UI-003 Build Button, Input, Textarea, Badge, Card, Panel
 - [ ] UI-004 Build Radix-based Dialog, Dropdown, Tooltip, Tabs skins
