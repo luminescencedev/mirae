@@ -1,0 +1,25 @@
+{
+  "name": "@mirae/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "1.1.0",
+    "drizzle-orm": "0.45.2"
+  },
+  "devDependencies": {
+    "@mirae/config": "workspace:*",
+    "drizzle-kit": "0.31.10",
+    "typescript": "6.0.3"
+  }
+}
