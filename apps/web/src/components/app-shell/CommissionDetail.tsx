@@ -1,6 +1,30 @@
-import { Badge, SheetBody, SheetHeader, SheetTitle, cn } from "@mirae/ui";
-import { type QueueCommission } from "../../lib/api.ts";
-import { STATUS_META, dueLabel, euro } from "../../lib/commissions.ts";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  Badge,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  Icon,
+  SheetBody,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  cn,
+} from "@mirae/ui";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import {
+  commissionsApi,
+  type CommissionStatus,
+  type QueueCommission,
+} from "../../lib/api.ts";
+import {
+  STATUS_META,
+  STATUS_ORDER,
+  dueLabel,
+  euro,
+} from "../../lib/commissions.ts";
 
 function Meta({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -12,7 +36,18 @@ function Meta({ label, children }: { label: string; children: React.ReactNode })
 }
 
 export function CommissionDetail({ item }: { item: QueueCommission }) {
+  const qc = useQueryClient();
   const meta = STATUS_META[item.status];
+  const idx = STATUS_ORDER.indexOf(item.status);
+  const next = idx >= 0 && idx < STATUS_ORDER.length - 1
+    ? STATUS_ORDER[idx + 1]
+    : null;
+
+  const setStatus = useMutation({
+    mutationFn: (status: CommissionStatus) =>
+      commissionsApi.update(item.id, { status }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["commissions"] }),
+  });
 
   return (
     <>
@@ -48,6 +83,38 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
           </Meta>
         </div>
       </SheetBody>
+
+      <SheetFooter>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" disabled={setStatus.isPending}>
+              Change status
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            {STATUS_ORDER.map((s) => (
+              <DropdownMenuItem
+                key={s}
+                onSelect={() => setStatus.mutate(s)}
+                className={cn(s === item.status && "bg-surface-muted")}
+              >
+                <span className={cn("size-1.5 rounded-full", STATUS_META[s].dot)} />
+                {STATUS_META[s].label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {next && (
+          <Button
+            className="flex-1"
+            disabled={setStatus.isPending}
+            onClick={() => setStatus.mutate(next)}
+          >
+            Advance to {STATUS_META[next].label}
+            <Icon icon={ArrowRight01Icon} strokeWidth={1.8} />
+          </Button>
+        )}
+      </SheetFooter>
     </>
   );
 }

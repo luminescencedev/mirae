@@ -138,7 +138,7 @@ Completion notes (2026-07-11):
 - [x] COM-002 Convert request to commission
 - [x] COM-003 Build commission queue API
 - [x] COM-004 Connect queue UI to backend
-- [ ] COM-005 Add status update action
+- [x] COM-005 Add status update action
 - [ ] COM-006 Connect commission detail panel
 - [ ] COM-007 Add basic activity log
 
