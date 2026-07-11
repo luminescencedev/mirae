@@ -10,6 +10,7 @@ import type {
   accounts,
   verifications,
   artistProfiles,
+  waitlist,
   clients,
   commissionTypes,
   commissionRequests,
@@ -28,6 +29,7 @@ export type Account = typeof accounts.$inferSelect;
 export type Verification = typeof verifications.$inferSelect;
 export type ArtistProfile = typeof artistProfiles.$inferSelect;
 export type NewArtistProfile = typeof artistProfiles.$inferInsert;
+export type Waitlist = typeof waitlist.$inferSelect;
 export type Client = typeof clients.$inferSelect;
 export type NewClient = typeof clients.$inferInsert;
 export type CommissionType = typeof commissionTypes.$inferSelect;

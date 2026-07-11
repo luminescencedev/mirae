@@ -200,7 +200,7 @@ Completion notes (2026-07-11):
 - [x] POLISH-005 Improve keyboard/focus states
 - [x] POLISH-006 Responsive pass
 - [x] POLISH-007 Demo seed data
-- [ ] POLISH-008 Landing waitlist CTA
+- [x] POLISH-008 Landing waitlist CTA
 - [ ] POLISH-009 Wire Resend for real notification emails
 
 ## Backlog — future UX (not scheduled)
