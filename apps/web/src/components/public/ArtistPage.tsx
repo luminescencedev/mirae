@@ -52,6 +52,9 @@ export function ArtistPage({ handle }: { handle: string }) {
 
   const { profile, commissionTypes } = data;
   const status = STUDIO_STATUS_META[profile.status];
+  const isClosed = profile.status === "closed";
+  const isWaitlist = profile.status === "waitlist";
+  const ctaLabel = isWaitlist ? "Join the waitlist" : "Request a commission";
 
   return (
     <Shell>
@@ -78,12 +81,26 @@ export function ArtistPage({ handle }: { handle: string }) {
                 {profile.bio}
               </p>
             )}
-            <Button asChild className="mt-5">
-              <Link to="/$handle/request" params={{ handle }}>
-                Request a commission
-                <Icon icon={ArrowRight01Icon} strokeWidth={1.8} />
-              </Link>
-            </Button>
+            {isClosed ? (
+              <div className="mt-5 rounded-lg border border-border bg-surface-sunken px-4 py-3 text-sm text-fg-muted">
+                {profile.displayName} isn’t taking commissions right now.
+              </div>
+            ) : (
+              <>
+                <Button asChild className="mt-5">
+                  <Link to="/$handle/request" params={{ handle }}>
+                    {ctaLabel}
+                    <Icon icon={ArrowRight01Icon} strokeWidth={1.8} />
+                  </Link>
+                </Button>
+                {isWaitlist && (
+                  <p className="mt-2 text-xs text-fg-subtle">
+                    Slots are full — join the waitlist and you’ll be notified
+                    when one opens.
+                  </p>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -121,11 +138,17 @@ export function ArtistPage({ handle }: { handle: string }) {
                   <p className="text-xs text-fg-subtle">Turnaround</p>
                   <p className="text-sm text-fg-muted">{c.turnaround ?? "—"}</p>
                 </div>
-                <Button asChild size="sm" variant="outline">
-                  <Link to="/$handle/request" params={{ handle }}>
-                    Request
-                  </Link>
-                </Button>
+                {isClosed ? (
+                  <Button size="sm" variant="outline" disabled>
+                    Closed
+                  </Button>
+                ) : (
+                  <Button asChild size="sm" variant="outline">
+                    <Link to="/$handle/request" params={{ handle }}>
+                      {isWaitlist ? "Waitlist" : "Request"}
+                    </Link>
+                  </Button>
+                )}
               </div>
             </div>
           ))}
