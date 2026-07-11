@@ -63,6 +63,30 @@ export const artistApi = {
     }).then(json<{ profile: ArtistProfile }>),
 };
 
+export type PublicProfile = {
+  handle: string;
+  displayName: string;
+  tagline: string | null;
+  bio: string | null;
+  status: StudioStatus;
+};
+
+export type PublicStudio = {
+  profile: PublicProfile;
+  commissionTypes: CommissionType[];
+};
+
+export const publicApi = {
+  // 404 → resolves to null so the page can render a not-found state.
+  studio: (handle: string) =>
+    fetch(`/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}`).then(
+      async (res) => {
+        if (res.status === 404) return null;
+        return json<PublicStudio>(res);
+      },
+    ),
+};
+
 export const commissionTypesApi = {
   list: () =>
     fetch("/api/commission-types")

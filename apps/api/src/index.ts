@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { makeAuth, type AuthEnv } from "./auth.ts";
 import { artistsRoutes } from "./routes/artists.ts";
 import { commissionTypesRoutes } from "./routes/commission-types.ts";
+import { studioRoutes } from "./routes/studio.ts";
 
 type Bindings = AuthEnv & {
   ASSETS: Fetcher;
@@ -22,6 +23,8 @@ app.on(["GET", "POST"], "/api/auth/*", (c) =>
 app.route("/api/artists", artistsRoutes);
 // Commission types CRUD (the artist's public offerings).
 app.route("/api/commission-types", commissionTypesRoutes);
+// Public studio page payload by handle (no auth).
+app.route("/api/studio", studioRoutes);
 
 // SPA fallback: anything not handled above (and not an /api route) is served
 // from the static assets binding — the built Vite app in apps/web/dist.

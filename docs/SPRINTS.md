@@ -98,7 +98,7 @@ Completion notes (2026-07-11):
 - [x] CT-001 Add commission types API
 - [x] CT-002 Add commission types UI
 - [x] CT-003 Add artist profile editor basics
-- [ ] CT-004 Connect public @artist page to DB
+- [x] CT-004 Connect public @artist page to DB
 - [ ] CT-005 Add open/closed/waitlist state
 - [ ] CT-006 Add social bot user-agent detection + dynamic OG HTML for /@:handle
 
