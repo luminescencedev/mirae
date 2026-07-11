@@ -96,7 +96,7 @@ Completion notes (2026-07-11):
 ## Sprint 4 — Commission types and public page
 
 - [x] CT-001 Add commission types API
-- [ ] CT-002 Add commission types UI
+- [x] CT-002 Add commission types UI
 - [ ] CT-003 Add artist profile editor basics
 - [ ] CT-004 Connect public @artist page to DB
 - [ ] CT-005 Add open/closed/waitlist state
