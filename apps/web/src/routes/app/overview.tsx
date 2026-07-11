@@ -1,21 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button, Icon } from "@mirae/ui";
-import { Add01Icon } from "@hugeicons/core-free-icons";
 import { PageHeader } from "../../components/app-shell/PageHeader.tsx";
 import { OverviewView } from "../../components/app-shell/views/OverviewView.tsx";
+import { useSession } from "../../lib/auth-client.ts";
 
 function Overview() {
+  const { data: session } = useSession();
+  const first = session?.user?.name?.split(" ")[0];
+
   return (
     <>
       <PageHeader
-        title="Hello, Rain"
+        title={first ? `Hello, ${first}` : "Overview"}
         subtitle="Here's your studio today."
-        action={
-          <Button>
-            <Icon icon={Add01Icon} strokeWidth={1.8} />
-            New commission
-          </Button>
-        }
       />
       <div className="px-6 py-6">
         <OverviewView />

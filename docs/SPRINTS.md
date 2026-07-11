@@ -221,7 +221,7 @@ Completion notes (2026-07-11):
 Post-MVP hardening. Goal: every button does something, every screen shows the signed-in artist's real data, no mock left in the app.
 
 - [x] AUDIT-001 Gate /app on an artist profile (redirect to /onboarding if none)
-- [ ] AUDIT-002 Wire the Overview screen to real data (stats + recent activity from commissions/requests)
+- [x] AUDIT-002 Wire the Overview screen to real data (stats + recent activity from commissions/requests)
 - [ ] AUDIT-003 Real Clients page (derive from requests/commissions; replace ComingSoon)
 - [ ] AUDIT-004 Real Deliveries page (list commissions with a delivery; replace ComingSoon)
 - [ ] AUDIT-005 Remove or wire dead controls (sidebar search, notification bell)

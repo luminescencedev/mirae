@@ -1,25 +1,70 @@
 import { motion } from "motion/react";
-import { Badge, Button, Icon, cn } from "@mirae/ui";
+import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { Badge, ErrorState, Icon, LoadingState, cn } from "@mirae/ui";
 import {
-  ACTIVITY,
-  COLUMNS,
-  NEEDS_ATTENTION,
-  STATS,
-} from "../../mockups/seed.ts";
+  CheckmarkCircle02Icon,
+  InboxIcon,
+  Money03Icon,
+  PaintBrush01Icon,
+} from "@hugeicons/core-free-icons";
+import { commissionsApi, requestsApi } from "../../../lib/api.ts";
+import { STATUS_META, dueLabel, euro } from "../../../lib/commissions.ts";
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
-// Commissions in flight (in progress + review — not new or delivered).
-const ACTIVE = COLUMNS.filter(
-  (c) => c.name === "In progress" || c.name === "Review",
-).flatMap((c) => c.items);
-
 export function OverviewView() {
+  const commissionsQ = useQuery({
+    queryKey: ["commissions"],
+    queryFn: commissionsApi.list,
+  });
+  const requestsQ = useQuery({
+    queryKey: ["requests"],
+    queryFn: requestsApi.list,
+  });
+
+  if (commissionsQ.isLoading || requestsQ.isLoading)
+    return <LoadingState label="Loading your studio…" />;
+  if (commissionsQ.isError || requestsQ.isError)
+    return (
+      <ErrorState
+        hint="Couldn’t load your studio."
+        onRetry={() => {
+          commissionsQ.refetch();
+          requestsQ.refetch();
+        }}
+      />
+    );
+
+  const commissions = commissionsQ.data ?? [];
+  const requests = requestsQ.data ?? [];
+
+  const active = commissions.filter(
+    (c) => c.status !== "delivered" && c.status !== "archived",
+  );
+  const newRequests = requests.filter((r) => r.status === "new");
+  const delivered = commissions.filter((c) => c.status === "delivered").length;
+  const earnedCents = commissions.reduce((s, c) => s + (c.paidCents ?? 0), 0);
+
+  const stats: { label: string; value: string; icon: typeof InboxIcon }[] = [
+    { label: "Active", value: String(active.length), icon: PaintBrush01Icon },
+    {
+      label: "New requests",
+      value: String(newRequests.length),
+      icon: InboxIcon,
+    },
+    {
+      label: "Delivered",
+      value: String(delivered),
+      icon: CheckmarkCircle02Icon,
+    },
+    { label: "Earned", value: euro(earnedCents), icon: Money03Icon },
+  ];
+
   return (
     <div className="flex flex-col gap-6">
-      {/* KPI stats */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {STATS.map((s, i) => (
+        {stats.map((s, i) => (
           <motion.div
             key={s.label}
             initial={{ opacity: 0, y: 10 }}
@@ -35,113 +80,111 @@ export function OverviewView() {
                 <Icon icon={s.icon} size={16} strokeWidth={1.8} />
               </span>
             </div>
-            <div className="mt-2.5 flex items-baseline gap-2">
-              <span className="text-2xl font-semibold tracking-tight text-fg tabular-nums">
-                {s.value}
-              </span>
-              {s.delta && (
-                <span
-                  className={
-                    s.positive === false
-                      ? "text-xs font-medium text-rose-600"
-                      : "text-xs font-medium text-emerald-600"
-                  }
-                >
-                  {s.delta}
-                </span>
-              )}
+            <div className="mt-2.5 text-2xl font-semibold tracking-tight tabular-nums text-fg">
+              {s.value}
             </div>
           </motion.div>
         ))}
       </div>
 
       <div className="grid gap-5 lg:grid-cols-5">
-        {/* Needs attention */}
-        <section className="lg:col-span-3">
+        {/* New requests */}
+        <section className="lg:col-span-2">
           <div className="mb-3 flex items-center gap-2">
-            <h2 className="text-sm font-semibold">Needs your attention</h2>
-            <Badge variant="amber">{NEEDS_ATTENTION.length}</Badge>
+            <h2 className="text-sm font-semibold">New requests</h2>
+            <Badge variant="amber">{newRequests.length}</Badge>
+            <Link
+              to="/app/requests"
+              className="ml-auto text-xs font-medium text-accent-700 hover:text-accent-800"
+            >
+              View all
+            </Link>
           </div>
-          <div className="flex flex-col gap-2">
-            {NEEDS_ATTENTION.map((c) => (
-              <div
-                key={c.client + c.type}
-                className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3 shadow-soft"
-              >
-                <span className="size-8 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-fg">
-                    {c.type}
-                  </p>
-                  <p className="truncate text-xs text-fg-muted">
-                    {c.client} · {c.due}
-                  </p>
-                </div>
-                <span className="text-sm font-semibold tabular-nums">
-                  {c.price}
-                </span>
-                <Button size="sm">Send quote</Button>
-              </div>
-            ))}
+          <div className="rounded-xl border border-border bg-surface shadow-soft">
+            {newRequests.length === 0 ? (
+              <p className="px-4 py-6 text-center text-sm text-fg-subtle">
+                No new requests.
+              </p>
+            ) : (
+              newRequests.slice(0, 5).map((r, i) => (
+                <Link
+                  key={r.id}
+                  to="/app/requests"
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-muted",
+                    i > 0 && "border-t border-border",
+                  )}
+                >
+                  <span className="size-8 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-fg">
+                      {r.clientName}
+                    </p>
+                    <p className="truncate text-xs text-fg-muted">
+                      {r.commissionTypeName ?? "No type"}
+                    </p>
+                  </div>
+                </Link>
+              ))
+            )}
           </div>
         </section>
 
-        {/* Recent activity */}
-        <section className="lg:col-span-2">
-          <h2 className="mb-3 text-sm font-semibold">Recent activity</h2>
-          <div className="rounded-xl border border-border bg-surface p-1 shadow-soft">
-            {ACTIVITY.map((a) => (
-              <div
-                key={a.text}
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5"
-              >
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-surface-sunken text-fg-muted">
-                  <Icon icon={a.icon} size={15} strokeWidth={1.8} />
-                </span>
-                <p className="flex-1 text-sm leading-snug text-fg">{a.text}</p>
-                <span className="shrink-0 text-xs tabular-nums text-fg-subtle">
-                  {a.time}
-                </span>
-              </div>
-            ))}
+        {/* Active commissions */}
+        <section className="lg:col-span-3">
+          <div className="mb-3 flex items-center gap-2">
+            <h2 className="text-sm font-semibold">Active commissions</h2>
+            <span className="text-xs text-fg-subtle">{active.length}</span>
+            <Link
+              to="/app/queue"
+              className="ml-auto text-xs font-medium text-accent-700 hover:text-accent-800"
+            >
+              Open queue
+            </Link>
+          </div>
+          <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
+            {active.length === 0 ? (
+              <p className="px-4 py-6 text-center text-sm text-fg-subtle">
+                No active commissions yet.
+              </p>
+            ) : (
+              active.slice(0, 6).map((c, i) => {
+                const meta = STATUS_META[c.status];
+                return (
+                  <Link
+                    key={c.id}
+                    to="/app/queue"
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-muted",
+                      i > 0 && "border-t border-border",
+                    )}
+                  >
+                    <span className="size-7 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-fg">
+                        {c.title}
+                      </p>
+                      <p className="truncate text-xs text-fg-muted">
+                        {c.clientName ?? "—"}
+                      </p>
+                    </div>
+                    <span className="hidden items-center gap-1.5 text-xs text-fg-muted sm:inline-flex">
+                      <span className={cn("size-1.5 rounded-full", meta.dot)} />
+                      {meta.label}
+                    </span>
+                    <span className="w-16 text-right text-xs tabular-nums text-fg-muted">
+                      {dueLabel(c.deadline)}
+                    </span>
+                    <span className="w-14 text-right text-sm font-semibold tabular-nums text-fg">
+                      {euro(c.priceCents)}
+                    </span>
+                  </Link>
+                );
+              })
+            )}
           </div>
         </section>
       </div>
-
-      {/* Active commissions */}
-      <section>
-        <div className="mb-3 flex items-center gap-2">
-          <h2 className="text-sm font-semibold">Active commissions</h2>
-          <span className="text-xs text-fg-subtle">{ACTIVE.length}</span>
-        </div>
-        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
-          {ACTIVE.map((c, i) => (
-            <div
-              key={c.client + c.type}
-              className={cn(
-                "flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-muted",
-                i > 0 && "border-t border-border",
-              )}
-            >
-              <span className="size-7 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-fg">{c.type}</p>
-                <p className="truncate text-xs text-fg-muted">{c.client}</p>
-              </div>
-              <span className="hidden items-center gap-1.5 text-xs text-fg-muted sm:inline-flex">
-                <span className={cn("size-1.5 rounded-full", c.statusDot)} />
-                {c.statusLabel}
-              </span>
-              <span className="w-16 text-right text-xs tabular-nums text-fg-muted">
-                {c.due}
-              </span>
-              <span className="w-14 text-right text-sm font-semibold tabular-nums text-fg">
-                {c.price}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
