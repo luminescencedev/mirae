@@ -33,10 +33,14 @@ export function SiteHeader() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <Button asChild variant="ghost" size="sm">
-            <Link to="/login">Log in</Link>
+            <Link to="/login" reloadDocument>
+              Log in
+            </Link>
           </Button>
           <Button asChild size="sm">
-            <Link to="/signup">Sign up</Link>
+            <Link to="/signup" reloadDocument>
+              Sign up
+            </Link>
           </Button>
         </div>
       </div>

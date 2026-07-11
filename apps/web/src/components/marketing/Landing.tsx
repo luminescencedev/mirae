@@ -24,13 +24,15 @@ export function Landing() {
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
             <Button asChild size="lg">
-              <Link to="/signup">
+              <Link to="/signup" reloadDocument>
                 Open your studio
                 <Icon icon={ArrowUpRight01Icon} />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <Link to="/app">View demo</Link>
+              <Link to="/app" reloadDocument>
+                View demo
+              </Link>
             </Button>
           </div>
         </section>
@@ -65,7 +67,7 @@ export function Landing() {
             in one place.
           </p>
           <Button asChild size="lg" className="mt-6">
-            <Link to="/signup">
+            <Link to="/signup" reloadDocument>
               Open your studio
               <Icon icon={ArrowUpRight01Icon} />
             </Link>
