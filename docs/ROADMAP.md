@@ -25,6 +25,7 @@ Known gaps found in the audit (2026-07-11):
 Ordered by value. Revisit / re-sequence as we learn from beta.
 
 ### Core (highest value)
+
 1. **Stripe payments** — deposits, payment links, invoices (currently manual
    `paidCents`). Biggest differentiator; MVP is manual on purpose.
 2. **WIP / revisions workflow** — artist uploads work-in-progress, client
@@ -33,19 +34,23 @@ Ordered by value. Revisit / re-sequence as we learn from beta.
    waitlist, per-commission ETA shown to clients.
 
 ### Client relationship
+
 4. **Portal v2** — persisted feedback, comment thread, milestone approvals.
 5. **Notifications & reminders** — deadline-approaching, deposit-due, weekly
    digest; polished templates (builds on Resend from Sprint 9).
 
 ### Studio tools
+
 6. **Analytics** — earnings, throughput, backlog, per-type stats.
 7. **Templates** — quote presets, canned replies, per-commission terms/contract.
 8. **Public page customization** — cover image, portfolio/gallery, theme.
 
 ### Comfort / polish
+
 9. Command palette (⌘K, cmdk) · onboarding + first-run tour · deadlines
    calendar · Studio-page live preview · PWA / mobile pass.
 
 ### Explicitly out of scope
+
 Discovery, marketplace, client-matching, AI-first features, escrow, taking a cut
 of commission revenue (subscription-only).

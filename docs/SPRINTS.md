@@ -220,7 +220,7 @@ Completion notes (2026-07-11):
 
 Post-MVP hardening. Goal: every button does something, every screen shows the signed-in artist's real data, no mock left in the app.
 
-- [ ] AUDIT-001 Gate /app on an artist profile (redirect to /onboarding if none)
+- [x] AUDIT-001 Gate /app on an artist profile (redirect to /onboarding if none)
 - [ ] AUDIT-002 Wire the Overview screen to real data (stats + recent activity from commissions/requests)
 - [ ] AUDIT-003 Real Clients page (derive from requests/commissions; replace ComingSoon)
 - [ ] AUDIT-004 Real Deliveries page (list commissions with a delivery; replace ComingSoon)
@@ -229,7 +229,7 @@ Post-MVP hardening. Goal: every button does something, every screen shows the si
 - [ ] AUDIT-007 Queue calendar view (real deadlines) or drop the tab
 - [ ] AUDIT-008 Persist client feedback from the portal
 
-Acceptance: signing up → a fresh studio shows *your* data (not Rain Aoki); no button is a no-op; Clients/Deliveries are real; landing preview matches the app.
+Acceptance: signing up → a fresh studio shows _your_ data (not Rain Aoki); no button is a no-op; Clients/Deliveries are real; landing preview matches the app.
 
 ## Backlog — future UX (not scheduled)
 
