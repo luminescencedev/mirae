@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   animate,
@@ -127,6 +127,11 @@ function NavList({
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const collapsed = !open;
+
+  // Start collapsed on small screens so the sidebar doesn't crowd the content.
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 768px)").matches) setOpen(false);
+  }, []);
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
