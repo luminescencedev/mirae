@@ -1,34 +1,23 @@
-import { Hono, type Context } from "hono";
-import { eq } from "drizzle-orm";
+import { Hono } from "hono";
 import { createDb, artistProfiles } from "@mirae/db";
-import { makeAuth, type AuthEnv } from "../auth.ts";
+import { type AuthEnv } from "../auth.ts";
+import { getArtist, getUserId } from "../lib/session.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher };
-type AppContext = Context<{ Bindings: Bindings }>;
 
 export const artistsRoutes = new Hono<{ Bindings: Bindings }>();
 
-async function currentUserId(c: AppContext): Promise<string | null> {
-  const auth = makeAuth(c.env);
-  const session = await auth.api.getSession({ headers: c.req.raw.headers });
-  return session?.user.id ?? null;
-}
-
 // The signed-in artist's profile (null if they haven't onboarded).
 artistsRoutes.get("/me", async (c) => {
-  const userId = await currentUserId(c);
+  const userId = await getUserId(c);
   if (!userId) return c.json({ error: "unauthorized" }, 401);
-  const db = createDb(c.env.DATABASE_URL);
-  const [profile] = await db
-    .select()
-    .from(artistProfiles)
-    .where(eq(artistProfiles.userId, userId));
+  const profile = await getArtist(c);
   return c.json({ profile: profile ?? null });
 });
 
 // Create the artist profile during onboarding.
 artistsRoutes.post("/", async (c) => {
-  const userId = await currentUserId(c);
+  const userId = await getUserId(c);
   if (!userId) return c.json({ error: "unauthorized" }, 401);
 
   const body = await c.req.json().catch(() => ({}));
