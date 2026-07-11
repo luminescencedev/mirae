@@ -69,6 +69,7 @@ commissionsRoutes.get("/", async (c) => {
       paidCents: commissions.paidCents,
       deadline: commissions.deadline,
       requestId: commissions.requestId,
+      portalToken: commissions.portalToken,
       createdAt: commissions.createdAt,
       updatedAt: commissions.updatedAt,
       clientName: commissionRequests.clientName,
@@ -169,6 +170,35 @@ commissionsRoutes.get("/:id/activity", async (c) => {
     )
     .orderBy(desc(activityLogs.createdAt));
   return c.json({ activity: rows });
+});
+
+// POST /api/commissions/:id/portal — ensure the commission has a client
+// portal token; returns it (idempotent — reuses an existing token).
+commissionsRoutes.post("/:id/portal", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const [row] = await db
+    .select({ id: commissions.id, portalToken: commissions.portalToken })
+    .from(commissions)
+    .where(
+      and(
+        eq(commissions.id, c.req.param("id")),
+        eq(commissions.artistId, artist.id),
+      ),
+    )
+    .limit(1);
+  if (!row) return c.json({ error: "not found" }, 404);
+
+  let token = row.portalToken;
+  if (!token) {
+    token = crypto.randomUUID().replace(/-/g, "");
+    await db
+      .update(commissions)
+      .set({ portalToken: token })
+      .where(eq(commissions.id, row.id));
+  }
+  return c.json({ token });
 });
 
 // --- Quotes (one per commission) -----------------------------------------

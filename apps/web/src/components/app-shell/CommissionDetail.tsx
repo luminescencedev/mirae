@@ -83,6 +83,15 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
     onSuccess: invalidate,
   });
 
+  const genPortal = useMutation({
+    mutationFn: () => commissionsApi.generatePortal(item.id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["commissions"] }),
+  });
+
+  const portalUrl = item.portalToken
+    ? `${window.location.origin}/portal/${item.portalToken}`
+    : null;
+
   const price = item.priceCents ?? 0;
   const paidState =
     item.paidCents <= 0
@@ -172,6 +181,36 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
               );
             })}
           </ol>
+        </div>
+
+        <div>
+          <p className="mb-3 text-sm font-semibold">Client portal</p>
+          {portalUrl ? (
+            <div className="flex items-center gap-2">
+              <input
+                readOnly
+                value={portalUrl}
+                onFocus={(e) => e.currentTarget.select()}
+                className="min-w-0 flex-1 rounded-md border border-border bg-surface-muted px-2.5 py-1.5 text-xs text-fg-muted outline-none"
+              />
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => navigator.clipboard?.writeText(portalUrl)}
+              >
+                Copy
+              </Button>
+            </div>
+          ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={genPortal.isPending}
+              onClick={() => genPortal.mutate()}
+            >
+              {genPortal.isPending ? "Generating…" : "Generate portal link"}
+            </Button>
+          )}
         </div>
 
         <QuoteEditor commissionId={item.id} />

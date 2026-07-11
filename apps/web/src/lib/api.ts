@@ -158,6 +158,7 @@ export type QueueCommission = {
   paidCents: number;
   deadline: string | null;
   requestId: string | null;
+  portalToken: string | null;
   createdAt: string;
   updatedAt: string;
   clientName: string | null;
@@ -195,6 +196,10 @@ export const commissionsApi = {
     fetch(`/api/commissions/${id}/activity`)
       .then(json<{ activity: CommissionActivity[] }>)
       .then((d) => d.activity),
+  generatePortal: (id: string) =>
+    fetch(`/api/commissions/${id}/portal`, { method: "POST" })
+      .then(json<{ token: string }>)
+      .then((d) => d.token),
 };
 
 export type QuoteItem = {
