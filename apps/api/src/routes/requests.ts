@@ -1,6 +1,11 @@
 import { Hono } from "hono";
 import { and, desc, eq } from "drizzle-orm";
-import { commissionRequests, commissionTypes, createDb } from "@mirae/db";
+import {
+  commissionRequests,
+  commissionTypes,
+  commissions,
+  createDb,
+} from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
 
@@ -67,4 +72,52 @@ requestsRoutes.patch("/:id", async (c) => {
     });
   if (!row) return c.json({ error: "not found" }, 404);
   return c.json({ request: row });
+});
+
+// POST /api/requests/:id/convert — accept a new request and create a
+// tracked commission from it (links requestId, marks the request accepted).
+requestsRoutes.post("/:id/convert", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+
+  const db = createDb(c.env.DATABASE_URL);
+  const [req] = await db
+    .select()
+    .from(commissionRequests)
+    .where(
+      and(
+        eq(commissionRequests.id, c.req.param("id")),
+        eq(commissionRequests.artistId, artist.id),
+      ),
+    )
+    .limit(1);
+  if (!req) return c.json({ error: "not found" }, 404);
+  if (req.status !== "new")
+    return c.json({ error: "Request already handled." }, 409);
+
+  // Title from the chosen commission type (if any) + the client's name.
+  let typeName: string | null = null;
+  if (req.commissionTypeId) {
+    const [t] = await db
+      .select({ name: commissionTypes.name })
+      .from(commissionTypes)
+      .where(eq(commissionTypes.id, req.commissionTypeId))
+      .limit(1);
+    typeName = t?.name ?? null;
+  }
+  const title = typeName
+    ? `${typeName} — ${req.clientName}`
+    : `Commission — ${req.clientName}`;
+
+  const [commission] = await db
+    .insert(commissions)
+    .values({ artistId: artist.id, requestId: req.id, title, status: "queued" })
+    .returning();
+
+  await db
+    .update(commissionRequests)
+    .set({ status: "accepted" })
+    .where(eq(commissionRequests.id, req.id));
+
+  return c.json({ commission }, 201);
 });

@@ -131,6 +131,11 @@ export const requestsApi = {
       headers: jsonHeaders,
       body: JSON.stringify({ status }),
     }).then(json<{ request: { id: string; status: RequestStatus } }>),
+  // Accept a request + create a commission from it.
+  convert: (id: string) =>
+    fetch(`/api/requests/${id}/convert`, { method: "POST" }).then(
+      json<{ commission: { id: string } }>,
+    ),
 };
 
 export const commissionTypesApi = {
