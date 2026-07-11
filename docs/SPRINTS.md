@@ -224,7 +224,7 @@ Post-MVP hardening. Goal: every button does something, every screen shows the si
 - [x] AUDIT-002 Wire the Overview screen to real data (stats + recent activity from commissions/requests)
 - [ ] AUDIT-003 Real Clients page (derive from requests/commissions; replace ComingSoon)
 - [ ] AUDIT-004 Real Deliveries page (list commissions with a delivery; replace ComingSoon)
-- [ ] AUDIT-005 Remove or wire dead controls (sidebar search, notification bell)
+- [x] AUDIT-005 Remove or wire dead controls (sidebar search, notification bell)
 - [ ] AUDIT-006 Refresh the marketing DashboardPreview to match the real UI
 - [ ] AUDIT-007 Queue calendar view (real deadlines) or drop the tab
 - [ ] AUDIT-008 Persist client feedback from the portal
