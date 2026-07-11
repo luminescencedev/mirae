@@ -103,6 +103,18 @@ export const deliveries = pgTable("deliveries", {
     .defaultNow(),
 });
 
+// Client feedback left from the public portal (no account).
+export const portalFeedback = pgTable("portal_feedback", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  commissionId: uuid("commission_id")
+    .notNull()
+    .references(() => commissions.id, { onDelete: "cascade" }),
+  message: text("message").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 // Activity log — key changes on a commission.
 export const activityLogs = pgTable("activity_logs", {
   id: uuid("id").primaryKey().defaultRandom(),

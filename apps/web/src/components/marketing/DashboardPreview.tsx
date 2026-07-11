@@ -1,6 +1,5 @@
 import { Badge, Button, Icon } from "@mirae/ui";
 import {
-  Add01Icon,
   CubeIcon,
   DashboardSquare01Icon,
   InboxIcon,
@@ -92,19 +91,11 @@ export function DashboardPreview() {
           </span>
         </div>
 
-        <div className="flex items-end justify-between px-6 pt-6">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Hello, Rain
-            </h1>
-            <p className="mt-1 text-sm text-fg-muted">
-              Here's your studio today.
-            </p>
-          </div>
-          <Button>
-            <Icon icon={Add01Icon} strokeWidth={1.8} />
-            New commission
-          </Button>
+        <div className="px-6 pt-6">
+          <h1 className="text-2xl font-semibold tracking-tight">Hello, Rain</h1>
+          <p className="mt-1 text-sm text-fg-muted">
+            Here's your studio today.
+          </p>
         </div>
 
         <div className="flex flex-col gap-6 px-6 py-6">
@@ -123,21 +114,8 @@ export function DashboardPreview() {
                     <Icon icon={s.icon} size={16} strokeWidth={1.8} />
                   </span>
                 </div>
-                <div className="mt-2.5 flex items-baseline gap-2">
-                  <span className="text-2xl font-semibold tracking-tight tabular-nums">
-                    {s.value}
-                  </span>
-                  {s.delta && (
-                    <span
-                      className={
-                        s.positive === false
-                          ? "text-xs font-medium text-rose-600"
-                          : "text-xs font-medium text-emerald-600"
-                      }
-                    >
-                      {s.delta}
-                    </span>
-                  )}
+                <div className="mt-2.5 text-2xl font-semibold tracking-tight tabular-nums">
+                  {s.value}
                 </div>
               </div>
             ))}
@@ -146,7 +124,7 @@ export function DashboardPreview() {
           <div className="grid gap-5 lg:grid-cols-5">
             <section className="lg:col-span-3">
               <div className="mb-3 flex items-center gap-2">
-                <h2 className="text-sm font-semibold">Needs your attention</h2>
+                <h2 className="text-sm font-semibold">New requests</h2>
                 <Badge variant="amber">{NEEDS_ATTENTION.length}</Badge>
               </div>
               <div className="flex flex-col gap-2">

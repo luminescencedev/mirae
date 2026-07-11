@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Icon, Textarea, cn } from "@mirae/ui";
 import { CubeIcon } from "@hugeicons/core-free-icons";
 import { Link } from "@tanstack/react-router";
@@ -26,11 +26,19 @@ function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Feedback({ artistName }: { artistName: string }) {
+function Feedback({
+  token,
+  artistName,
+}: {
+  token: string;
+  artistName: string;
+}) {
   const [note, setNote] = useState("");
-  const [sent, setSent] = useState(false);
+  const send = useMutation({
+    mutationFn: () => publicApi.submitFeedback(token, note.trim()),
+  });
 
-  if (sent) {
+  if (send.isSuccess) {
     return (
       <div className="mt-3 rounded-xl border border-border bg-surface p-5 text-center text-sm text-fg-muted shadow-soft">
         Thanks — your note was shared with {artistName}.
@@ -42,7 +50,7 @@ function Feedback({ artistName }: { artistName: string }) {
       className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft"
       onSubmit={(e) => {
         e.preventDefault();
-        if (note.trim()) setSent(true);
+        if (note.trim()) send.mutate();
       }}
     >
       <p className="mb-2 text-sm font-semibold text-fg">Leave a note</p>
@@ -52,8 +60,18 @@ function Feedback({ artistName }: { artistName: string }) {
         onChange={(e) => setNote(e.target.value)}
         placeholder="A question or feedback for the artist…"
       />
-      <Button type="submit" size="sm" className="mt-3" disabled={!note.trim()}>
-        Send note
+      {send.isError && (
+        <p className="mt-2 text-sm text-red-600">
+          {(send.error as Error).message}
+        </p>
+      )}
+      <Button
+        type="submit"
+        size="sm"
+        className="mt-3"
+        disabled={!note.trim() || send.isPending}
+      >
+        {send.isPending ? "Sending…" : "Send note"}
       </Button>
     </form>
   );
@@ -178,7 +196,10 @@ export function PortalPage({ token }: { token: string }) {
         </div>
       )}
 
-      <Feedback artistName={artist?.displayName ?? "the artist"} />
+      <Feedback
+        token={token}
+        artistName={artist?.displayName ?? "the artist"}
+      />
     </Shell>
   );
 }

@@ -132,6 +132,12 @@ export const publicApi = {
       if (res.status === 404) return null;
       return json<PortalView>(res);
     }),
+  submitFeedback: (token: string, message: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}/feedback`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ message }),
+    }).then(json<{ ok: true }>),
   studio: (handle: string) =>
     fetch(`/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}`).then(
       async (res) => {

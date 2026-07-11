@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-MVP complete — all sprints shipped. Deployed to Cloudflare (usemirae.com + app.usemirae.com).
+MVP + audit complete — all sprints shipped. Live on Cloudflare (usemirae.com + app.usemirae.com).
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -215,6 +215,23 @@ Completion notes (2026-07-11):
 - **Emails**: `lib/mail.ts` — Resend over the HTTP API (no SDK dep), best-effort no-op when `RESEND_API_KEY` is unset. Notifications: new request → artist; quote sent → client (portal link); delivered → client (delivery link). lint/typecheck/build/format green.
 - Known issues / follow-ups: set `RESEND_API_KEY` (+ optional `MAIL_FROM`, a verified domain sender) as a Worker secret to actually send — until then emails are logged and skipped; portal client feedback still local-only (not persisted); Stripe billing is post-MVP.
 - **MVP complete** — deployed to Cloudflare (usemirae.com + app.usemirae.com). Remaining backlog is future UX (⌘K palette, onboarding tour, Studio live preview).
+
+## Sprint 10 — Audit & polish ✅ complete
+
+Post-MVP hardening. Goal: every button does something, every screen shows the signed-in artist's real data, no mock left in the app.
+
+Completion notes (2026-07-11): `/app` redirects to onboarding without a studio; Overview / Clients / Deliveries read the signed-in artist's real data (Rain Aoki mock gone); sidebar search is a real ⌘K command palette + the bell a real notifications menu (live requests badge); the queue Calendar tab is a real deadline calendar; portal feedback is persisted (migration 0003) and shows in the artist activity feed; marketing DashboardPreview matches the current UI. Verified: portal feedback POST 201/400/404 live; lint/typecheck/build/format green.
+
+- [x] AUDIT-001 Gate /app on an artist profile (redirect to /onboarding if none)
+- [x] AUDIT-002 Wire the Overview screen to real data (stats + recent activity from commissions/requests)
+- [x] AUDIT-003 Real Clients page (derive from requests/commissions; replace ComingSoon)
+- [x] AUDIT-004 Real Deliveries page (list commissions with a delivery; replace ComingSoon)
+- [x] AUDIT-005 Remove or wire dead controls (sidebar search, notification bell)
+- [x] AUDIT-006 Refresh the marketing DashboardPreview to match the real UI
+- [x] AUDIT-007 Queue calendar view (real deadlines) or drop the tab
+- [x] AUDIT-008 Persist client feedback from the portal
+
+Acceptance: signing up → a fresh studio shows _your_ data (not Rain Aoki); no button is a no-op; Clients/Deliveries are real; landing preview matches the app.
 
 ## Backlog — future UX (not scheduled)
 

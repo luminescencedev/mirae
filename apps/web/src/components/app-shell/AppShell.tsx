@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import {
   animate,
   useMotionValue,
@@ -11,7 +12,6 @@ import {
   CubeIcon,
   DashboardSquare01Icon,
   InboxIcon,
-  Notification03Icon,
   Package01Icon,
   PaintBrush01Icon,
   PanelLeftIcon,
@@ -23,14 +23,17 @@ import {
 } from "@hugeicons/core-free-icons";
 import type { IconData } from "../mockups/seed.ts";
 import { signOut, useSession } from "../../lib/auth-client.ts";
+import { requestsApi } from "../../lib/api.ts";
+import { CommandPalette } from "./CommandPalette.tsx";
+import { NotificationsMenu } from "./NotificationsMenu.tsx";
 
 const NAV_ROW = 36; // h-9
 const NAV_STEP = NAV_ROW + 2; // + gap-0.5
 
 // Mirae's product nav → the /app/* routes.
-const NAV: { label: string; icon: IconData; to: string; badge?: number }[] = [
+const NAV: { label: string; icon: IconData; to: string }[] = [
   { label: "Overview", icon: DashboardSquare01Icon, to: "/app/overview" },
-  { label: "Requests", icon: InboxIcon, to: "/app/requests", badge: 3 },
+  { label: "Requests", icon: InboxIcon, to: "/app/requests" },
   { label: "Queue", icon: PaintBrush01Icon, to: "/app/queue" },
   { label: "Clients", icon: UserGroupIcon, to: "/app/clients" },
   { label: "Deliveries", icon: Package01Icon, to: "/app/deliveries" },
@@ -62,9 +65,11 @@ function Label({
 function NavList({
   collapsed,
   activeIndex,
+  newRequests,
 }: {
   collapsed: boolean;
   activeIndex: number;
+  newRequests: number;
 }) {
   const reduce = useReducedMotion();
   const [hovered, setHovered] = useState<number | null>(null);
@@ -107,9 +112,9 @@ function NavList({
             <Icon icon={item.icon} size={18} strokeWidth={1.7} />
           </span>
           <Label collapsed={collapsed}>{item.label}</Label>
-          {item.badge != null && !collapsed && (
+          {item.label === "Requests" && newRequests > 0 && !collapsed && (
             <Badge variant="accent" className="ml-auto mr-1">
-              {item.badge}
+              {newRequests}
             </Badge>
           )}
           {collapsed && (
@@ -127,11 +132,31 @@ function NavList({
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const collapsed = !open;
+  const [paletteOpen, setPaletteOpen] = useState(false);
 
   // Start collapsed on small screens so the sidebar doesn't crowd the content.
   useEffect(() => {
     if (window.matchMedia("(max-width: 768px)").matches) setOpen(false);
   }, []);
+
+  // ⌘K / Ctrl+K opens the command palette.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const { data: requests = [] } = useQuery({
+    queryKey: ["requests"],
+    queryFn: requestsApi.list,
+  });
+  const newRequests = requests.filter((r) => r.status === "new").length;
+
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
@@ -174,16 +199,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="px-4">
-          <button className="flex h-9 w-full items-center rounded-md text-sm text-fg-subtle outline-none ring-1 ring-inset ring-border transition-[color,box-shadow] hover:text-fg hover:ring-border-strong focus-visible:ring-2 focus-visible:ring-accent-500">
+          <button
+            onClick={() => setPaletteOpen(true)}
+            className="flex h-9 w-full items-center rounded-md text-sm text-fg-subtle outline-none ring-1 ring-inset ring-border transition-[color,box-shadow] hover:text-fg hover:ring-border-strong focus-visible:ring-2 focus-visible:ring-accent-500"
+          >
             <span className="grid size-9 shrink-0 place-items-center">
               <Icon icon={Search01Icon} size={16} strokeWidth={1.8} />
             </span>
-            <Label collapsed={collapsed}>Search</Label>
+            <Label collapsed={collapsed} className="flex-1 text-left">
+              Search
+            </Label>
+            {!collapsed && (
+              <kbd className="mr-2 rounded border border-border px-1.5 py-0.5 text-[10px] font-medium text-fg-subtle">
+                ⌘K
+              </kbd>
+            )}
           </button>
         </div>
 
         <div className="mt-3 flex-1 px-4">
-          <NavList collapsed={collapsed} activeIndex={activeIndex} />
+          <NavList
+            collapsed={collapsed}
+            activeIndex={activeIndex}
+            newRequests={newRequests}
+          />
         </div>
 
         <div className="flex h-14 items-center border-t border-border px-4">
@@ -229,18 +268,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span>Studio</span>
           <span className="text-fg-subtle">/</span>
           <span className="text-fg">{current}</span>
-          <button
-            aria-label="Notifications"
-            className="ml-auto rounded-md p-1.5 text-fg-subtle outline-none transition-colors hover:bg-surface-muted hover:text-fg focus-visible:ring-2 focus-visible:ring-accent-500"
-          >
-            <Icon icon={Notification03Icon} size={18} strokeWidth={1.7} />
-          </button>
+          <div className="ml-auto">
+            <NotificationsMenu />
+          </div>
         </header>
 
         <div id="main-content" className="flex-1 overflow-auto">
           {children}
         </div>
       </main>
+
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </div>
   );
 }

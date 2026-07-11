@@ -3,6 +3,7 @@ import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { Button, Input } from "@mirae/ui";
 import { AuthLayout, Field } from "../components/marketing/AuthLayout.tsx";
 import { authClient } from "../lib/auth-client.ts";
+import { artistApi } from "../lib/api.ts";
 
 function Onboarding() {
   const navigate = useNavigate();
@@ -78,6 +79,9 @@ export const Route = createFileRoute("/onboarding")({
   beforeLoad: async () => {
     const { data } = await authClient.getSession();
     if (!data) throw redirect({ to: "/login" });
+    // Already have a studio → straight to the app.
+    const profile = await artistApi.me();
+    if (profile) throw redirect({ to: "/app" });
   },
   component: Onboarding,
 });
