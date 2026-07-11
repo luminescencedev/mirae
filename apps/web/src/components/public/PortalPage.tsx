@@ -3,7 +3,12 @@ import { Icon, cn } from "@mirae/ui";
 import { CubeIcon } from "@hugeicons/core-free-icons";
 import { Link } from "@tanstack/react-router";
 import { publicApi } from "../../lib/api.ts";
-import { STATUS_META, dueLabel, euro } from "../../lib/commissions.ts";
+import {
+  STATUS_META,
+  dueLabel,
+  euro,
+  milestones,
+} from "../../lib/commissions.ts";
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
@@ -84,6 +89,45 @@ export function PortalPage({ token }: { token: string }) {
             {dueLabel(commission.deadline)}
           </p>
         </div>
+      </div>
+
+      <div className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft">
+        <p className="mb-3 text-sm font-semibold text-fg">Progress</p>
+        <ol className="flex flex-col gap-0.5">
+          {milestones(commission.status).map((m) => (
+            <li key={m.label} className="flex items-center gap-3 py-1">
+              <span
+                className={cn(
+                  "flex size-4 items-center justify-center rounded-full",
+                  m.state === "active"
+                    ? "bg-accent-500"
+                    : m.state === "done"
+                      ? "bg-emerald-500"
+                      : "bg-surface-sunken ring-1 ring-inset ring-border",
+                )}
+              >
+                <span
+                  className={cn(
+                    "size-1.5 rounded-full",
+                    m.state !== "todo" ? "bg-white" : "bg-fg-subtle",
+                  )}
+                />
+              </span>
+              <span
+                className={cn(
+                  "text-sm",
+                  m.state === "active"
+                    ? "font-medium text-fg"
+                    : m.state === "done"
+                      ? "text-fg-muted"
+                      : "text-fg-subtle",
+                )}
+              >
+                {m.label}
+              </span>
+            </li>
+          ))}
+        </ol>
       </div>
 
       {quote && (
