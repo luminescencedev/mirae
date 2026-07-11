@@ -16,6 +16,7 @@ import { PageHeader } from "../../components/app-shell/PageHeader.tsx";
 import { CommissionDetail } from "../../components/app-shell/CommissionDetail.tsx";
 import { QueueView } from "../../components/app-shell/views/QueueView.tsx";
 import { QueueListView } from "../../components/app-shell/views/QueueListView.tsx";
+import { QueueCalendarView } from "../../components/app-shell/views/QueueCalendarView.tsx";
 import { commissionsApi } from "../../lib/api.ts";
 
 const ENTER = {
@@ -81,11 +82,11 @@ function Queue() {
               </motion.div>
             </TabsContent>
             <TabsContent value="calendar" className="mt-5">
-              <motion.div
-                {...ENTER}
-                className="grid place-items-center rounded-xl border border-dashed border-border py-20 text-sm text-fg-subtle"
-              >
-                Calendar view — coming soon
+              <motion.div {...ENTER}>
+                <QueueCalendarView
+                  commissions={commissions}
+                  onSelect={(c) => setSelectedId(c.id)}
+                />
               </motion.div>
             </TabsContent>
           </Tabs>

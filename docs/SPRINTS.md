@@ -226,7 +226,7 @@ Post-MVP hardening. Goal: every button does something, every screen shows the si
 - [x] AUDIT-004 Real Deliveries page (list commissions with a delivery; replace ComingSoon)
 - [x] AUDIT-005 Remove or wire dead controls (sidebar search, notification bell)
 - [ ] AUDIT-006 Refresh the marketing DashboardPreview to match the real UI
-- [ ] AUDIT-007 Queue calendar view (real deadlines) or drop the tab
+- [x] AUDIT-007 Queue calendar view (real deadlines) or drop the tab
 - [ ] AUDIT-008 Persist client feedback from the portal
 
 Acceptance: signing up → a fresh studio shows _your_ data (not Rain Aoki); no button is a no-op; Clients/Deliveries are real; landing preview matches the app.
