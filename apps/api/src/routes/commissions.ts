@@ -6,6 +6,8 @@ import {
   commissionStatus,
   commissions,
   createDb,
+  quoteItems,
+  quotes,
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
@@ -159,6 +161,127 @@ commissionsRoutes.get("/:id/activity", async (c) => {
     )
     .orderBy(desc(activityLogs.createdAt));
   return c.json({ activity: rows });
+});
+
+// --- Quotes (one per commission) -----------------------------------------
+
+type QuoteItemInput = {
+  label?: unknown;
+  amountCents?: unknown;
+  quantity?: unknown;
+};
+
+// Verify the commission belongs to the signed-in artist; returns its id or null.
+async function ownedCommissionId(
+  db: ReturnType<typeof createDb>,
+  commissionId: string,
+  artistId: string,
+): Promise<string | null> {
+  const [row] = await db
+    .select({ id: commissions.id })
+    .from(commissions)
+    .where(
+      and(eq(commissions.id, commissionId), eq(commissions.artistId, artistId)),
+    )
+    .limit(1);
+  return row?.id ?? null;
+}
+
+// GET /api/commissions/:id/quote — the commission's quote + line items (or null).
+commissionsRoutes.get("/:id/quote", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const [quote] = await db
+    .select()
+    .from(quotes)
+    .where(eq(quotes.commissionId, commissionId))
+    .limit(1);
+  if (!quote) return c.json({ quote: null });
+
+  const items = await db
+    .select()
+    .from(quoteItems)
+    .where(eq(quoteItems.quoteId, quote.id));
+  return c.json({ quote: { ...quote, items } });
+});
+
+// PUT /api/commissions/:id/quote — create/replace the draft quote + items.
+// Recomputes the total and mirrors it onto the commission's price.
+commissionsRoutes.put("/:id/quote", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const body = (await c.req.json().catch(() => ({}))) as { items?: unknown };
+  const rawItems = Array.isArray(body.items)
+    ? (body.items as QuoteItemInput[])
+    : [];
+  const items = rawItems
+    .map((it) => ({
+      label: String(it.label ?? "").trim(),
+      amountCents: Number(it.amountCents) || 0,
+      quantity: Math.max(1, Number(it.quantity) || 1),
+    }))
+    .filter((it) => it.label);
+  const totalCents = items.reduce(
+    (s, it) => s + it.amountCents * it.quantity,
+    0,
+  );
+
+  // Upsert the quote row (kept as draft on edit).
+  const [existing] = await db
+    .select()
+    .from(quotes)
+    .where(eq(quotes.commissionId, commissionId))
+    .limit(1);
+  let quoteId: string;
+  if (existing) {
+    quoteId = existing.id;
+    await db.update(quotes).set({ totalCents }).where(eq(quotes.id, quoteId));
+    await db.delete(quoteItems).where(eq(quoteItems.quoteId, quoteId));
+  } else {
+    const [created] = await db
+      .insert(quotes)
+      .values({ commissionId, totalCents, status: "draft" })
+      .returning({ id: quotes.id });
+    quoteId = created.id;
+  }
+  if (items.length)
+    await db.insert(quoteItems).values(items.map((it) => ({ ...it, quoteId })));
+
+  // Mirror the total onto the commission price.
+  await db
+    .update(commissions)
+    .set({ priceCents: totalCents })
+    .where(eq(commissions.id, commissionId));
+
+  const saved = await db
+    .select()
+    .from(quoteItems)
+    .where(eq(quoteItems.quoteId, quoteId));
+  return c.json({
+    quote: {
+      id: quoteId,
+      commissionId,
+      totalCents,
+      status: existing?.status ?? "draft",
+      items: saved,
+    },
+  });
 });
 
 // DELETE /api/commissions/:id
