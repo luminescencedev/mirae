@@ -115,8 +115,8 @@ Completion notes (2026-07-11):
 
 ## Sprint 5 — Request form and inbox
 
-- [ ] REQ-001 Connect public request form to API
-- [ ] REQ-002 Create commission request records
+- [x] REQ-001 Connect public request form to API
+- [x] REQ-002 Create commission request records
 - [ ] REQ-003 Build request inbox API
 - [ ] REQ-004 Connect request inbox UI
 - [ ] REQ-005 Build request detail panel

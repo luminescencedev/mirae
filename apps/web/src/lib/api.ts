@@ -76,6 +76,15 @@ export type PublicStudio = {
   commissionTypes: CommissionType[];
 };
 
+export type RequestInput = {
+  clientName: string;
+  clientEmail: string;
+  commissionTypeId?: string | null;
+  budget?: string | null;
+  deadline?: string | null;
+  message: string;
+};
+
 export const publicApi = {
   // 404 → resolves to null so the page can render a not-found state.
   studio: (handle: string) =>
@@ -85,6 +94,15 @@ export const publicApi = {
         return json<PublicStudio>(res);
       },
     ),
+  submitRequest: (handle: string, body: RequestInput) =>
+    fetch(
+      `/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}/requests`,
+      {
+        method: "POST",
+        headers: jsonHeaders,
+        body: JSON.stringify(body),
+      },
+    ).then(json<{ ok: true; id: string }>),
 };
 
 export const commissionTypesApi = {
