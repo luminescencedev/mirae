@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Icon, Input, cn } from "@mirae/ui";
+import { Button, Icon, Input, cn, useToast } from "@mirae/ui";
 import { Add01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { quotesApi, type QuoteStatus } from "../../lib/api.ts";
 
@@ -24,6 +24,7 @@ const STATUS_LABEL: Record<QuoteStatus, string> = {
 
 export function QuoteEditor({ commissionId }: { commissionId: string }) {
   const qc = useQueryClient();
+  const { toast } = useToast();
   const key = ["commissions", commissionId, "quote"];
   const { data: quote, isLoading } = useQuery({
     queryKey: key,
@@ -61,23 +62,27 @@ export function QuoteEditor({ commissionId }: { commissionId: string }) {
             quantity: Number(r.quantity) || 1,
           })),
       ),
-    onSuccess: () =>
-      Promise.all([
+    onSuccess: async () => {
+      await Promise.all([
         qc.invalidateQueries({ queryKey: key }),
         qc.invalidateQueries({ queryKey: ["commissions"] }),
-      ]),
+      ]);
+      toast({ title: "Quote saved", variant: "success" });
+    },
   });
 
   const send = useMutation({
     mutationFn: () => quotesApi.send(commissionId),
-    onSuccess: () =>
-      Promise.all([
+    onSuccess: async () => {
+      await Promise.all([
         qc.invalidateQueries({ queryKey: key }),
         qc.invalidateQueries({ queryKey: ["commissions"] }),
         qc.invalidateQueries({
           queryKey: ["commissions", commissionId, "activity"],
         }),
-      ]),
+      ]);
+      toast({ title: "Quote sent", variant: "success" });
+    },
   });
 
   const setRow = (i: number, patch: Partial<Row>) =>

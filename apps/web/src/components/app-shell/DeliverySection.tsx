@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Icon } from "@mirae/ui";
+import { Button, Icon, useToast } from "@mirae/ui";
 import { Cancel01Icon, File01Icon } from "@hugeicons/core-free-icons";
 import { commissionsApi } from "../../lib/api.ts";
 
@@ -13,6 +13,7 @@ function fmtSize(bytes: number | null): string {
 
 export function DeliverySection({ commissionId }: { commissionId: string }) {
   const qc = useQueryClient();
+  const { toast } = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
   const deliveryKey = ["commissions", commissionId, "delivery"];
   const filesKey = ["commissions", commissionId, "files"];
@@ -32,7 +33,11 @@ export function DeliverySection({ commissionId }: { commissionId: string }) {
   });
   const upload = useMutation({
     mutationFn: (file: File) => commissionsApi.uploadFile(commissionId, file),
-    onSuccess: () => qc.invalidateQueries({ queryKey: filesKey }),
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: filesKey });
+      toast({ title: "File uploaded", variant: "success" });
+    },
+    onError: () => toast({ title: "Upload failed", variant: "error" }),
   });
   const remove = useMutation({
     mutationFn: (fileId: string) =>
@@ -48,7 +53,9 @@ export function DeliverySection({ commissionId }: { commissionId: string }) {
         qc.invalidateQueries({
           queryKey: ["commissions", commissionId, "activity"],
         }),
-      ]),
+      ]).then(() =>
+        toast({ title: "Marked as delivered", variant: "success" }),
+      ),
   });
 
   const url = delivery

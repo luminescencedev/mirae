@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   animate,
@@ -127,6 +127,11 @@ function NavList({
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const collapsed = !open;
+
+  // Start collapsed on small screens so the sidebar doesn't crowd the content.
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 768px)").matches) setOpen(false);
+  }, []);
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { data: session } = useSession();
@@ -142,6 +147,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-full w-full overflow-hidden bg-canvas text-fg">
+      <a
+        href="#main-content"
+        className="sr-only rounded-md bg-fg px-3 py-2 text-sm font-medium text-canvas focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
+      >
+        Skip to content
+      </a>
       <aside
         className={cn(
           "flex shrink-0 flex-col overflow-hidden border-r border-border transition-[width] duration-200 ease-out",
@@ -218,12 +229,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span>Studio</span>
           <span className="text-fg-subtle">/</span>
           <span className="text-fg">{current}</span>
-          <button className="ml-auto rounded-md p-1.5 text-fg-subtle transition-colors hover:bg-surface-muted hover:text-fg">
+          <button
+            aria-label="Notifications"
+            className="ml-auto rounded-md p-1.5 text-fg-subtle outline-none transition-colors hover:bg-surface-muted hover:text-fg focus-visible:ring-2 focus-visible:ring-accent-500"
+          >
             <Icon icon={Notification03Icon} size={18} strokeWidth={1.7} />
           </button>
         </header>
 
-        <div className="flex-1 overflow-auto">{children}</div>
+        <div id="main-content" className="flex-1 overflow-auto">
+          {children}
+        </div>
       </main>
     </div>
   );

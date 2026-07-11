@@ -13,8 +13,30 @@ import {
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
+import { mailLayout, sendEmail } from "../lib/mail.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
+
+// The client email + portal token for a commission (from its originating
+// request), for notification emails.
+async function clientInfoFor(
+  db: ReturnType<typeof createDb>,
+  commissionId: string,
+): Promise<{ email: string | null; portalToken: string | null }> {
+  const [row] = await db
+    .select({
+      email: commissionRequests.clientEmail,
+      portalToken: commissions.portalToken,
+    })
+    .from(commissions)
+    .leftJoin(
+      commissionRequests,
+      eq(commissionRequests.id, commissions.requestId),
+    )
+    .where(eq(commissions.id, commissionId))
+    .limit(1);
+  return { email: row?.email ?? null, portalToken: row?.portalToken ?? null };
+}
 
 export const commissionsRoutes = new Hono<{ Bindings: Bindings }>();
 
@@ -302,6 +324,23 @@ commissionsRoutes.post("/:id/delivery/deliver", async (c) => {
     type: "delivery",
     message: "Marked as delivered",
   });
+
+  // Notify the client their delivery is ready (best-effort).
+  const { email: deliverEmail } = await clientInfoFor(db, commissionId);
+  if (deliverEmail) {
+    await sendEmail(c.env, {
+      to: deliverEmail,
+      subject: "Your commission is ready",
+      html: mailLayout(
+        "Your commission is ready",
+        "Your artist has marked your commission as delivered. Open your delivery page to download the files.",
+        {
+          label: "View delivery",
+          url: `https://usemirae.com/delivery/${updated.token}`,
+        },
+      ),
+    });
+  }
   return c.json({ delivery: updated });
 });
 
@@ -561,6 +600,28 @@ commissionsRoutes.post("/:id/quote/send", async (c) => {
     .select()
     .from(quoteItems)
     .where(eq(quoteItems.quoteId, quote.id));
+
+  // Notify the client a quote is waiting (best-effort).
+  const { email: quoteEmail, portalToken } = await clientInfoFor(
+    db,
+    commissionId,
+  );
+  if (quoteEmail) {
+    await sendEmail(c.env, {
+      to: quoteEmail,
+      subject: "You've received a quote",
+      html: mailLayout(
+        "You've received a quote",
+        `Your artist sent a quote of <strong>${(updated.totalCents / 100).toLocaleString()} €</strong>. Open your portal to review it.`,
+        portalToken
+          ? {
+              label: "View quote",
+              url: `https://usemirae.com/portal/${portalToken}`,
+            }
+          : undefined,
+      ),
+    });
+  }
   return c.json({ quote: { ...updated, items } });
 });
 

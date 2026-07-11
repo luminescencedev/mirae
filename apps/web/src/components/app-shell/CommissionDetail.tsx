@@ -12,6 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
   cn,
+  useToast,
 } from "@mirae/ui";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { QuoteEditor } from "./QuoteEditor.tsx";
@@ -46,6 +47,7 @@ function Meta({
 
 export function CommissionDetail({ item }: { item: QueueCommission }) {
   const qc = useQueryClient();
+  const { toast } = useToast();
   const meta = STATUS_META[item.status];
   const idx = STATUS_ORDER.indexOf(item.status);
   const next =
@@ -66,13 +68,19 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
   const setStatus = useMutation({
     mutationFn: (status: CommissionStatus) =>
       commissionsApi.update(item.id, { status }),
-    onSuccess: invalidate,
+    onSuccess: async () => {
+      await invalidate();
+      toast({ title: "Status updated", variant: "success" });
+    },
   });
 
   const pay = useMutation({
     mutationFn: (paidCents: number) =>
       commissionsApi.update(item.id, { paidCents }),
-    onSuccess: invalidate,
+    onSuccess: async () => {
+      await invalidate();
+      toast({ title: "Payment updated", variant: "success" });
+    },
   });
 
   const genPortal = useMutation({

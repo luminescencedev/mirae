@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { eq } from "drizzle-orm";
-import { artistProfiles, createDb } from "@mirae/db";
+import { artistProfiles, createDb, waitlist } from "@mirae/db";
 import { makeAuth, type AuthEnv } from "./auth.ts";
 import { artistsRoutes } from "./routes/artists.ts";
 import { commissionTypesRoutes } from "./routes/commission-types.ts";
@@ -74,6 +74,20 @@ app.get("/api/health", (c) => c.json({ status: "ok" }));
 app.on(["GET", "POST"], "/api/auth/*", (c) =>
   makeAuth(c.env).handler(c.req.raw),
 );
+
+// Public waitlist capture (landing page, no auth).
+app.post("/api/waitlist", async (c) => {
+  const body = (await c.req.json().catch(() => ({}))) as { email?: unknown };
+  const email = String(body.email ?? "")
+    .trim()
+    .toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return c.json({ error: "A valid email is required." }, 400);
+  const db = createDb(c.env.DATABASE_URL);
+  // Ignore duplicates — signing up twice is a no-op success.
+  await db.insert(waitlist).values({ email }).onConflictDoNothing();
+  return c.json({ ok: true }, 201);
+});
 
 // Artist profile (onboarding + /me).
 app.route("/api/artists", artistsRoutes);

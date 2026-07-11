@@ -5,8 +5,10 @@ import {
   commissionRequests,
   commissionTypes,
   createDb,
+  users,
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
+import { mailLayout, sendEmail } from "../lib/mail.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher };
 
@@ -120,6 +122,27 @@ studioRoutes.post("/:handle/requests", async (c) => {
       message,
     })
     .returning({ id: commissionRequests.id });
+
+  // Notify the artist by email (best-effort).
+  const [account] = await db
+    .select({ email: users.email })
+    .from(users)
+    .where(eq(users.id, profile.userId))
+    .limit(1);
+  if (account?.email) {
+    await sendEmail(c.env, {
+      to: account.email,
+      subject: `New commission request from ${clientName}`,
+      html: mailLayout(
+        "New commission request",
+        `<strong>${clientName}</strong> (${clientEmail}) sent a request${budget ? ` · budget ${budget}` : ""}.<br/><br/>${brief}`,
+        {
+          label: "Open your inbox",
+          url: `${c.env.BETTER_AUTH_URL}/app/requests`,
+        },
+      ),
+    });
+  }
 
   return c.json({ ok: true, id: row.id }, 201);
 });

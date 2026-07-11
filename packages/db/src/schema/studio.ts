@@ -30,6 +30,15 @@ export const artistProfiles = pgTable("artist_profiles", {
     .$onUpdate(() => new Date()),
 });
 
+// Landing-page waitlist signups (pre-launch email capture).
+export const waitlist = pgTable("waitlist", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull().unique(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 // A client the artist works with (found off-platform).
 export const clients = pgTable("clients", {
   id: uuid("id").primaryKey().defaultRandom(),

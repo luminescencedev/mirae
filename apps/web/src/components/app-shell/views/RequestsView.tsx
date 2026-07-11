@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Badge, Sheet, SheetContent, cn } from "@mirae/ui";
+import {
+  Badge,
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  Sheet,
+  SheetContent,
+  cn,
+} from "@mirae/ui";
 import {
   requestsApi,
   type InboxRequest,
@@ -96,6 +104,7 @@ export function RequestsView() {
     data: requests = [],
     isLoading,
     isError,
+    refetch,
   } = useQuery({ queryKey: ["requests"], queryFn: requestsApi.list });
 
   const rows = requests.filter((r) => filter === "all" || r.status === filter);
@@ -128,17 +137,21 @@ export function RequestsView() {
 
       <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
         {isLoading ? (
-          <div className="grid place-items-center p-12 text-sm text-fg-subtle">
-            Loading…
-          </div>
+          <LoadingState label="Loading requests…" />
         ) : isError ? (
-          <div className="grid place-items-center p-12 text-sm text-red-600">
-            Couldn’t load requests.
-          </div>
+          <ErrorState
+            hint="Couldn’t load your requests."
+            onRetry={() => refetch()}
+          />
         ) : rows.length === 0 ? (
-          <div className="grid place-items-center p-12 text-sm text-fg-subtle">
-            No requests here.
-          </div>
+          <EmptyState
+            title={filter === "all" ? "No requests yet" : "Nothing here"}
+            hint={
+              filter === "all"
+                ? "New commission requests from your public page land here."
+                : "No requests with this status."
+            }
+          />
         ) : (
           rows.map((r) => (
             <RequestRow key={r.id} req={r} onOpen={() => setSelected(r)} />

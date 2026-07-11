@@ -6,6 +6,9 @@ export type AuthEnv = {
   DATABASE_URL: string;
   BETTER_AUTH_SECRET: string;
   BETTER_AUTH_URL: string;
+  // Optional — notification emails no-op when unset (see lib/mail.ts).
+  RESEND_API_KEY?: string;
+  MAIL_FROM?: string;
 };
 
 // Better Auth is built per request (Workers have no long-lived globals; env

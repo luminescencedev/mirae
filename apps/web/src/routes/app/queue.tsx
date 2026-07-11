@@ -3,6 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import {
+  ErrorState,
+  LoadingState,
   Sheet,
   SheetContent,
   Tabs,
@@ -24,7 +26,12 @@ const ENTER = {
 
 function Queue() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const { data: commissions = [], isLoading } = useQuery({
+  const {
+    data: commissions = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["commissions"],
     queryFn: commissionsApi.list,
   });
@@ -45,35 +52,44 @@ function Queue() {
         }
       />
       <div className="px-6 py-6">
-        <Tabs defaultValue="board">
-          <TabsList>
-            <TabsTrigger value="board">Board</TabsTrigger>
-            <TabsTrigger value="list">List</TabsTrigger>
-            <TabsTrigger value="calendar">Calendar</TabsTrigger>
-          </TabsList>
-          <TabsContent value="board" className="mt-5">
-            <QueueView
-              commissions={commissions}
-              onSelect={(c) => setSelectedId(c.id)}
-            />
-          </TabsContent>
-          <TabsContent value="list" className="mt-5">
-            <motion.div {...ENTER}>
-              <QueueListView
+        {isLoading ? (
+          <LoadingState label="Loading queue…" />
+        ) : isError ? (
+          <ErrorState
+            hint="Couldn’t load your commissions."
+            onRetry={() => refetch()}
+          />
+        ) : (
+          <Tabs defaultValue="board">
+            <TabsList>
+              <TabsTrigger value="board">Board</TabsTrigger>
+              <TabsTrigger value="list">List</TabsTrigger>
+              <TabsTrigger value="calendar">Calendar</TabsTrigger>
+            </TabsList>
+            <TabsContent value="board" className="mt-5">
+              <QueueView
                 commissions={commissions}
                 onSelect={(c) => setSelectedId(c.id)}
               />
-            </motion.div>
-          </TabsContent>
-          <TabsContent value="calendar" className="mt-5">
-            <motion.div
-              {...ENTER}
-              className="grid place-items-center rounded-xl border border-dashed border-border py-20 text-sm text-fg-subtle"
-            >
-              Calendar view — coming soon
-            </motion.div>
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+            <TabsContent value="list" className="mt-5">
+              <motion.div {...ENTER}>
+                <QueueListView
+                  commissions={commissions}
+                  onSelect={(c) => setSelectedId(c.id)}
+                />
+              </motion.div>
+            </TabsContent>
+            <TabsContent value="calendar" className="mt-5">
+              <motion.div
+                {...ENTER}
+                className="grid place-items-center rounded-xl border border-dashed border-border py-20 text-sm text-fg-subtle"
+              >
+                Calendar view — coming soon
+              </motion.div>
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
 
       <Sheet

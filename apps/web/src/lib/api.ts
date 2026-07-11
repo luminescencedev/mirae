@@ -111,6 +111,15 @@ export type DeliveryView = {
   files: DeliveryFile[];
 };
 
+export const waitlistApi = {
+  join: (email: string) =>
+    fetch("/api/waitlist", {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ email }),
+    }).then(json<{ ok: true }>),
+};
+
 export const publicApi = {
   // 404 → resolves to null so the page can render a not-found state.
   delivery: (token: string) =>
