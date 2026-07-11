@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 9 — Polish and beta readiness
+MVP complete — all sprints shipped. Deployed to Cloudflare (usemirae.com + app.usemirae.com).
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -191,7 +191,7 @@ Completion notes (2026-07-11):
 - Known issues / follow-ups: **production R2 bucket must be provisioned** (`wrangler r2 bucket create mirae-files`) — dev uses the local simulated bucket; portal feedback + email notifications not persisted/sent (Resend → Sprint 9); no upload size/type limits or virus scan; single delivery per commission. Backlog unchanged.
 - **Next sprint:** Sprint 9 — Polish and beta readiness (first ticket POLISH-001: empty states).
 
-## Sprint 9 — Polish and beta readiness
+## Sprint 9 — Polish and beta readiness ✅ complete
 
 - [x] POLISH-001 Add empty states
 - [x] POLISH-002 Add loading states
@@ -201,7 +201,20 @@ Completion notes (2026-07-11):
 - [x] POLISH-006 Responsive pass
 - [x] POLISH-007 Demo seed data
 - [x] POLISH-008 Landing waitlist CTA
-- [ ] POLISH-009 Wire Resend for real notification emails
+- [x] POLISH-009 Wire Resend for real notification emails
+
+Acceptance: consistent empty/loading/error states · toast feedback · keyboard/focus · responsive · demo seed · working waitlist CTA · real notification emails. **All met.**
+
+Completion notes (2026-07-11):
+
+- **UI states**: new `@mirae/ui` primitives — Spinner, LoadingState, EmptyState, ErrorState (retry), and a ToastProvider/useToast (motion, auto-dismiss). Wired states into the requests inbox + queue; success/error toasts into accept/decline, quote save/send, status + payment, file upload, mark-delivered.
+- **A11y**: skip-to-content link + `#main-content` landmark in the app shell; focus-visible rings across controls.
+- **Responsive**: sidebar starts collapsed on small screens; lists/board/detail/public pages stack via responsive utilities.
+- **Seed**: richer demo lifecycle (added a delivered commission + delivery + file).
+- **Waitlist**: new `waitlist` table (migration 0002), public `POST /api/waitlist` (dedup), wired the `/waitlist` form.
+- **Emails**: `lib/mail.ts` — Resend over the HTTP API (no SDK dep), best-effort no-op when `RESEND_API_KEY` is unset. Notifications: new request → artist; quote sent → client (portal link); delivered → client (delivery link). lint/typecheck/build/format green.
+- Known issues / follow-ups: set `RESEND_API_KEY` (+ optional `MAIL_FROM`, a verified domain sender) as a Worker secret to actually send — until then emails are logged and skipped; portal client feedback still local-only (not persisted); Stripe billing is post-MVP.
+- **MVP complete** — deployed to Cloudflare (usemirae.com + app.usemirae.com). Remaining backlog is future UX (⌘K palette, onboarding tour, Studio live preview).
 
 ## Backlog — future UX (not scheduled)
 
