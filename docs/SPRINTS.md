@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 5 — Request form and inbox
+Sprint 6 — Queue and commissions
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -113,14 +113,24 @@ Completion notes (2026-07-11):
 - Known issues / follow-ups: OG has no `og:image` yet (summary card, no large image) — add when brand/OG art exists. Subdomain→/app host mapping + wrangler secrets still deferred to deploy. Public page still can't actually submit a request (Sprint 5). Backlog: ⌘K palette, onboarding flow + first-run tour, Studio page live preview split.
 - **Next sprint:** Sprint 5 — Request form and inbox (first ticket REQ-001: connect the public request form to the API).
 
-## Sprint 5 — Request form and inbox
+## Sprint 5 — Request form and inbox ✅ complete
 
 - [x] REQ-001 Connect public request form to API
 - [x] REQ-002 Create commission request records
 - [x] REQ-003 Build request inbox API
 - [x] REQ-004 Connect request inbox UI
 - [x] REQ-005 Build request detail panel
-- [ ] REQ-006 Add accept/decline actions
+- [x] REQ-006 Add accept/decline actions
+
+Acceptance: public request form submits real records · artist inbox lists their requests · detail panel shows the full request · accept/decline updates status. **All met.**
+
+Completion notes (2026-07-11):
+
+- End-to-end verified live (Worker :8787 / web :5173): public `POST /api/studio/:handle/requests` creates a `commission_requests` row (201), missing email → 400, unknown handle → 404, closed studio → 403 · authed `GET /api/requests` is owner-scoped (401 unauth) · `PATCH /api/requests/:id` sets accepted/declined (200), bad status → 400, unauth → 401 · inbox UI loads real data, detail slide-over shows the full brief, Accept/Decline flips the badge + filter counts. lint/typecheck/build/format green.
+- **API**: `POST /api/studio/:handle/requests` (public, validates + folds deadline into message), `GET /api/requests` (auth, left-joins commission type name, newest-first), `PATCH /api/requests/:id` (auth, owner-scoped, status whitelist).
+- **Web**: `RequestForm` rewritten data-driven (real studio + types, success/error/closed states); `RequestsView` reads the API with filter chips + live counts; new `RequestDetail` Sheet (full brief, email mailto, budget, deadline, timestamp) with wired Accept/Decline mutation → invalidate.
+- Known issues / follow-ups: no email notification to the artist on a new request (Resend = Sprint 9 POLISH-009); accepted requests don't yet become commissions (COM-002, Sprint 6); budget stays free-text; no spam/rate-limit on the public endpoint yet. Backlog unchanged (⌘K palette, onboarding tour, Studio live preview).
+- **Next sprint:** Sprint 6 — Queue and commissions (first ticket COM-001: commissions API).
 
 ## Sprint 6 — Queue and commissions
 

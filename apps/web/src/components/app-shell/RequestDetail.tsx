@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Badge,
   Button,
@@ -8,7 +9,11 @@ import {
   SheetTitle,
 } from "@mirae/ui";
 import { Cancel01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
-import { type InboxRequest, type RequestStatus } from "../../lib/api.ts";
+import {
+  requestsApi,
+  type InboxRequest,
+  type RequestStatus,
+} from "../../lib/api.ts";
 
 const STATUS_BADGE: Record<
   RequestStatus,
@@ -47,10 +52,26 @@ function Row({
   );
 }
 
-export function RequestDetail({ req }: { req: InboxRequest }) {
+export function RequestDetail({
+  req,
+  onDone,
+}: {
+  req: InboxRequest;
+  onDone: () => void;
+}) {
+  const qc = useQueryClient();
   const badge = STATUS_BADGE[req.status];
   const { deadline, brief } = splitMessage(req.message);
   const submitted = new Date(req.createdAt).toLocaleString();
+
+  const setStatus = useMutation({
+    mutationFn: (status: "accepted" | "declined") =>
+      requestsApi.setStatus(req.id, status),
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ["requests"] });
+      onDone();
+    },
+  });
 
   return (
     <>
@@ -90,11 +111,20 @@ export function RequestDetail({ req }: { req: InboxRequest }) {
 
       {req.status === "new" && (
         <SheetFooter>
-          <Button variant="outline" className="flex-1">
+          <Button
+            variant="outline"
+            className="flex-1"
+            disabled={setStatus.isPending}
+            onClick={() => setStatus.mutate("declined")}
+          >
             <Icon icon={Cancel01Icon} strokeWidth={2} />
             Decline
           </Button>
-          <Button className="flex-1">
+          <Button
+            className="flex-1"
+            disabled={setStatus.isPending}
+            onClick={() => setStatus.mutate("accepted")}
+          >
             <Icon icon={Tick02Icon} strokeWidth={2} />
             Accept
           </Button>

@@ -125,6 +125,12 @@ export const requestsApi = {
     fetch("/api/requests")
       .then(json<{ requests: InboxRequest[] }>)
       .then((d) => d.requests),
+  setStatus: (id: string, status: "new" | "accepted" | "declined") =>
+    fetch(`/api/requests/${id}`, {
+      method: "PATCH",
+      headers: jsonHeaders,
+      body: JSON.stringify({ status }),
+    }).then(json<{ request: { id: string; status: RequestStatus } }>),
 };
 
 export const commissionTypesApi = {

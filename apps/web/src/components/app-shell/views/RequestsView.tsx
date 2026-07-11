@@ -151,7 +151,9 @@ export function RequestsView() {
         onOpenChange={(open) => !open && setSelected(null)}
       >
         <SheetContent>
-          {selected && <RequestDetail req={selected} />}
+          {selected && (
+            <RequestDetail req={selected} onDone={() => setSelected(null)} />
+          )}
         </SheetContent>
       </Sheet>
     </div>
