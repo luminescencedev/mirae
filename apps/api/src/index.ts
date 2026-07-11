@@ -5,6 +5,7 @@ import { makeAuth, type AuthEnv } from "./auth.ts";
 import { artistsRoutes } from "./routes/artists.ts";
 import { commissionTypesRoutes } from "./routes/commission-types.ts";
 import { studioRoutes } from "./routes/studio.ts";
+import { requestsRoutes } from "./routes/requests.ts";
 import { isSocialBot, renderStudioOg } from "./lib/og.ts";
 
 type Bindings = AuthEnv & {
@@ -39,6 +40,8 @@ app.route("/api/artists", artistsRoutes);
 app.route("/api/commission-types", commissionTypesRoutes);
 // Public studio page payload by handle (no auth).
 app.route("/api/studio", studioRoutes);
+// The signed-in artist's request inbox.
+app.route("/api/requests", requestsRoutes);
 
 // Social crawlers hitting /@handle get a server-rendered Open Graph document
 // (nice link unfurls in Discord/Twitter/etc.); humans fall through to the SPA.
