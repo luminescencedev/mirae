@@ -128,13 +128,21 @@ commissionsRoutes.patch("/:id", async (c) => {
     .returning();
   if (!row) return c.json({ error: "not found" }, 404);
 
-  // Log status transitions to the activity feed.
+  // Log status transitions + payment updates to the activity feed.
   if (data.status !== undefined) {
     await db.insert(activityLogs).values({
       artistId: artist.id,
       commissionId: row.id,
       type: "status",
       message: `Status changed to ${data.status}`,
+    });
+  }
+  if (data.paidCents !== undefined) {
+    await db.insert(activityLogs).values({
+      artistId: artist.id,
+      commissionId: row.id,
+      type: "payment",
+      message: `Payment recorded: ${(data.paidCents / 100).toLocaleString()} €`,
     });
   }
   return c.json({ commission: row });
