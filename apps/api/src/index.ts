@@ -18,10 +18,47 @@ type Bindings = AuthEnv & {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
+// Paths that belong to the dashboard host (app.usemirae.com): the app itself
+// plus auth/onboarding. Everything else (landing, /@handle, /portal,
+// /delivery) belongs to the marketing host (usemirae.com).
+const APP_PATH = /^\/(app|login|signup|onboarding)(\/|$)/;
+
+// Split the two production hosts. In dev / on *.workers.dev there is no split,
+// so every route is served by path on the same origin (returns null).
+function hostSplitRedirect(req: Request): Response | null {
+  const url = new URL(req.url);
+  const host = url.hostname;
+  const isApp = host === "app.usemirae.com";
+  const isMarketing = host === "usemirae.com" || host === "www.usemirae.com";
+  if (!isApp && !isMarketing) return null;
+  if (req.method !== "GET" || url.pathname.includes(".")) return null; // assets
+
+  const onAppPath = APP_PATH.test(url.pathname);
+  if (isApp) {
+    // Dashboard host: root → the app; anything non-app → the marketing site.
+    if (url.pathname === "/")
+      return Response.redirect("https://app.usemirae.com/app", 302);
+    if (!onAppPath)
+      return Response.redirect(
+        `https://usemirae.com${url.pathname}${url.search}`,
+        302,
+      );
+  } else if (onAppPath) {
+    // Marketing host: app/auth paths live on the dashboard host.
+    return Response.redirect(
+      `https://app.usemirae.com${url.pathname}${url.search}`,
+      302,
+    );
+  }
+  return null;
+}
+
 // Serve a static asset; for client-side routes with no matching file (e.g.
 // /@handle, /login, /app/*) fall back to index.html so the SPA can boot.
 // `run_worker_first` means the Worker sees every request, so we own this.
 async function serveSpa(c: { env: Bindings; req: { raw: Request } }) {
+  const redirect = hostSplitRedirect(c.req.raw);
+  if (redirect) return redirect;
   const res = await c.env.ASSETS.fetch(c.req.raw);
   if (res.status !== 404 || c.req.raw.method !== "GET") return res;
   const url = new URL(c.req.raw.url);
