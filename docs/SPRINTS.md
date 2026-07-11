@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-MVP complete — all sprints shipped. Deployed to Cloudflare (usemirae.com + app.usemirae.com).
+Sprint 10 — Audit & polish (post-MVP hardening: no dead buttons, real data everywhere)
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -215,6 +215,21 @@ Completion notes (2026-07-11):
 - **Emails**: `lib/mail.ts` — Resend over the HTTP API (no SDK dep), best-effort no-op when `RESEND_API_KEY` is unset. Notifications: new request → artist; quote sent → client (portal link); delivered → client (delivery link). lint/typecheck/build/format green.
 - Known issues / follow-ups: set `RESEND_API_KEY` (+ optional `MAIL_FROM`, a verified domain sender) as a Worker secret to actually send — until then emails are logged and skipped; portal client feedback still local-only (not persisted); Stripe billing is post-MVP.
 - **MVP complete** — deployed to Cloudflare (usemirae.com + app.usemirae.com). Remaining backlog is future UX (⌘K palette, onboarding tour, Studio live preview).
+
+## Sprint 10 — Audit & polish
+
+Post-MVP hardening. Goal: every button does something, every screen shows the signed-in artist's real data, no mock left in the app.
+
+- [ ] AUDIT-001 Gate /app on an artist profile (redirect to /onboarding if none)
+- [ ] AUDIT-002 Wire the Overview screen to real data (stats + recent activity from commissions/requests)
+- [ ] AUDIT-003 Real Clients page (derive from requests/commissions; replace ComingSoon)
+- [ ] AUDIT-004 Real Deliveries page (list commissions with a delivery; replace ComingSoon)
+- [ ] AUDIT-005 Remove or wire dead controls (sidebar search, notification bell)
+- [ ] AUDIT-006 Refresh the marketing DashboardPreview to match the real UI
+- [ ] AUDIT-007 Queue calendar view (real deadlines) or drop the tab
+- [ ] AUDIT-008 Persist client feedback from the portal
+
+Acceptance: signing up → a fresh studio shows *your* data (not Rain Aoki); no button is a no-op; Clients/Deliveries are real; landing preview matches the app.
 
 ## Backlog — future UX (not scheduled)
 
