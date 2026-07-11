@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Badge, Button, Icon, cn } from "@mirae/ui";
-import { Cancel01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
+import { useQuery } from "@tanstack/react-query";
+import { Badge, Sheet, SheetContent, cn } from "@mirae/ui";
 import {
-  REQUESTS,
-  type CommissionRequest,
+  requestsApi,
+  type InboxRequest,
   type RequestStatus,
-} from "../../mockups/seed.ts";
+} from "../../../lib/api.ts";
+import { RequestDetail } from "../RequestDetail.tsx";
 
-const FILTERS: { key: "all" | RequestStatus; label: string }[] = [
+type Filter = "all" | "new" | "accepted" | "declined";
+
+const FILTERS: { key: Filter; label: string }[] = [
   { key: "all", label: "All" },
   { key: "new", label: "New" },
   { key: "accepted", label: "Accepted" },
@@ -21,49 +24,81 @@ const STATUS_BADGE: Record<
   new: { variant: "accent", label: "New" },
   accepted: { variant: "emerald", label: "Accepted" },
   declined: { variant: "neutral", label: "Declined" },
+  converted: { variant: "emerald", label: "Converted" },
+  archived: { variant: "neutral", label: "Archived" },
 };
 
-function RequestRow({ req }: { req: CommissionRequest }) {
+// Compact relative time ("just now", "3h", "2d", or a date).
+function relativeTime(iso: string): string {
+  const then = new Date(iso).getTime();
+  const mins = Math.round((Date.now() - then) / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.round(hours / 24);
+  if (days < 7) return `${days}d`;
+  return new Date(iso).toLocaleDateString();
+}
+
+function RequestRow({
+  req,
+  onOpen,
+}: {
+  req: InboxRequest;
+  onOpen: () => void;
+}) {
   const badge = STATUS_BADGE[req.status];
   return (
-    <div className="flex gap-3 p-4 transition-colors hover:bg-surface-muted">
+    <button
+      type="button"
+      onClick={onOpen}
+      className="flex w-full gap-3 p-4 text-left outline-none transition-colors hover:bg-surface-muted focus-visible:bg-surface-muted"
+    >
       <span className="size-9 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="truncate text-sm font-medium text-fg">
-            {req.client}
+            {req.clientName}
           </span>
           <Badge variant={badge.variant}>{badge.label}</Badge>
           <span className="ml-auto shrink-0 text-xs tabular-nums text-fg-subtle">
-            {req.time}
+            {relativeTime(req.createdAt)}
           </span>
         </div>
         <p className="mt-0.5 text-xs text-fg-muted">
-          {req.type} · <span className="tabular-nums">{req.budget}</span>
+          {req.commissionTypeName ?? "No type"}
+          {req.budget && (
+            <>
+              {" · "}
+              <span className="tabular-nums">{req.budget}</span>
+            </>
+          )}
         </p>
-        <p className="mt-1.5 line-clamp-2 text-sm text-fg-muted">
-          {req.message}
+        <p className="mt-1.5 line-clamp-2 whitespace-pre-line text-sm text-fg-muted">
+          {splitBrief(req.message)}
         </p>
-        {req.status === "new" && (
-          <div className="mt-3 flex gap-2">
-            <Button size="sm">
-              <Icon icon={Tick02Icon} strokeWidth={2} />
-              Accept
-            </Button>
-            <Button size="sm" variant="outline">
-              <Icon icon={Cancel01Icon} strokeWidth={2} />
-              Decline
-            </Button>
-          </div>
-        )}
       </div>
-    </div>
+    </button>
   );
 }
 
+// Preview shows just the brief, not the folded-in "Deadline:" prefix.
+function splitBrief(message: string): string {
+  const m = message.match(/^Deadline:\s*.+?\n\n([\s\S]*)$/);
+  return m ? m[1] : message;
+}
+
 export function RequestsView() {
-  const [filter, setFilter] = useState<"all" | RequestStatus>("all");
-  const rows = REQUESTS.filter((r) => filter === "all" || r.status === filter);
+  const [filter, setFilter] = useState<Filter>("all");
+  const [selected, setSelected] = useState<InboxRequest | null>(null);
+  const {
+    data: requests = [],
+    isLoading,
+    isError,
+  } = useQuery({ queryKey: ["requests"], queryFn: requestsApi.list });
+
+  const rows = requests.filter((r) => filter === "all" || r.status === filter);
 
   return (
     <div className="flex flex-col gap-4">
@@ -71,8 +106,8 @@ export function RequestsView() {
         {FILTERS.map((f) => {
           const count =
             f.key === "all"
-              ? REQUESTS.length
-              : REQUESTS.filter((r) => r.status === f.key).length;
+              ? requests.length
+              : requests.filter((r) => r.status === f.key).length;
           return (
             <button
               key={f.key}
@@ -92,14 +127,35 @@ export function RequestsView() {
       </div>
 
       <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
-        {rows.length === 0 ? (
+        {isLoading ? (
+          <div className="grid place-items-center p-12 text-sm text-fg-subtle">
+            Loading…
+          </div>
+        ) : isError ? (
+          <div className="grid place-items-center p-12 text-sm text-red-600">
+            Couldn’t load requests.
+          </div>
+        ) : rows.length === 0 ? (
           <div className="grid place-items-center p-12 text-sm text-fg-subtle">
             No requests here.
           </div>
         ) : (
-          rows.map((r) => <RequestRow key={r.id} req={r} />)
+          rows.map((r) => (
+            <RequestRow key={r.id} req={r} onOpen={() => setSelected(r)} />
+          ))
         )}
       </div>
+
+      <Sheet
+        open={selected !== null}
+        onOpenChange={(open) => !open && setSelected(null)}
+      >
+        <SheetContent>
+          {selected && (
+            <RequestDetail req={selected} onDone={() => setSelected(null)} />
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

@@ -76,6 +76,15 @@ export type PublicStudio = {
   commissionTypes: CommissionType[];
 };
 
+export type RequestInput = {
+  clientName: string;
+  clientEmail: string;
+  commissionTypeId?: string | null;
+  budget?: string | null;
+  deadline?: string | null;
+  message: string;
+};
+
 export const publicApi = {
   // 404 → resolves to null so the page can render a not-found state.
   studio: (handle: string) =>
@@ -85,6 +94,43 @@ export const publicApi = {
         return json<PublicStudio>(res);
       },
     ),
+  submitRequest: (handle: string, body: RequestInput) =>
+    fetch(
+      `/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}/requests`,
+      {
+        method: "POST",
+        headers: jsonHeaders,
+        body: JSON.stringify(body),
+      },
+    ).then(json<{ ok: true; id: string }>),
+};
+
+export type RequestStatus =
+  "new" | "accepted" | "declined" | "converted" | "archived";
+
+export type InboxRequest = {
+  id: string;
+  clientName: string;
+  clientEmail: string;
+  budget: string | null;
+  message: string;
+  status: RequestStatus;
+  createdAt: string;
+  commissionTypeId: string | null;
+  commissionTypeName: string | null;
+};
+
+export const requestsApi = {
+  list: () =>
+    fetch("/api/requests")
+      .then(json<{ requests: InboxRequest[] }>)
+      .then((d) => d.requests),
+  setStatus: (id: string, status: "new" | "accepted" | "declined") =>
+    fetch(`/api/requests/${id}`, {
+      method: "PATCH",
+      headers: jsonHeaders,
+      body: JSON.stringify({ status }),
+    }).then(json<{ request: { id: string; status: RequestStatus } }>),
 };
 
 export const commissionTypesApi = {
