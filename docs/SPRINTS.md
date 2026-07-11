@@ -176,7 +176,7 @@ Completion notes (2026-07-11):
 - [x] PORTAL-002 Build /portal/:token
 - [x] PORTAL-003 Add status timeline
 - [x] PORTAL-004 Add client feedback placeholder
-- [ ] DELIV-001 Add delivery model
+- [x] DELIV-001 Add delivery model
 - [ ] DELIV-002 Build /delivery/:token
 - [ ] DELIV-003 Wire file uploads/downloads to Cloudflare R2
 - [ ] DELIV-004 Add mark delivered action

@@ -6,6 +6,7 @@ import {
   commissionStatus,
   commissions,
   createDb,
+  deliveries,
   quoteItems,
   quotes,
 } from "@mirae/db";
@@ -199,6 +200,70 @@ commissionsRoutes.post("/:id/portal", async (c) => {
       .where(eq(commissions.id, row.id));
   }
   return c.json({ token });
+});
+
+// --- Delivery (one per commission) ----------------------------------------
+
+// GET /api/commissions/:id/delivery — the delivery row (or null).
+commissionsRoutes.get("/:id/delivery", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+  const [row] = await db
+    .select()
+    .from(deliveries)
+    .where(eq(deliveries.commissionId, commissionId))
+    .limit(1);
+  return c.json({ delivery: row ?? null });
+});
+
+// POST /api/commissions/:id/delivery — ensure a delivery exists; optionally
+// set the message. Idempotent (reuses the existing delivery + token).
+commissionsRoutes.post("/:id/delivery", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const body = (await c.req.json().catch(() => ({}))) as { message?: unknown };
+  const message =
+    typeof body.message === "string" ? body.message.trim() || null : undefined;
+
+  const [existing] = await db
+    .select()
+    .from(deliveries)
+    .where(eq(deliveries.commissionId, commissionId))
+    .limit(1);
+
+  if (existing) {
+    if (message !== undefined) {
+      const [row] = await db
+        .update(deliveries)
+        .set({ message })
+        .where(eq(deliveries.id, existing.id))
+        .returning();
+      return c.json({ delivery: row });
+    }
+    return c.json({ delivery: existing });
+  }
+
+  const token = crypto.randomUUID().replace(/-/g, "");
+  const [row] = await db
+    .insert(deliveries)
+    .values({ commissionId, token, message: message ?? null })
+    .returning();
+  return c.json({ delivery: row }, 201);
 });
 
 // --- Quotes (one per commission) -----------------------------------------

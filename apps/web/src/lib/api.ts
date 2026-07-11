@@ -217,6 +217,25 @@ export const commissionsApi = {
     fetch(`/api/commissions/${id}/portal`, { method: "POST" })
       .then(json<{ token: string }>)
       .then((d) => d.token),
+  delivery: (id: string) =>
+    fetch(`/api/commissions/${id}/delivery`)
+      .then(json<{ delivery: Delivery | null }>)
+      .then((d) => d.delivery),
+  ensureDelivery: (id: string, message?: string) =>
+    fetch(`/api/commissions/${id}/delivery`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify(message === undefined ? {} : { message }),
+    }).then(json<{ delivery: Delivery }>),
+};
+
+export type Delivery = {
+  id: string;
+  commissionId: string;
+  token: string;
+  message: string | null;
+  deliveredAt: string | null;
+  createdAt: string;
 };
 
 export type QuoteItem = {
