@@ -64,14 +64,27 @@ export function RequestDetail({
   const { deadline, brief } = splitMessage(req.message);
   const submitted = new Date(req.createdAt).toLocaleString();
 
-  const setStatus = useMutation({
-    mutationFn: (status: "accepted" | "declined") =>
-      requestsApi.setStatus(req.id, status),
+  const decline = useMutation({
+    mutationFn: () => requestsApi.setStatus(req.id, "declined"),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["requests"] });
       onDone();
     },
   });
+
+  // Accept → create a commission and drop it in the queue.
+  const accept = useMutation({
+    mutationFn: () => requestsApi.convert(req.id),
+    onSuccess: async () => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["requests"] }),
+        qc.invalidateQueries({ queryKey: ["commissions"] }),
+      ]);
+      onDone();
+    },
+  });
+
+  const busy = accept.isPending || decline.isPending;
 
   return (
     <>
@@ -110,24 +123,31 @@ export function RequestDetail({
       </SheetBody>
 
       {req.status === "new" && (
-        <SheetFooter>
-          <Button
-            variant="outline"
-            className="flex-1"
-            disabled={setStatus.isPending}
-            onClick={() => setStatus.mutate("declined")}
-          >
-            <Icon icon={Cancel01Icon} strokeWidth={2} />
-            Decline
-          </Button>
-          <Button
-            className="flex-1"
-            disabled={setStatus.isPending}
-            onClick={() => setStatus.mutate("accepted")}
-          >
-            <Icon icon={Tick02Icon} strokeWidth={2} />
-            Accept
-          </Button>
+        <SheetFooter className="flex-col items-stretch gap-2">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="flex-1"
+              disabled={busy}
+              onClick={() => decline.mutate()}
+            >
+              <Icon icon={Cancel01Icon} strokeWidth={2} />
+              Decline
+            </Button>
+            <Button
+              className="flex-1"
+              disabled={busy}
+              onClick={() => accept.mutate()}
+            >
+              <Icon icon={Tick02Icon} strokeWidth={2} />
+              {accept.isPending ? "Accepting…" : "Accept & add to queue"}
+            </Button>
+          </div>
+          {accept.isError && (
+            <p className="text-sm text-red-600">
+              {(accept.error as Error).message}
+            </p>
+          )}
         </SheetFooter>
       )}
     </>

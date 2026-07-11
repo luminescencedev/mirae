@@ -1,6 +1,11 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Badge,
   Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Icon,
   SheetBody,
   SheetFooter,
@@ -8,67 +13,110 @@ import {
   SheetTitle,
   cn,
 } from "@mirae/ui";
-import { ArrowRight01Icon, Message01Icon } from "@hugeicons/core-free-icons";
-import type { Commission } from "../mockups/seed.ts";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import {
+  commissionsApi,
+  type CommissionStatus,
+  type QueueCommission,
+} from "../../lib/api.ts";
+import {
+  STATUS_META,
+  STATUS_ORDER,
+  dueLabel,
+  euro,
+} from "../../lib/commissions.ts";
 
-const STAGES = [
-  "New request",
-  "Quote sent",
-  "In progress",
-  "Review",
-  "Delivered",
+// Condensed milestones over the full lifecycle (indexes into STATUS_ORDER).
+const MILESTONES: { label: string; at: number }[] = [
+  { label: "New request", at: 0 },
+  { label: "Quote sent", at: 1 },
+  { label: "Queued", at: 3 },
+  { label: "In progress", at: 4 },
+  { label: "Review", at: 5 },
+  { label: "Delivered", at: 8 },
 ];
 
-// Map a commission's status label to its stage index.
-function stageIndex(label: string): number {
-  if (label === "Needs quote") return 1;
-  if (label === "Sketch" || label === "Line art") return 2;
-  if (label === "Revision 1" || label === "Final review") return 3;
-  if (label === "Delivered") return 4;
-  return 0;
+function Meta({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-lg border border-border bg-surface-muted p-3">
+      <p className="text-xs text-fg-subtle">{label}</p>
+      <p className="mt-1 text-sm font-semibold text-fg">{children}</p>
+    </div>
+  );
 }
 
-export function CommissionDetail({ item }: { item: Commission }) {
-  const current = stageIndex(item.statusLabel);
+export function CommissionDetail({ item }: { item: QueueCommission }) {
+  const qc = useQueryClient();
+  const meta = STATUS_META[item.status];
+  const idx = STATUS_ORDER.indexOf(item.status);
+  const next =
+    idx >= 0 && idx < STATUS_ORDER.length - 1 ? STATUS_ORDER[idx + 1] : null;
+
+  const activityKey = ["commissions", item.id, "activity"];
+  const { data: activity = [] } = useQuery({
+    queryKey: activityKey,
+    queryFn: () => commissionsApi.activity(item.id),
+  });
+
+  const setStatus = useMutation({
+    mutationFn: (status: CommissionStatus) =>
+      commissionsApi.update(item.id, { status }),
+    onSuccess: () =>
+      Promise.all([
+        qc.invalidateQueries({ queryKey: ["commissions"] }),
+        qc.invalidateQueries({ queryKey: activityKey }),
+      ]),
+  });
 
   return (
     <>
       <SheetHeader className="pr-12">
-        <p className="text-xs text-fg-subtle">Client · {item.client}</p>
-        <SheetTitle className="mt-0.5">{item.type}</SheetTitle>
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          {item.tags.map((t) => (
-            <Badge key={t.label} variant={t.variant}>
-              {t.label}
-            </Badge>
-          ))}
+        <p className="text-xs text-fg-subtle">
+          Client · {item.clientName ?? "—"}
+        </p>
+        <SheetTitle className="mt-0.5">{item.title}</SheetTitle>
+        <div className="mt-2">
+          <Badge variant="neutral">
+            <span className={cn("mr-1.5 size-1.5 rounded-full", meta.dot)} />
+            {meta.label}
+          </Badge>
         </div>
       </SheetHeader>
 
       <SheetBody className="flex flex-col gap-6">
-        {/* Meta */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-lg border border-border bg-surface-muted p-3">
-            <p className="text-xs text-fg-subtle">Quote</p>
-            <p className="mt-1 text-lg font-semibold tabular-nums text-fg">
-              {item.price}
-            </p>
-          </div>
-          <div className="rounded-lg border border-border bg-surface-muted p-3">
-            <p className="text-xs text-fg-subtle">Deadline</p>
-            <p className="mt-1 text-lg font-semibold text-fg">{item.due}</p>
-          </div>
+          <Meta label="Price">{euro(item.priceCents)}</Meta>
+          <Meta label="Paid">{euro(item.paidCents)}</Meta>
+          <Meta label="Deadline">{dueLabel(item.deadline)}</Meta>
+          <Meta label="Client email">
+            {item.clientEmail ? (
+              <a
+                href={`mailto:${item.clientEmail}`}
+                className="text-accent-700 hover:underline"
+              >
+                {item.clientEmail}
+              </a>
+            ) : (
+              "—"
+            )}
+          </Meta>
         </div>
 
-        {/* Status timeline */}
         <div>
-          <p className="mb-3 text-sm font-semibold">Status</p>
+          <p className="mb-3 text-sm font-semibold">Progress</p>
           <ol className="flex flex-col gap-0.5">
-            {STAGES.map((s, i) => {
-              const done = i < current;
-              const active = i === current;
+            {MILESTONES.map((m, i) => {
+              const nextAt = MILESTONES[i + 1]?.at ?? Infinity;
+              const done = idx >= nextAt;
+              const active = idx >= m.at && idx < nextAt;
               return (
-                <li key={s} className="flex items-center gap-3 py-1">
+                <li key={m.label} className="flex items-center gap-3 py-1">
                   <span
                     className={cn(
                       "flex size-4 items-center justify-center rounded-full",
@@ -96,11 +144,11 @@ export function CommissionDetail({ item }: { item: Commission }) {
                           : "text-fg-subtle",
                     )}
                   >
-                    {s}
+                    {m.label}
                   </span>
                   {active && (
                     <span className="ml-auto text-xs text-accent-700">
-                      {item.statusLabel}
+                      {meta.label}
                     </span>
                   )}
                 </li>
@@ -109,26 +157,60 @@ export function CommissionDetail({ item }: { item: Commission }) {
           </ol>
         </div>
 
-        {/* Brief */}
         <div>
-          <p className="mb-2 text-sm font-semibold">Brief</p>
-          <p className="text-sm leading-relaxed text-fg-muted">
-            {item.client} requested a {item.type.toLowerCase()}. References
-            attached in the client portal; palette and pose notes included. Two
-            revision rounds agreed.
-          </p>
+          <p className="mb-3 text-sm font-semibold">Activity</p>
+          {activity.length === 0 ? (
+            <p className="text-sm text-fg-subtle">No activity yet.</p>
+          ) : (
+            <ol className="flex flex-col gap-3">
+              {activity.map((a) => (
+                <li key={a.id} className="flex gap-3">
+                  <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-border-strong" />
+                  <div className="min-w-0">
+                    <p className="text-sm text-fg">{a.message}</p>
+                    <p className="text-xs text-fg-subtle">
+                      {new Date(a.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
         </div>
       </SheetBody>
 
       <SheetFooter>
-        <Button variant="outline" className="flex-1">
-          <Icon icon={Message01Icon} strokeWidth={1.8} />
-          Message
-        </Button>
-        <Button className="flex-1">
-          Advance status
-          <Icon icon={ArrowRight01Icon} strokeWidth={1.8} />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" disabled={setStatus.isPending}>
+              Change status
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            {STATUS_ORDER.map((s) => (
+              <DropdownMenuItem
+                key={s}
+                onSelect={() => setStatus.mutate(s)}
+                className={cn(s === item.status && "bg-surface-muted")}
+              >
+                <span
+                  className={cn("size-1.5 rounded-full", STATUS_META[s].dot)}
+                />
+                {STATUS_META[s].label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {next && (
+          <Button
+            className="flex-1"
+            disabled={setStatus.isPending}
+            onClick={() => setStatus.mutate(next)}
+          >
+            Advance to {STATUS_META[next].label}
+            <Icon icon={ArrowRight01Icon} strokeWidth={1.8} />
+          </Button>
+        )}
       </SheetFooter>
     </>
   );
