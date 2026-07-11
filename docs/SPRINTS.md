@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 4 — Commission types and public page
+Sprint 5 — Request form and inbox
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -93,14 +93,25 @@ Completion notes (2026-07-11):
 - Known issues / follow-ups: the **seed user has no password** (created via direct insert) — log in via `/signup` or the demo `demo@mirae.test` / `commissions123`. App screens still show seed/mock data (not yet the logged-in user's real commissions — later sprints). Prod deploy (wrangler secrets, subdomain→/app) = Sprint 4/deploy. Onboarding doesn't yet redirect existing-profile users or gate `/app` on profile presence.
 - **Next sprint:** Sprint 4 — Commission types and public page (first ticket CT-001: commission types API).
 
-## Sprint 4 — Commission types and public page
+## Sprint 4 — Commission types and public page ✅ complete
 
 - [x] CT-001 Add commission types API
 - [x] CT-002 Add commission types UI
 - [x] CT-003 Add artist profile editor basics
 - [x] CT-004 Connect public @artist page to DB
 - [x] CT-005 Add open/closed/waitlist state
-- [ ] CT-006 Add social bot user-agent detection + dynamic OG HTML for /@:handle
+- [x] CT-006 Add social bot user-agent detection + dynamic OG HTML for /@:handle
+
+Acceptance: artist can define commission types + edit their profile/status · public `/@handle` page is DB-driven (no more seed) with 404 on unknown handles · public page reflects open/waitlist/closed · social crawlers get server-rendered OG meta. **All met.**
+
+Completion notes (2026-07-11):
+
+- End-to-end verified live on the Worker (:8787): commission-types CRUD + `PATCH /api/artists/me` persist · `GET /api/studio/@rainaoki` returns the real profile + 3 active types, `@demostudio` (waitlist, no types), unknown handle → 404 · Discordbot UA on `/@rainaoki` → server-rendered HTML with `og:title`/`og:description`, browser UA → SPA shell · SPA fallback serves index.html for `/login`, `/app/*`, `/@handle` while real assets still 200. lint/typecheck/build/format green.
+- **API**: new public `GET /api/studio/:handle` (no auth, active types only, sorted); `PATCH /api/artists/me` (display name/tagline/bio/status). Bot branch in the Worker (`src/lib/og.ts`: `isSocialBot` + `renderStudioOg`) ahead of the SPA fallback.
+- **Web**: Studio page profile editor (`ProfileEditor`) above the commission-types editor; public `ArtistPage` rewritten data-driven (TanStack Query, loading / not-found / empty states, price cents→€) with open/waitlist/closed CTA behavior.
+- **Fix**: `run_worker_first` made the Worker 404 on client routes; added `serveSpa()` index.html fallback (needed for the Sprint-4 deploy; dev was masked by vite).
+- Known issues / follow-ups: OG has no `og:image` yet (summary card, no large image) — add when brand/OG art exists. Subdomain→/app host mapping + wrangler secrets still deferred to deploy. Public page still can't actually submit a request (Sprint 5). Backlog: ⌘K palette, onboarding flow + first-run tour, Studio page live preview split.
+- **Next sprint:** Sprint 5 — Request form and inbox (first ticket REQ-001: connect the public request form to the API).
 
 ## Sprint 5 — Request form and inbox
 
