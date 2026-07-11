@@ -173,7 +173,7 @@ Completion notes (2026-07-11):
 ## Sprint 8 — Client portal and delivery
 
 - [x] PORTAL-001 Generate portal token
-- [ ] PORTAL-002 Build /portal/:token
+- [x] PORTAL-002 Build /portal/:token
 - [ ] PORTAL-003 Add status timeline
 - [ ] PORTAL-004 Add client feedback placeholder
 - [ ] DELIV-001 Add delivery model

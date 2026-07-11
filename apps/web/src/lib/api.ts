@@ -85,8 +85,25 @@ export type RequestInput = {
   message: string;
 };
 
+export type PortalView = {
+  commission: {
+    title: string;
+    status: CommissionStatus;
+    deadline: string | null;
+    priceCents: number | null;
+    paidCents: number;
+  };
+  artist: { displayName: string; handle: string } | null;
+  quote: { totalCents: number; status: QuoteStatus } | null;
+};
+
 export const publicApi = {
   // 404 → resolves to null so the page can render a not-found state.
+  portal: (token: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}`).then(async (res) => {
+      if (res.status === 404) return null;
+      return json<PortalView>(res);
+    }),
   studio: (handle: string) =>
     fetch(`/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}`).then(
       async (res) => {
