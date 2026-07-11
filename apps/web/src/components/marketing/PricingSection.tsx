@@ -91,7 +91,9 @@ export function PricingSection() {
               variant={t.featured ? "default" : "outline"}
               className="mt-6 w-full"
             >
-              <Link to="/signup">Get started</Link>
+              <Link to="/signup" reloadDocument>
+                Get started
+              </Link>
             </Button>
           </div>
         ))}
