@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Icon, cn } from "@mirae/ui";
+import { Button, Icon, Textarea, cn } from "@mirae/ui";
 import { CubeIcon } from "@hugeicons/core-free-icons";
 import { Link } from "@tanstack/react-router";
 import { publicApi } from "../../lib/api.ts";
@@ -22,6 +23,39 @@ function Shell({ children }: { children: React.ReactNode }) {
         </Link>
       </div>
     </div>
+  );
+}
+
+function Feedback({ artistName }: { artistName: string }) {
+  const [note, setNote] = useState("");
+  const [sent, setSent] = useState(false);
+
+  if (sent) {
+    return (
+      <div className="mt-3 rounded-xl border border-border bg-surface p-5 text-center text-sm text-fg-muted shadow-soft">
+        Thanks — your note was shared with {artistName}.
+      </div>
+    );
+  }
+  return (
+    <form
+      className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (note.trim()) setSent(true);
+      }}
+    >
+      <p className="mb-2 text-sm font-semibold text-fg">Leave a note</p>
+      <Textarea
+        rows={3}
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="A question or feedback for the artist…"
+      />
+      <Button type="submit" size="sm" className="mt-3" disabled={!note.trim()}>
+        Send note
+      </Button>
+    </form>
   );
 }
 
@@ -143,6 +177,8 @@ export function PortalPage({ token }: { token: string }) {
           </p>
         </div>
       )}
+
+      <Feedback artistName={artist?.displayName ?? "the artist"} />
     </Shell>
   );
 }
