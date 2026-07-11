@@ -138,6 +138,65 @@ export const requestsApi = {
     ),
 };
 
+export type CommissionStatus =
+  | "new_request"
+  | "quote_sent"
+  | "waiting_deposit"
+  | "queued"
+  | "sketch"
+  | "review"
+  | "revision"
+  | "final"
+  | "delivered"
+  | "archived";
+
+export type QueueCommission = {
+  id: string;
+  title: string;
+  status: CommissionStatus;
+  priceCents: number | null;
+  paidCents: number;
+  deadline: string | null;
+  requestId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  clientName: string | null;
+  clientEmail: string | null;
+};
+
+export type CommissionActivity = {
+  id: string;
+  type: string;
+  message: string;
+  createdAt: string;
+};
+
+export const commissionsApi = {
+  list: () =>
+    fetch("/api/commissions")
+      .then(json<{ commissions: QueueCommission[] }>)
+      .then((d) => d.commissions),
+  update: (
+    id: string,
+    body: {
+      title?: string;
+      status?: CommissionStatus;
+      priceCents?: number | null;
+      paidCents?: number;
+      deadline?: string | null;
+    },
+  ) =>
+    fetch(`/api/commissions/${id}`, {
+      method: "PATCH",
+      headers: jsonHeaders,
+      body: JSON.stringify(body),
+    }).then(json<{ commission: QueueCommission }>),
+  activity: (id: string) =>
+    fetch(`/api/commissions/${id}/activity`)
+      .then(json<{ activity: CommissionActivity[] }>)
+      .then((d) => d.activity),
+};
+
 export const commissionTypesApi = {
   list: () =>
     fetch("/api/commission-types")

@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import {
-  Button,
-  Icon,
   Sheet,
   SheetContent,
   Tabs,
@@ -11,12 +10,11 @@ import {
   TabsList,
   TabsTrigger,
 } from "@mirae/ui";
-import { Add01Icon } from "@hugeicons/core-free-icons";
 import { PageHeader } from "../../components/app-shell/PageHeader.tsx";
 import { CommissionDetail } from "../../components/app-shell/CommissionDetail.tsx";
 import { QueueView } from "../../components/app-shell/views/QueueView.tsx";
 import { QueueListView } from "../../components/app-shell/views/QueueListView.tsx";
-import type { Commission } from "../../components/mockups/seed.ts";
+import { commissionsApi } from "../../lib/api.ts";
 
 const ENTER = {
   initial: { opacity: 0, y: 8 },
@@ -25,18 +23,25 @@ const ENTER = {
 };
 
 function Queue() {
-  const [selected, setSelected] = useState<Commission | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { data: commissions = [], isLoading } = useQuery({
+    queryKey: ["commissions"],
+    queryFn: commissionsApi.list,
+  });
+
+  const selected = commissions.find((c) => c.id === selectedId) ?? null;
+  const active = commissions.filter(
+    (c) => c.status !== "delivered" && c.status !== "archived",
+  ).length;
 
   return (
     <>
       <PageHeader
         title="Commission queue"
-        subtitle="5 active commissions · 2 awaiting your quote"
-        action={
-          <Button>
-            <Icon icon={Add01Icon} strokeWidth={1.8} />
-            New commission
-          </Button>
+        subtitle={
+          isLoading
+            ? "Loading…"
+            : `${commissions.length} commission${commissions.length === 1 ? "" : "s"} · ${active} active`
         }
       />
       <div className="px-6 py-6">
@@ -47,11 +52,14 @@ function Queue() {
             <TabsTrigger value="calendar">Calendar</TabsTrigger>
           </TabsList>
           <TabsContent value="board" className="mt-5">
-            <QueueView onSelect={setSelected} />
+            <QueueView commissions={commissions} onSelect={(c) => setSelectedId(c.id)} />
           </TabsContent>
           <TabsContent value="list" className="mt-5">
             <motion.div {...ENTER}>
-              <QueueListView onSelect={setSelected} />
+              <QueueListView
+                commissions={commissions}
+                onSelect={(c) => setSelectedId(c.id)}
+              />
             </motion.div>
           </TabsContent>
           <TabsContent value="calendar" className="mt-5">
@@ -67,7 +75,7 @@ function Queue() {
 
       <Sheet
         open={selected !== null}
-        onOpenChange={(o) => !o && setSelected(null)}
+        onOpenChange={(o) => !o && setSelectedId(null)}
       >
         <SheetContent>
           {selected && <CommissionDetail item={selected} />}
