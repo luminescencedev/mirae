@@ -105,6 +105,28 @@ export const publicApi = {
     ).then(json<{ ok: true; id: string }>),
 };
 
+export type RequestStatus =
+  "new" | "accepted" | "declined" | "converted" | "archived";
+
+export type InboxRequest = {
+  id: string;
+  clientName: string;
+  clientEmail: string;
+  budget: string | null;
+  message: string;
+  status: RequestStatus;
+  createdAt: string;
+  commissionTypeId: string | null;
+  commissionTypeName: string | null;
+};
+
+export const requestsApi = {
+  list: () =>
+    fetch("/api/requests")
+      .then(json<{ requests: InboxRequest[] }>)
+      .then((d) => d.requests),
+};
+
 export const commissionTypesApi = {
   list: () =>
     fetch("/api/commission-types")

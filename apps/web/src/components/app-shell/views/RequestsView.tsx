@@ -1,13 +1,16 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Badge, Button, Icon, cn } from "@mirae/ui";
 import { Cancel01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import {
-  REQUESTS,
-  type CommissionRequest,
+  requestsApi,
+  type InboxRequest,
   type RequestStatus,
-} from "../../mockups/seed.ts";
+} from "../../../lib/api.ts";
 
-const FILTERS: { key: "all" | RequestStatus; label: string }[] = [
+type Filter = "all" | "new" | "accepted" | "declined";
+
+const FILTERS: { key: Filter; label: string }[] = [
   { key: "all", label: "All" },
   { key: "new", label: "New" },
   { key: "accepted", label: "Accepted" },
@@ -21,9 +24,24 @@ const STATUS_BADGE: Record<
   new: { variant: "accent", label: "New" },
   accepted: { variant: "emerald", label: "Accepted" },
   declined: { variant: "neutral", label: "Declined" },
+  converted: { variant: "emerald", label: "Converted" },
+  archived: { variant: "neutral", label: "Archived" },
 };
 
-function RequestRow({ req }: { req: CommissionRequest }) {
+// Compact relative time ("just now", "3h", "2d", or a date).
+function relativeTime(iso: string): string {
+  const then = new Date(iso).getTime();
+  const mins = Math.round((Date.now() - then) / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.round(hours / 24);
+  if (days < 7) return `${days}d`;
+  return new Date(iso).toLocaleDateString();
+}
+
+function RequestRow({ req }: { req: InboxRequest }) {
   const badge = STATUS_BADGE[req.status];
   return (
     <div className="flex gap-3 p-4 transition-colors hover:bg-surface-muted">
@@ -31,17 +49,23 @@ function RequestRow({ req }: { req: CommissionRequest }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="truncate text-sm font-medium text-fg">
-            {req.client}
+            {req.clientName}
           </span>
           <Badge variant={badge.variant}>{badge.label}</Badge>
           <span className="ml-auto shrink-0 text-xs tabular-nums text-fg-subtle">
-            {req.time}
+            {relativeTime(req.createdAt)}
           </span>
         </div>
         <p className="mt-0.5 text-xs text-fg-muted">
-          {req.type} · <span className="tabular-nums">{req.budget}</span>
+          {req.commissionTypeName ?? "No type"}
+          {req.budget && (
+            <>
+              {" · "}
+              <span className="tabular-nums">{req.budget}</span>
+            </>
+          )}
         </p>
-        <p className="mt-1.5 line-clamp-2 text-sm text-fg-muted">
+        <p className="mt-1.5 line-clamp-2 whitespace-pre-line text-sm text-fg-muted">
           {req.message}
         </p>
         {req.status === "new" && (
@@ -62,8 +86,14 @@ function RequestRow({ req }: { req: CommissionRequest }) {
 }
 
 export function RequestsView() {
-  const [filter, setFilter] = useState<"all" | RequestStatus>("all");
-  const rows = REQUESTS.filter((r) => filter === "all" || r.status === filter);
+  const [filter, setFilter] = useState<Filter>("all");
+  const {
+    data: requests = [],
+    isLoading,
+    isError,
+  } = useQuery({ queryKey: ["requests"], queryFn: requestsApi.list });
+
+  const rows = requests.filter((r) => filter === "all" || r.status === filter);
 
   return (
     <div className="flex flex-col gap-4">
@@ -71,8 +101,8 @@ export function RequestsView() {
         {FILTERS.map((f) => {
           const count =
             f.key === "all"
-              ? REQUESTS.length
-              : REQUESTS.filter((r) => r.status === f.key).length;
+              ? requests.length
+              : requests.filter((r) => r.status === f.key).length;
           return (
             <button
               key={f.key}
@@ -92,7 +122,15 @@ export function RequestsView() {
       </div>
 
       <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
-        {rows.length === 0 ? (
+        {isLoading ? (
+          <div className="grid place-items-center p-12 text-sm text-fg-subtle">
+            Loading…
+          </div>
+        ) : isError ? (
+          <div className="grid place-items-center p-12 text-sm text-red-600">
+            Couldn’t load requests.
+          </div>
+        ) : rows.length === 0 ? (
           <div className="grid place-items-center p-12 text-sm text-fg-subtle">
             No requests here.
           </div>
