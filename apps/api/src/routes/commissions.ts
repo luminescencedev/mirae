@@ -6,13 +6,15 @@ import {
   commissionStatus,
   commissions,
   createDb,
+  deliveries,
+  files,
   quoteItems,
   quotes,
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
 
-type Bindings = AuthEnv & { ASSETS: Fetcher };
+type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
 export const commissionsRoutes = new Hono<{ Bindings: Bindings }>();
 
@@ -69,6 +71,7 @@ commissionsRoutes.get("/", async (c) => {
       paidCents: commissions.paidCents,
       deadline: commissions.deadline,
       requestId: commissions.requestId,
+      portalToken: commissions.portalToken,
       createdAt: commissions.createdAt,
       updatedAt: commissions.updatedAt,
       clientName: commissionRequests.clientName,
@@ -169,6 +172,230 @@ commissionsRoutes.get("/:id/activity", async (c) => {
     )
     .orderBy(desc(activityLogs.createdAt));
   return c.json({ activity: rows });
+});
+
+// POST /api/commissions/:id/portal — ensure the commission has a client
+// portal token; returns it (idempotent — reuses an existing token).
+commissionsRoutes.post("/:id/portal", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const [row] = await db
+    .select({ id: commissions.id, portalToken: commissions.portalToken })
+    .from(commissions)
+    .where(
+      and(
+        eq(commissions.id, c.req.param("id")),
+        eq(commissions.artistId, artist.id),
+      ),
+    )
+    .limit(1);
+  if (!row) return c.json({ error: "not found" }, 404);
+
+  let token = row.portalToken;
+  if (!token) {
+    token = crypto.randomUUID().replace(/-/g, "");
+    await db
+      .update(commissions)
+      .set({ portalToken: token })
+      .where(eq(commissions.id, row.id));
+  }
+  return c.json({ token });
+});
+
+// --- Delivery (one per commission) ----------------------------------------
+
+// GET /api/commissions/:id/delivery — the delivery row (or null).
+commissionsRoutes.get("/:id/delivery", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+  const [row] = await db
+    .select()
+    .from(deliveries)
+    .where(eq(deliveries.commissionId, commissionId))
+    .limit(1);
+  return c.json({ delivery: row ?? null });
+});
+
+// POST /api/commissions/:id/delivery — ensure a delivery exists; optionally
+// set the message. Idempotent (reuses the existing delivery + token).
+commissionsRoutes.post("/:id/delivery", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const body = (await c.req.json().catch(() => ({}))) as { message?: unknown };
+  const message =
+    typeof body.message === "string" ? body.message.trim() || null : undefined;
+
+  const [existing] = await db
+    .select()
+    .from(deliveries)
+    .where(eq(deliveries.commissionId, commissionId))
+    .limit(1);
+
+  if (existing) {
+    if (message !== undefined) {
+      const [row] = await db
+        .update(deliveries)
+        .set({ message })
+        .where(eq(deliveries.id, existing.id))
+        .returning();
+      return c.json({ delivery: row });
+    }
+    return c.json({ delivery: existing });
+  }
+
+  const token = crypto.randomUUID().replace(/-/g, "");
+  const [row] = await db
+    .insert(deliveries)
+    .values({ commissionId, token, message: message ?? null })
+    .returning();
+  return c.json({ delivery: row }, 201);
+});
+
+// POST /api/commissions/:id/delivery/deliver — mark delivered: stamp the
+// delivery, move the commission to "delivered", log activity.
+commissionsRoutes.post("/:id/delivery/deliver", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const [delivery] = await db
+    .select()
+    .from(deliveries)
+    .where(eq(deliveries.commissionId, commissionId))
+    .limit(1);
+  if (!delivery) return c.json({ error: "Prepare a delivery first." }, 400);
+
+  const [updated] = await db
+    .update(deliveries)
+    .set({ deliveredAt: new Date() })
+    .where(eq(deliveries.id, delivery.id))
+    .returning();
+  await db
+    .update(commissions)
+    .set({ status: "delivered" })
+    .where(eq(commissions.id, commissionId));
+  await db.insert(activityLogs).values({
+    artistId: artist.id,
+    commissionId,
+    type: "delivery",
+    message: "Marked as delivered",
+  });
+  return c.json({ delivery: updated });
+});
+
+// --- Files (deliverables in R2) -------------------------------------------
+
+// GET /api/commissions/:id/files — the commission's files.
+commissionsRoutes.get("/:id/files", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+  const rows = await db
+    .select({
+      id: files.id,
+      name: files.name,
+      sizeBytes: files.sizeBytes,
+      kind: files.kind,
+      createdAt: files.createdAt,
+    })
+    .from(files)
+    .where(eq(files.commissionId, commissionId))
+    .orderBy(desc(files.createdAt));
+  return c.json({ files: rows });
+});
+
+// POST /api/commissions/:id/files — upload a deliverable to R2 (multipart).
+commissionsRoutes.post("/:id/files", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const form = await c.req.formData().catch(() => null);
+  const file = form?.get("file");
+  if (!(file instanceof File)) return c.json({ error: "No file." }, 400);
+
+  const key = `commissions/${commissionId}/${crypto.randomUUID()}-${file.name}`;
+  await c.env.FILES.put(key, await file.arrayBuffer(), {
+    httpMetadata: { contentType: file.type || "application/octet-stream" },
+  });
+  const [row] = await db
+    .insert(files)
+    .values({
+      commissionId,
+      kind: "deliverable",
+      key,
+      name: file.name,
+      sizeBytes: file.size,
+    })
+    .returning({
+      id: files.id,
+      name: files.name,
+      sizeBytes: files.sizeBytes,
+      kind: files.kind,
+      createdAt: files.createdAt,
+    });
+  return c.json({ file: row }, 201);
+});
+
+// DELETE /api/commissions/:id/files/:fileId — remove a file (R2 + row).
+commissionsRoutes.delete("/:id/files/:fileId", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+  const [row] = await db
+    .select({ id: files.id, key: files.key })
+    .from(files)
+    .where(
+      and(
+        eq(files.id, c.req.param("fileId")),
+        eq(files.commissionId, commissionId),
+      ),
+    )
+    .limit(1);
+  if (!row) return c.json({ error: "not found" }, 404);
+  await c.env.FILES.delete(row.key);
+  await db.delete(files).where(eq(files.id, row.id));
+  return c.json({ ok: true });
 });
 
 // --- Quotes (one per commission) -----------------------------------------

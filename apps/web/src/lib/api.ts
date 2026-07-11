@@ -85,8 +85,44 @@ export type RequestInput = {
   message: string;
 };
 
+export type PortalView = {
+  commission: {
+    title: string;
+    status: CommissionStatus;
+    deadline: string | null;
+    priceCents: number | null;
+    paidCents: number;
+  };
+  artist: { displayName: string; handle: string } | null;
+  quote: { totalCents: number; status: QuoteStatus } | null;
+};
+
+export type DeliveryFile = {
+  id: string;
+  name: string;
+  sizeBytes: number | null;
+  kind: string;
+};
+
+export type DeliveryView = {
+  delivery: { message: string | null; deliveredAt: string | null };
+  commission: { title: string };
+  artist: { displayName: string } | null;
+  files: DeliveryFile[];
+};
+
 export const publicApi = {
   // 404 → resolves to null so the page can render a not-found state.
+  delivery: (token: string) =>
+    fetch(`/api/delivery/${encodeURIComponent(token)}`).then(async (res) => {
+      if (res.status === 404) return null;
+      return json<DeliveryView>(res);
+    }),
+  portal: (token: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}`).then(async (res) => {
+      if (res.status === 404) return null;
+      return json<PortalView>(res);
+    }),
   studio: (handle: string) =>
     fetch(`/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}`).then(
       async (res) => {
@@ -158,6 +194,7 @@ export type QueueCommission = {
   paidCents: number;
   deadline: string | null;
   requestId: string | null;
+  portalToken: string | null;
   createdAt: string;
   updatedAt: string;
   clientName: string | null;
@@ -195,6 +232,57 @@ export const commissionsApi = {
     fetch(`/api/commissions/${id}/activity`)
       .then(json<{ activity: CommissionActivity[] }>)
       .then((d) => d.activity),
+  generatePortal: (id: string) =>
+    fetch(`/api/commissions/${id}/portal`, { method: "POST" })
+      .then(json<{ token: string }>)
+      .then((d) => d.token),
+  delivery: (id: string) =>
+    fetch(`/api/commissions/${id}/delivery`)
+      .then(json<{ delivery: Delivery | null }>)
+      .then((d) => d.delivery),
+  ensureDelivery: (id: string, message?: string) =>
+    fetch(`/api/commissions/${id}/delivery`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify(message === undefined ? {} : { message }),
+    }).then(json<{ delivery: Delivery }>),
+  files: (id: string) =>
+    fetch(`/api/commissions/${id}/files`)
+      .then(json<{ files: CommissionFile[] }>)
+      .then((d) => d.files),
+  uploadFile: (id: string, file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return fetch(`/api/commissions/${id}/files`, {
+      method: "POST",
+      body: fd,
+    }).then(json<{ file: CommissionFile }>);
+  },
+  removeFile: (id: string, fileId: string) =>
+    fetch(`/api/commissions/${id}/files/${fileId}`, {
+      method: "DELETE",
+    }).then(json<{ ok: true }>),
+  markDelivered: (id: string) =>
+    fetch(`/api/commissions/${id}/delivery/deliver`, {
+      method: "POST",
+    }).then(json<{ delivery: Delivery }>),
+};
+
+export type CommissionFile = {
+  id: string;
+  name: string;
+  sizeBytes: number | null;
+  kind: string;
+  createdAt: string;
+};
+
+export type Delivery = {
+  id: string;
+  commissionId: string;
+  token: string;
+  message: string | null;
+  deliveredAt: string | null;
+  createdAt: string;
 };
 
 export type QuoteItem = {

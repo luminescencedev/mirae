@@ -55,6 +55,31 @@ export const COLUMNS: {
   },
 ];
 
+// Condensed client-facing milestones (indexes into STATUS_ORDER).
+const MILESTONES: { label: string; at: number }[] = [
+  { label: "New request", at: 0 },
+  { label: "Quote sent", at: 1 },
+  { label: "Queued", at: 3 },
+  { label: "In progress", at: 4 },
+  { label: "Review", at: 5 },
+  { label: "Delivered", at: 8 },
+];
+
+export type MilestoneState = "done" | "active" | "todo";
+
+// Milestone list with each step's state for the current commission status.
+export function milestones(
+  status: CommissionStatus,
+): { label: string; state: MilestoneState }[] {
+  const idx = STATUS_ORDER.indexOf(status);
+  return MILESTONES.map((m, i) => {
+    const nextAt = MILESTONES[i + 1]?.at ?? Infinity;
+    if (idx >= nextAt) return { label: m.label, state: "done" };
+    if (idx >= m.at) return { label: m.label, state: "active" };
+    return { label: m.label, state: "todo" };
+  });
+}
+
 export function euro(cents: number | null): string {
   return cents == null ? "—" : `€${(cents / 100).toLocaleString()}`;
 }

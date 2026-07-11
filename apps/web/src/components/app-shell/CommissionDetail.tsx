@@ -15,6 +15,7 @@ import {
 } from "@mirae/ui";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { QuoteEditor } from "./QuoteEditor.tsx";
+import { DeliverySection } from "./DeliverySection.tsx";
 import {
   commissionsApi,
   type CommissionStatus,
@@ -25,17 +26,8 @@ import {
   STATUS_ORDER,
   dueLabel,
   euro,
+  milestones,
 } from "../../lib/commissions.ts";
-
-// Condensed milestones over the full lifecycle (indexes into STATUS_ORDER).
-const MILESTONES: { label: string; at: number }[] = [
-  { label: "New request", at: 0 },
-  { label: "Quote sent", at: 1 },
-  { label: "Queued", at: 3 },
-  { label: "In progress", at: 4 },
-  { label: "Review", at: 5 },
-  { label: "Delivered", at: 8 },
-];
 
 function Meta({
   label,
@@ -83,6 +75,15 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
     onSuccess: invalidate,
   });
 
+  const genPortal = useMutation({
+    mutationFn: () => commissionsApi.generatePortal(item.id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["commissions"] }),
+  });
+
+  const portalUrl = item.portalToken
+    ? `${window.location.origin}/portal/${item.portalToken}`
+    : null;
+
   const price = item.priceCents ?? 0;
   const paidState =
     item.paidCents <= 0
@@ -128,50 +129,75 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
         <div>
           <p className="mb-3 text-sm font-semibold">Progress</p>
           <ol className="flex flex-col gap-0.5">
-            {MILESTONES.map((m, i) => {
-              const nextAt = MILESTONES[i + 1]?.at ?? Infinity;
-              const done = idx >= nextAt;
-              const active = idx >= m.at && idx < nextAt;
-              return (
-                <li key={m.label} className="flex items-center gap-3 py-1">
-                  <span
-                    className={cn(
-                      "flex size-4 items-center justify-center rounded-full",
-                      active
-                        ? "bg-accent-500"
-                        : done
-                          ? "bg-emerald-500"
-                          : "bg-surface-sunken ring-1 ring-inset ring-border",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "size-1.5 rounded-full",
-                        active || done ? "bg-white" : "bg-fg-subtle",
-                      )}
-                    />
-                  </span>
-                  <span
-                    className={cn(
-                      "text-sm",
-                      active
-                        ? "font-medium text-fg"
-                        : done
-                          ? "text-fg-muted"
-                          : "text-fg-subtle",
-                    )}
-                  >
-                    {m.label}
-                  </span>
-                  {active && (
-                    <span className="ml-auto text-xs text-accent-700">
-                      {meta.label}
-                    </span>
+            {milestones(item.status).map((m) => (
+              <li key={m.label} className="flex items-center gap-3 py-1">
+                <span
+                  className={cn(
+                    "flex size-4 items-center justify-center rounded-full",
+                    m.state === "active"
+                      ? "bg-accent-500"
+                      : m.state === "done"
+                        ? "bg-emerald-500"
+                        : "bg-surface-sunken ring-1 ring-inset ring-border",
                   )}
-                </li>
-              );
-            })}
+                >
+                  <span
+                    className={cn(
+                      "size-1.5 rounded-full",
+                      m.state !== "todo" ? "bg-white" : "bg-fg-subtle",
+                    )}
+                  />
+                </span>
+                <span
+                  className={cn(
+                    "text-sm",
+                    m.state === "active"
+                      ? "font-medium text-fg"
+                      : m.state === "done"
+                        ? "text-fg-muted"
+                        : "text-fg-subtle",
+                  )}
+                >
+                  {m.label}
+                </span>
+                {m.state === "active" && (
+                  <span className="ml-auto text-xs text-accent-700">
+                    {meta.label}
+                  </span>
+                )}
+              </li>
+            ))}
           </ol>
+        </div>
+
+        <div>
+          <p className="mb-3 text-sm font-semibold">Client portal</p>
+          {portalUrl ? (
+            <div className="flex items-center gap-2">
+              <input
+                readOnly
+                value={portalUrl}
+                onFocus={(e) => e.currentTarget.select()}
+                className="min-w-0 flex-1 rounded-md border border-border bg-surface-muted px-2.5 py-1.5 text-xs text-fg-muted outline-none"
+              />
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => navigator.clipboard?.writeText(portalUrl)}
+              >
+                Copy
+              </Button>
+            </div>
+          ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={genPortal.isPending}
+              onClick={() => genPortal.mutate()}
+            >
+              {genPortal.isPending ? "Generating…" : "Generate portal link"}
+            </Button>
+          )}
         </div>
 
         <QuoteEditor commissionId={item.id} />
@@ -223,6 +249,8 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
             </p>
           )}
         </div>
+
+        <DeliverySection commissionId={item.id} />
 
         <div>
           <p className="mb-3 text-sm font-semibold">Activity</p>
