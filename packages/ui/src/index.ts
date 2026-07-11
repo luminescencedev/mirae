@@ -13,6 +13,12 @@ export { Textarea } from "./primitives/textarea.tsx";
 
 // Feedback
 export { Badge, badgeVariants, type BadgeProps } from "./feedback/badge.tsx";
+export {
+  Spinner,
+  LoadingState,
+  EmptyState,
+  ErrorState,
+} from "./feedback/states.tsx";
 
 // Layout
 export {

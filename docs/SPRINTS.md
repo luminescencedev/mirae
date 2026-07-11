@@ -193,9 +193,9 @@ Completion notes (2026-07-11):
 
 ## Sprint 9 — Polish and beta readiness
 
-- [ ] POLISH-001 Add empty states
-- [ ] POLISH-002 Add loading states
-- [ ] POLISH-003 Add error states
+- [x] POLISH-001 Add empty states
+- [x] POLISH-002 Add loading states
+- [x] POLISH-003 Add error states
 - [ ] POLISH-004 Add toast feedback
 - [ ] POLISH-005 Improve keyboard/focus states
 - [ ] POLISH-006 Responsive pass
