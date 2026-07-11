@@ -139,7 +139,7 @@ Completion notes (2026-07-11):
 - [x] COM-003 Build commission queue API
 - [x] COM-004 Connect queue UI to backend
 - [x] COM-005 Add status update action
-- [ ] COM-006 Connect commission detail panel
+- [x] COM-006 Connect commission detail panel
 - [ ] COM-007 Add basic activity log
 
 ## Sprint 7 — Quotes and payment status
