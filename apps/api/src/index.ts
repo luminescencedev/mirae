@@ -8,6 +8,7 @@ import { studioRoutes } from "./routes/studio.ts";
 import { requestsRoutes } from "./routes/requests.ts";
 import { commissionsRoutes } from "./routes/commissions.ts";
 import { portalRoutes } from "./routes/portal.ts";
+import { deliveryRoutes } from "./routes/delivery.ts";
 import { isSocialBot, renderStudioOg } from "./lib/og.ts";
 
 type Bindings = AuthEnv & {
@@ -48,6 +49,8 @@ app.route("/api/requests", requestsRoutes);
 app.route("/api/commissions", commissionsRoutes);
 // Public client portal (token-addressed, no auth).
 app.route("/api/portal", portalRoutes);
+// Public delivery page (token-addressed, no auth).
+app.route("/api/delivery", deliveryRoutes);
 
 // Social crawlers hitting /@handle get a server-rendered Open Graph document
 // (nice link unfurls in Discord/Twitter/etc.); humans fall through to the SPA.

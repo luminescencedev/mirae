@@ -97,8 +97,27 @@ export type PortalView = {
   quote: { totalCents: number; status: QuoteStatus } | null;
 };
 
+export type DeliveryFile = {
+  id: string;
+  name: string;
+  sizeBytes: number | null;
+  kind: string;
+};
+
+export type DeliveryView = {
+  delivery: { message: string | null; deliveredAt: string | null };
+  commission: { title: string };
+  artist: { displayName: string } | null;
+  files: DeliveryFile[];
+};
+
 export const publicApi = {
   // 404 → resolves to null so the page can render a not-found state.
+  delivery: (token: string) =>
+    fetch(`/api/delivery/${encodeURIComponent(token)}`).then(async (res) => {
+      if (res.status === 404) return null;
+      return json<DeliveryView>(res);
+    }),
   portal: (token: string) =>
     fetch(`/api/portal/${encodeURIComponent(token)}`).then(async (res) => {
       if (res.status === 404) return null;
