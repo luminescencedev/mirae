@@ -31,6 +31,38 @@ async function json<T>(res: Response): Promise<T> {
 
 const jsonHeaders = { "Content-Type": "application/json" };
 
+export type StudioStatus = "open" | "waitlist" | "closed";
+
+export type ArtistProfile = {
+  id: string;
+  userId: string;
+  handle: string;
+  displayName: string;
+  tagline: string | null;
+  bio: string | null;
+  status: StudioStatus;
+};
+
+export type ArtistProfileInput = {
+  displayName?: string;
+  tagline?: string | null;
+  bio?: string | null;
+  status?: StudioStatus;
+};
+
+export const artistApi = {
+  me: () =>
+    fetch("/api/artists/me")
+      .then(json<{ profile: ArtistProfile | null }>)
+      .then((d) => d.profile),
+  update: (body: ArtistProfileInput) =>
+    fetch("/api/artists/me", {
+      method: "PATCH",
+      headers: jsonHeaders,
+      body: JSON.stringify(body),
+    }).then(json<{ profile: ArtistProfile }>),
+};
+
 export const commissionTypesApi = {
   list: () =>
     fetch("/api/commission-types")

@@ -1,7 +1,11 @@
 import { Hono } from "hono";
+import { eq } from "drizzle-orm";
 import { createDb, artistProfiles } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist, getUserId } from "../lib/session.ts";
+
+const STATUSES = ["open", "waitlist", "closed"] as const;
+type Status = (typeof STATUSES)[number];
 
 type Bindings = AuthEnv & { ASSETS: Fetcher };
 
@@ -13,6 +17,36 @@ artistsRoutes.get("/me", async (c) => {
   if (!userId) return c.json({ error: "unauthorized" }, 401);
   const profile = await getArtist(c);
   return c.json({ profile: profile ?? null });
+});
+
+// Update the signed-in artist's profile (display name, tagline, bio, status).
+artistsRoutes.patch("/me", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const body = await c.req.json().catch(() => ({}));
+
+  const patch: {
+    displayName?: string;
+    tagline?: string | null;
+    bio?: string | null;
+    status?: Status;
+  } = {};
+  if (typeof body.displayName === "string" && body.displayName.trim())
+    patch.displayName = body.displayName.trim();
+  if ("tagline" in body)
+    patch.tagline = body.tagline ? String(body.tagline) : null;
+  if ("bio" in body) patch.bio = body.bio ? String(body.bio) : null;
+  if (STATUSES.includes(body.status)) patch.status = body.status as Status;
+
+  if (Object.keys(patch).length === 0) return c.json({ profile: artist });
+
+  const db = createDb(c.env.DATABASE_URL);
+  const [row] = await db
+    .update(artistProfiles)
+    .set(patch)
+    .where(eq(artistProfiles.id, artist.id))
+    .returning();
+  return c.json({ profile: row });
 });
 
 // Create the artist profile during onboarding.

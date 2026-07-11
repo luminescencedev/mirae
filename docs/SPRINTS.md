@@ -97,7 +97,7 @@ Completion notes (2026-07-11):
 
 - [x] CT-001 Add commission types API
 - [x] CT-002 Add commission types UI
-- [ ] CT-003 Add artist profile editor basics
+- [x] CT-003 Add artist profile editor basics
 - [ ] CT-004 Connect public @artist page to DB
 - [ ] CT-005 Add open/closed/waitlist state
 - [ ] CT-006 Add social bot user-agent detection + dynamic OG HTML for /@:handle
@@ -156,6 +156,7 @@ Completion notes (2026-07-11):
 
 - **Onboarding flow + first-run tour**: make the entry journey smooth and continuous — sign up → login → arriving in the app (not isolated pages) — and add a dismissible first-run **guided tour** on the dashboard for new artists. Design before building; revisit when auth (Sprint 3) + app screens are further along.
 - **Command palette (⌘K)**: wire the sidebar Search (and ⌘K) to a `cmdk`-based command palette — quick nav + actions across the app. Add `cmdk` (pin version) when built.
+- **Studio page live preview**: split the Studio page — editor on the left, a **live preview of the public `/@handle` page** on the right (updates as you edit profile + commission types).
 
 ## Notes
 
