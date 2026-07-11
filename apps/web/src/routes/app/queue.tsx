@@ -52,7 +52,10 @@ function Queue() {
             <TabsTrigger value="calendar">Calendar</TabsTrigger>
           </TabsList>
           <TabsContent value="board" className="mt-5">
-            <QueueView commissions={commissions} onSelect={(c) => setSelectedId(c.id)} />
+            <QueueView
+              commissions={commissions}
+              onSelect={(c) => setSelectedId(c.id)}
+            />
           </TabsContent>
           <TabsContent value="list" className="mt-5">
             <motion.div {...ENTER}>

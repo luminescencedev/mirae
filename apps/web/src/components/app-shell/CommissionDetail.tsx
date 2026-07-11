@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Badge,
   Button,
@@ -36,7 +36,13 @@ const MILESTONES: { label: string; at: number }[] = [
   { label: "Delivered", at: 8 },
 ];
 
-function Meta({ label, children }: { label: string; children: React.ReactNode }) {
+function Meta({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="rounded-lg border border-border bg-surface-muted p-3">
       <p className="text-xs text-fg-subtle">{label}</p>
@@ -49,14 +55,23 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
   const qc = useQueryClient();
   const meta = STATUS_META[item.status];
   const idx = STATUS_ORDER.indexOf(item.status);
-  const next = idx >= 0 && idx < STATUS_ORDER.length - 1
-    ? STATUS_ORDER[idx + 1]
-    : null;
+  const next =
+    idx >= 0 && idx < STATUS_ORDER.length - 1 ? STATUS_ORDER[idx + 1] : null;
+
+  const activityKey = ["commissions", item.id, "activity"];
+  const { data: activity = [] } = useQuery({
+    queryKey: activityKey,
+    queryFn: () => commissionsApi.activity(item.id),
+  });
 
   const setStatus = useMutation({
     mutationFn: (status: CommissionStatus) =>
       commissionsApi.update(item.id, { status }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["commissions"] }),
+    onSuccess: () =>
+      Promise.all([
+        qc.invalidateQueries({ queryKey: ["commissions"] }),
+        qc.invalidateQueries({ queryKey: activityKey }),
+      ]),
   });
 
   return (
@@ -141,6 +156,27 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
             })}
           </ol>
         </div>
+
+        <div>
+          <p className="mb-3 text-sm font-semibold">Activity</p>
+          {activity.length === 0 ? (
+            <p className="text-sm text-fg-subtle">No activity yet.</p>
+          ) : (
+            <ol className="flex flex-col gap-3">
+              {activity.map((a) => (
+                <li key={a.id} className="flex gap-3">
+                  <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-border-strong" />
+                  <div className="min-w-0">
+                    <p className="text-sm text-fg">{a.message}</p>
+                    <p className="text-xs text-fg-subtle">
+                      {new Date(a.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
       </SheetBody>
 
       <SheetFooter>
@@ -157,7 +193,9 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
                 onSelect={() => setStatus.mutate(s)}
                 className={cn(s === item.status && "bg-surface-muted")}
               >
-                <span className={cn("size-1.5 rounded-full", STATUS_META[s].dot)} />
+                <span
+                  className={cn("size-1.5 rounded-full", STATUS_META[s].dot)}
+                />
                 {STATUS_META[s].label}
               </DropdownMenuItem>
             ))}

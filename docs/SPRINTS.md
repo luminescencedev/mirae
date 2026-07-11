@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 6 — Queue and commissions
+Sprint 7 — Quotes and payment status
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -132,7 +132,7 @@ Completion notes (2026-07-11):
 - Known issues / follow-ups: no email notification to the artist on a new request (Resend = Sprint 9 POLISH-009); accepted requests don't yet become commissions (COM-002, Sprint 6); budget stays free-text; no spam/rate-limit on the public endpoint yet. Backlog unchanged (⌘K palette, onboarding tour, Studio live preview).
 - **Next sprint:** Sprint 6 — Queue and commissions (first ticket COM-001: commissions API).
 
-## Sprint 6 — Queue and commissions
+## Sprint 6 — Queue and commissions ✅ complete
 
 - [x] COM-001 Create commissions API
 - [x] COM-002 Convert request to commission
@@ -140,7 +140,17 @@ Completion notes (2026-07-11):
 - [x] COM-004 Connect queue UI to backend
 - [x] COM-005 Add status update action
 - [x] COM-006 Connect commission detail panel
-- [ ] COM-007 Add basic activity log
+- [x] COM-007 Add basic activity log
+
+Acceptance: commissions CRUD API · accepted request becomes a commission · queue board/list backed by real data · status changes from the detail panel · detail shows real commission + progress · activity log records key changes. **All met.**
+
+Completion notes (2026-07-11):
+
+- End-to-end verified live (Worker :8787 / web :5173): commissions CRUD (401 unauth, 201 create, 400 bad status, PATCH 200, DELETE 200, owner-scoped) · `POST /api/requests/:id/convert` creates a queued commission + marks the request accepted (409 if already handled) · `GET /api/commissions` returns queue rows joined to client name · `PATCH` status change + `GET /api/commissions/:id/activity` returns "created" + "status changed" entries newest-first (401 unauth). lint/typecheck/build/format green.
+- **API**: `/api/commissions` CRUD (`routes/commissions.ts`), `POST /api/requests/:id/convert` (`routes/requests.ts`), `GET /api/commissions/:id/activity`. Statuses validated against the `commission_status` enum via `.enumValues`; money in cents; activity written on convert + status change.
+- **Web**: shared `lib/commissions.ts` (status meta, lifecycle order, board columns, formatters); `QueueView`/`QueueListView` data-driven; `CommissionDetail` rewritten to real data with price/paid/deadline/client meta, a milestone progress timeline, a status action footer (Advance + change-status dropdown), and an activity feed; `queue.tsx` fetches via TanStack Query and selects by id so the panel tracks live updates.
+- Known issues / follow-ups: no email/notification on status change (Resend → Sprint 9); commission price/paid/deadline not yet editable from the UI (only status); calendar view still a placeholder; `clients` table not populated (commission.clientId stays null, client info comes from the linked request); activity feed is create/status only. Backlog unchanged.
+- **Next sprint:** Sprint 7 — Quotes and payment status (first ticket QUOTE-001: quote model/API).
 
 ## Sprint 7 — Quotes and payment status
 

@@ -26,9 +26,7 @@ function CommissionCard({
     >
       <div className="flex items-center gap-2">
         <span className="size-5 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
-        <span className="text-xs text-fg-muted">
-          {item.clientName ?? "—"}
-        </span>
+        <span className="text-xs text-fg-muted">{item.clientName ?? "—"}</span>
       </div>
       <h4 className="mt-2 text-sm font-medium tracking-tight text-fg">
         {item.title}

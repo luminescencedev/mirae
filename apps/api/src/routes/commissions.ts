@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { and, desc, eq } from "drizzle-orm";
 import {
+  activityLogs,
   commissionRequests,
   commissionStatus,
   commissions,
@@ -124,7 +125,40 @@ commissionsRoutes.patch("/:id", async (c) => {
     )
     .returning();
   if (!row) return c.json({ error: "not found" }, 404);
+
+  // Log status transitions to the activity feed.
+  if (data.status !== undefined) {
+    await db.insert(activityLogs).values({
+      artistId: artist.id,
+      commissionId: row.id,
+      type: "status",
+      message: `Status changed to ${data.status}`,
+    });
+  }
   return c.json({ commission: row });
+});
+
+// GET /api/commissions/:id/activity — the activity feed for a commission.
+commissionsRoutes.get("/:id/activity", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const rows = await db
+    .select({
+      id: activityLogs.id,
+      type: activityLogs.type,
+      message: activityLogs.message,
+      createdAt: activityLogs.createdAt,
+    })
+    .from(activityLogs)
+    .where(
+      and(
+        eq(activityLogs.commissionId, c.req.param("id")),
+        eq(activityLogs.artistId, artist.id),
+      ),
+    )
+    .orderBy(desc(activityLogs.createdAt));
+  return c.json({ activity: rows });
 });
 
 // DELETE /api/commissions/:id

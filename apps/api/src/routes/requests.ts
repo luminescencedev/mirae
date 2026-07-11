@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { and, desc, eq } from "drizzle-orm";
 import {
+  activityLogs,
   commissionRequests,
   commissionTypes,
   commissions,
@@ -118,6 +119,13 @@ requestsRoutes.post("/:id/convert", async (c) => {
     .update(commissionRequests)
     .set({ status: "accepted" })
     .where(eq(commissionRequests.id, req.id));
+
+  await db.insert(activityLogs).values({
+    artistId: artist.id,
+    commissionId: commission.id,
+    type: "created",
+    message: `Commission created from ${req.clientName}'s request`,
+  });
 
   return c.json({ commission }, 201);
 });

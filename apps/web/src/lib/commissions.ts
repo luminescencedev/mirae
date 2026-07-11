@@ -48,7 +48,11 @@ export const COLUMNS: {
     dot: "bg-accent-500",
     statuses: ["sketch", "review", "revision", "final"],
   },
-  { name: "Delivered", dot: "bg-emerald-500", statuses: ["delivered", "archived"] },
+  {
+    name: "Delivered",
+    dot: "bg-emerald-500",
+    statuses: ["delivered", "archived"],
+  },
 ];
 
 export function euro(cents: number | null): string {
