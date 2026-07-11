@@ -284,6 +284,51 @@ commissionsRoutes.put("/:id/quote", async (c) => {
   });
 });
 
+// POST /api/commissions/:id/quote/send — mark the quote sent (placeholder:
+// no email yet) and bump the commission to "quote_sent".
+commissionsRoutes.post("/:id/quote/send", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const [quote] = await db
+    .select()
+    .from(quotes)
+    .where(eq(quotes.commissionId, commissionId))
+    .limit(1);
+  if (!quote) return c.json({ error: "No quote to send." }, 400);
+
+  const [updated] = await db
+    .update(quotes)
+    .set({ status: "sent", sentAt: new Date() })
+    .where(eq(quotes.id, quote.id))
+    .returning();
+
+  await db
+    .update(commissions)
+    .set({ status: "quote_sent" })
+    .where(eq(commissions.id, commissionId));
+
+  await db.insert(activityLogs).values({
+    artistId: artist.id,
+    commissionId,
+    type: "quote",
+    message: `Quote sent (${(updated.totalCents / 100).toLocaleString()} €)`,
+  });
+
+  const items = await db
+    .select()
+    .from(quoteItems)
+    .where(eq(quoteItems.quoteId, quote.id));
+  return c.json({ quote: { ...updated, items } });
+});
+
 // DELETE /api/commissions/:id
 commissionsRoutes.delete("/:id", async (c) => {
   const artist = await getArtist(c);

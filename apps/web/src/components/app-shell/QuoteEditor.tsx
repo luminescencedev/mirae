@@ -68,6 +68,18 @@ export function QuoteEditor({ commissionId }: { commissionId: string }) {
       ]),
   });
 
+  const send = useMutation({
+    mutationFn: () => quotesApi.send(commissionId),
+    onSuccess: () =>
+      Promise.all([
+        qc.invalidateQueries({ queryKey: key }),
+        qc.invalidateQueries({ queryKey: ["commissions"] }),
+        qc.invalidateQueries({
+          queryKey: ["commissions", commissionId, "activity"],
+        }),
+      ]),
+  });
+
   const setRow = (i: number, patch: Partial<Row>) =>
     setRows((rs) => rs.map((r, j) => (j === i ? { ...r, ...patch } : r)));
   const addRow = () => setRows((rs) => [...rs, { ...EMPTY }]);
@@ -155,10 +167,21 @@ export function QuoteEditor({ commissionId }: { commissionId: string }) {
 
       <div className="mt-3 flex items-center gap-3">
         <Button
+          variant="outline"
           onClick={() => save.mutate()}
           disabled={save.isPending || total === 0}
         >
           {save.isPending ? "Saving…" : "Save quote"}
+        </Button>
+        <Button
+          onClick={() => send.mutate()}
+          disabled={send.isPending || !quote || quote.status !== "draft"}
+        >
+          {send.isPending
+            ? "Sending…"
+            : quote && quote.status !== "draft"
+              ? "Quote sent"
+              : "Send quote"}
         </Button>
         {save.isSuccess && !save.isPending && (
           <span className="text-sm text-emerald-600">Saved</span>

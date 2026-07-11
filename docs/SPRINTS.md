@@ -157,7 +157,7 @@ Completion notes (2026-07-11):
 - [x] QUOTE-001 Add quote model/API
 - [x] QUOTE-002 Build quote builder UI
 - [x] QUOTE-003 Add quote line items
-- [ ] QUOTE-004 Add send quote placeholder
+- [x] QUOTE-004 Add send quote placeholder
 - [ ] QUOTE-005 Add manual payment status
 
 ## Sprint 8 — Client portal and delivery
