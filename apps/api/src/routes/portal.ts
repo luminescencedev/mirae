@@ -1,6 +1,13 @@
 import { Hono } from "hono";
 import { eq } from "drizzle-orm";
-import { artistProfiles, commissions, createDb, quotes } from "@mirae/db";
+import {
+  activityLogs,
+  artistProfiles,
+  commissions,
+  createDb,
+  portalFeedback,
+  quotes,
+} from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher };
@@ -46,4 +53,31 @@ portalRoutes.get("/:token", async (c) => {
     artist: artist ?? null,
     quote: quote ?? null,
   });
+});
+
+// POST /api/portal/:token/feedback — a client note from the portal (public).
+// Persists it and drops a note into the artist's activity feed.
+portalRoutes.post("/:token/feedback", async (c) => {
+  const db = createDb(c.env.DATABASE_URL);
+  const [commission] = await db
+    .select({ id: commissions.id, artistId: commissions.artistId })
+    .from(commissions)
+    .where(eq(commissions.portalToken, c.req.param("token")))
+    .limit(1);
+  if (!commission) return c.json({ error: "not found" }, 404);
+
+  const body = (await c.req.json().catch(() => ({}))) as { message?: unknown };
+  const message = String(body.message ?? "").trim();
+  if (!message) return c.json({ error: "Message is required." }, 400);
+
+  await db
+    .insert(portalFeedback)
+    .values({ commissionId: commission.id, message });
+  await db.insert(activityLogs).values({
+    artistId: commission.artistId,
+    commissionId: commission.id,
+    type: "feedback",
+    message: `Client note: ${message.length > 80 ? message.slice(0, 77) + "…" : message}`,
+  });
+  return c.json({ ok: true }, 201);
 });

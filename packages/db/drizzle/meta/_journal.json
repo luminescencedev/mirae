@@ -22,6 +22,13 @@
       "when": 1783782901771,
       "tag": "0002_tiresome_lady_deathstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783786819569,
+      "tag": "0003_long_lionheart",
+      "breakpoints": true
     }
   ]
 }
