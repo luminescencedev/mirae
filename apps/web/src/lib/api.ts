@@ -197,6 +197,48 @@ export const commissionsApi = {
       .then((d) => d.activity),
 };
 
+export type QuoteItem = {
+  id: string;
+  quoteId: string;
+  label: string;
+  amountCents: number;
+  quantity: number;
+};
+
+export type QuoteStatus = "draft" | "sent" | "accepted";
+
+export type Quote = {
+  id: string;
+  commissionId: string;
+  totalCents: number;
+  status: QuoteStatus;
+  sentAt?: string | null;
+  items: QuoteItem[];
+};
+
+export type QuoteItemInput = {
+  label: string;
+  amountCents: number;
+  quantity: number;
+};
+
+export const quotesApi = {
+  get: (commissionId: string) =>
+    fetch(`/api/commissions/${commissionId}/quote`)
+      .then(json<{ quote: Quote | null }>)
+      .then((d) => d.quote),
+  save: (commissionId: string, items: QuoteItemInput[]) =>
+    fetch(`/api/commissions/${commissionId}/quote`, {
+      method: "PUT",
+      headers: jsonHeaders,
+      body: JSON.stringify({ items }),
+    }).then(json<{ quote: Quote }>),
+  send: (commissionId: string) =>
+    fetch(`/api/commissions/${commissionId}/quote/send`, {
+      method: "POST",
+    }).then(json<{ quote: Quote }>),
+};
+
 export const commissionTypesApi = {
   list: () =>
     fetch("/api/commission-types")

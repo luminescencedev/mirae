@@ -14,6 +14,7 @@ import {
   cn,
 } from "@mirae/ui";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { QuoteEditor } from "./QuoteEditor.tsx";
 import {
   commissionsApi,
   type CommissionStatus,
@@ -64,15 +65,31 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
     queryFn: () => commissionsApi.activity(item.id),
   });
 
+  const invalidate = () =>
+    Promise.all([
+      qc.invalidateQueries({ queryKey: ["commissions"] }),
+      qc.invalidateQueries({ queryKey: activityKey }),
+    ]);
+
   const setStatus = useMutation({
     mutationFn: (status: CommissionStatus) =>
       commissionsApi.update(item.id, { status }),
-    onSuccess: () =>
-      Promise.all([
-        qc.invalidateQueries({ queryKey: ["commissions"] }),
-        qc.invalidateQueries({ queryKey: activityKey }),
-      ]),
+    onSuccess: invalidate,
   });
+
+  const pay = useMutation({
+    mutationFn: (paidCents: number) =>
+      commissionsApi.update(item.id, { paidCents }),
+    onSuccess: invalidate,
+  });
+
+  const price = item.priceCents ?? 0;
+  const paidState =
+    item.paidCents <= 0
+      ? { label: "Unpaid", cls: "bg-surface-sunken text-fg-muted" }
+      : price > 0 && item.paidCents >= price
+        ? { label: "Paid", cls: "bg-emerald-50 text-emerald-700" }
+        : { label: "Partial", cls: "bg-amber-50 text-amber-700" };
 
   return (
     <>
@@ -155,6 +172,56 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
               );
             })}
           </ol>
+        </div>
+
+        <QuoteEditor commissionId={item.id} />
+
+        <div>
+          <div className="mb-3 flex items-center gap-2">
+            <p className="text-sm font-semibold">Payment</p>
+            <span
+              className={cn(
+                "rounded-full px-2 py-0.5 text-xs font-medium",
+                paidState.cls,
+              )}
+            >
+              {paidState.label}
+            </span>
+            <span className="ml-auto text-sm tabular-nums text-fg-muted">
+              {euro(item.paidCents)} / {euro(item.priceCents)}
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={pay.isPending || price <= 0}
+              onClick={() => pay.mutate(Math.round(price / 2))}
+            >
+              Deposit 50%
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={pay.isPending || price <= 0}
+              onClick={() => pay.mutate(price)}
+            >
+              Mark paid
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={pay.isPending || item.paidCents === 0}
+              onClick={() => pay.mutate(0)}
+            >
+              Clear
+            </Button>
+          </div>
+          {price <= 0 && (
+            <p className="mt-2 text-xs text-fg-subtle">
+              Set a price (save a quote) to record payment.
+            </p>
+          )}
         </div>
 
         <div>

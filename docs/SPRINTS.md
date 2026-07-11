@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 7 — Quotes and payment status
+Sprint 8 — Client portal and delivery
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -152,13 +152,23 @@ Completion notes (2026-07-11):
 - Known issues / follow-ups: no email/notification on status change (Resend → Sprint 9); commission price/paid/deadline not yet editable from the UI (only status); calendar view still a placeholder; `clients` table not populated (commission.clientId stays null, client info comes from the linked request); activity feed is create/status only. Backlog unchanged.
 - **Next sprint:** Sprint 7 — Quotes and payment status (first ticket QUOTE-001: quote model/API).
 
-## Sprint 7 — Quotes and payment status
+## Sprint 7 — Quotes and payment status ✅ complete
 
-- [ ] QUOTE-001 Add quote model/API
-- [ ] QUOTE-002 Build quote builder UI
-- [ ] QUOTE-003 Add quote line items
-- [ ] QUOTE-004 Add send quote placeholder
-- [ ] QUOTE-005 Add manual payment status
+- [x] QUOTE-001 Add quote model/API
+- [x] QUOTE-002 Build quote builder UI
+- [x] QUOTE-003 Add quote line items
+- [x] QUOTE-004 Add send quote placeholder
+- [x] QUOTE-005 Add manual payment status
+
+Acceptance: itemized quote model/API · quote builder with line items · send-quote step · manual payment status on a commission. **All met.**
+
+Completion notes (2026-07-11):
+
+- End-to-end verified live (Worker :8787 / web :5173): `GET quote` null initially → `PUT` items → total €250 (150 + 2×50), commission price mirrored to €250 → `POST send` sets quote `sent` + commission `quote_sent` → `PATCH paidCents` 200; activity feed shows created / status / "Quote sent (250 €)" / "Payment recorded: 125 €". lint/typecheck/build/format green.
+- **API** (on `routes/commissions.ts`): `GET/PUT /api/commissions/:id/quote` (one quote per commission, replace line items, recompute total, mirror onto price), `POST /api/commissions/:id/quote/send` (status→sent, sentAt, commission→quote_sent, activity), payment via existing `PATCH` (`paidCents`) now logs a payment activity entry.
+- **Web**: `quotesApi` client; new `QuoteEditor` (itemized rows add/remove, live total, Save + Send, status pill) in the commission detail panel; a Payment section (Unpaid/Partial/Paid badge, paid/price, Deposit 50% / Mark paid / Clear).
+- Known issues / follow-ups: quote isn't actually emailed (placeholder → Resend in Sprint 9); no client-facing quote acceptance yet (the client portal is Sprint 8, `accepted` status unused for now); payment is manual amounts (no Stripe — post-MVP); one quote per commission (no revisions/history). Backlog unchanged.
+- **Next sprint:** Sprint 8 — Client portal and delivery (first ticket PORTAL-001: generate portal token).
 
 ## Sprint 8 — Client portal and delivery
 
