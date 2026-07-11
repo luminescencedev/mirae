@@ -119,7 +119,7 @@ Completion notes (2026-07-11):
 - [x] REQ-002 Create commission request records
 - [x] REQ-003 Build request inbox API
 - [x] REQ-004 Connect request inbox UI
-- [ ] REQ-005 Build request detail panel
+- [x] REQ-005 Build request detail panel
 - [ ] REQ-006 Add accept/decline actions
 
 ## Sprint 6 — Queue and commissions

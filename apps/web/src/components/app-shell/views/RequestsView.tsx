@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Badge, Button, Icon, cn } from "@mirae/ui";
-import { Cancel01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
+import { Badge, Sheet, SheetContent, cn } from "@mirae/ui";
 import {
   requestsApi,
   type InboxRequest,
   type RequestStatus,
 } from "../../../lib/api.ts";
+import { RequestDetail } from "../RequestDetail.tsx";
 
 type Filter = "all" | "new" | "accepted" | "declined";
 
@@ -41,10 +41,20 @@ function relativeTime(iso: string): string {
   return new Date(iso).toLocaleDateString();
 }
 
-function RequestRow({ req }: { req: InboxRequest }) {
+function RequestRow({
+  req,
+  onOpen,
+}: {
+  req: InboxRequest;
+  onOpen: () => void;
+}) {
   const badge = STATUS_BADGE[req.status];
   return (
-    <div className="flex gap-3 p-4 transition-colors hover:bg-surface-muted">
+    <button
+      type="button"
+      onClick={onOpen}
+      className="flex w-full gap-3 p-4 text-left outline-none transition-colors hover:bg-surface-muted focus-visible:bg-surface-muted"
+    >
       <span className="size-9 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
@@ -66,27 +76,22 @@ function RequestRow({ req }: { req: InboxRequest }) {
           )}
         </p>
         <p className="mt-1.5 line-clamp-2 whitespace-pre-line text-sm text-fg-muted">
-          {req.message}
+          {splitBrief(req.message)}
         </p>
-        {req.status === "new" && (
-          <div className="mt-3 flex gap-2">
-            <Button size="sm">
-              <Icon icon={Tick02Icon} strokeWidth={2} />
-              Accept
-            </Button>
-            <Button size="sm" variant="outline">
-              <Icon icon={Cancel01Icon} strokeWidth={2} />
-              Decline
-            </Button>
-          </div>
-        )}
       </div>
-    </div>
+    </button>
   );
+}
+
+// Preview shows just the brief, not the folded-in "Deadline:" prefix.
+function splitBrief(message: string): string {
+  const m = message.match(/^Deadline:\s*.+?\n\n([\s\S]*)$/);
+  return m ? m[1] : message;
 }
 
 export function RequestsView() {
   const [filter, setFilter] = useState<Filter>("all");
+  const [selected, setSelected] = useState<InboxRequest | null>(null);
   const {
     data: requests = [],
     isLoading,
@@ -135,9 +140,20 @@ export function RequestsView() {
             No requests here.
           </div>
         ) : (
-          rows.map((r) => <RequestRow key={r.id} req={r} />)
+          rows.map((r) => (
+            <RequestRow key={r.id} req={r} onOpen={() => setSelected(r)} />
+          ))
         )}
       </div>
+
+      <Sheet
+        open={selected !== null}
+        onOpenChange={(open) => !open && setSelected(null)}
+      >
+        <SheetContent>
+          {selected && <RequestDetail req={selected} />}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
