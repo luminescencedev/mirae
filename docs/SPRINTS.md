@@ -178,7 +178,7 @@ Completion notes (2026-07-11):
 - [x] PORTAL-004 Add client feedback placeholder
 - [x] DELIV-001 Add delivery model
 - [x] DELIV-002 Build /delivery/:token
-- [ ] DELIV-003 Wire file uploads/downloads to Cloudflare R2
+- [x] DELIV-003 Wire file uploads/downloads to Cloudflare R2
 - [ ] DELIV-004 Add mark delivered action
 
 ## Sprint 9 — Polish and beta readiness

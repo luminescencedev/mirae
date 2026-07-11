@@ -7,13 +7,14 @@ import {
   commissions,
   createDb,
   deliveries,
+  files,
   quoteItems,
   quotes,
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
 
-type Bindings = AuthEnv & { ASSETS: Fetcher };
+type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
 export const commissionsRoutes = new Hono<{ Bindings: Bindings }>();
 
@@ -264,6 +265,99 @@ commissionsRoutes.post("/:id/delivery", async (c) => {
     .values({ commissionId, token, message: message ?? null })
     .returning();
   return c.json({ delivery: row }, 201);
+});
+
+// --- Files (deliverables in R2) -------------------------------------------
+
+// GET /api/commissions/:id/files — the commission's files.
+commissionsRoutes.get("/:id/files", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+  const rows = await db
+    .select({
+      id: files.id,
+      name: files.name,
+      sizeBytes: files.sizeBytes,
+      kind: files.kind,
+      createdAt: files.createdAt,
+    })
+    .from(files)
+    .where(eq(files.commissionId, commissionId))
+    .orderBy(desc(files.createdAt));
+  return c.json({ files: rows });
+});
+
+// POST /api/commissions/:id/files — upload a deliverable to R2 (multipart).
+commissionsRoutes.post("/:id/files", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const form = await c.req.formData().catch(() => null);
+  const file = form?.get("file");
+  if (!(file instanceof File)) return c.json({ error: "No file." }, 400);
+
+  const key = `commissions/${commissionId}/${crypto.randomUUID()}-${file.name}`;
+  await c.env.FILES.put(key, await file.arrayBuffer(), {
+    httpMetadata: { contentType: file.type || "application/octet-stream" },
+  });
+  const [row] = await db
+    .insert(files)
+    .values({
+      commissionId,
+      kind: "deliverable",
+      key,
+      name: file.name,
+      sizeBytes: file.size,
+    })
+    .returning({
+      id: files.id,
+      name: files.name,
+      sizeBytes: files.sizeBytes,
+      kind: files.kind,
+      createdAt: files.createdAt,
+    });
+  return c.json({ file: row }, 201);
+});
+
+// DELETE /api/commissions/:id/files/:fileId — remove a file (R2 + row).
+commissionsRoutes.delete("/:id/files/:fileId", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+  const [row] = await db
+    .select({ id: files.id, key: files.key })
+    .from(files)
+    .where(
+      and(
+        eq(files.id, c.req.param("fileId")),
+        eq(files.commissionId, commissionId),
+      ),
+    )
+    .limit(1);
+  if (!row) return c.json({ error: "not found" }, 404);
+  await c.env.FILES.delete(row.key);
+  await db.delete(files).where(eq(files.id, row.id));
+  return c.json({ ok: true });
 });
 
 // --- Quotes (one per commission) -----------------------------------------

@@ -15,6 +15,7 @@ import {
 } from "@mirae/ui";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { QuoteEditor } from "./QuoteEditor.tsx";
+import { DeliverySection } from "./DeliverySection.tsx";
 import {
   commissionsApi,
   type CommissionStatus,
@@ -248,6 +249,8 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
             </p>
           )}
         </div>
+
+        <DeliverySection commissionId={item.id} />
 
         <div>
           <p className="mb-3 text-sm font-semibold">Activity</p>

@@ -13,6 +13,7 @@ import { isSocialBot, renderStudioOg } from "./lib/og.ts";
 
 type Bindings = AuthEnv & {
   ASSETS: Fetcher;
+  FILES: R2Bucket;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();

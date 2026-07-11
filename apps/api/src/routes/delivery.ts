@@ -65,3 +65,35 @@ deliveryRoutes.get("/:token", async (c) => {
     files: fileRows,
   });
 });
+
+// GET /api/delivery/:token/files/:fileId — stream a deliverable from R2
+// (PUBLIC, gated by the unguessable delivery token).
+deliveryRoutes.get("/:token/files/:fileId", async (c) => {
+  const db = createDb(c.env.DATABASE_URL);
+  const found = await resolve(db, c.req.param("token"));
+  if (!found) return c.json({ error: "not found" }, 404);
+
+  const [file] = await db
+    .select()
+    .from(files)
+    .where(
+      and(
+        eq(files.id, c.req.param("fileId")),
+        eq(files.commissionId, found.commission.id),
+      ),
+    )
+    .limit(1);
+  if (!file) return c.json({ error: "not found" }, 404);
+
+  const object = await c.env.FILES.get(file.key);
+  if (!object) return c.json({ error: "not found" }, 404);
+
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set("etag", object.httpEtag);
+  headers.set(
+    "content-disposition",
+    `attachment; filename="${encodeURIComponent(file.name)}"`,
+  );
+  return new Response(object.body, { headers });
+});

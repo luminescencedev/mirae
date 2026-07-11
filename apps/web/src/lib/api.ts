@@ -246,6 +246,30 @@ export const commissionsApi = {
       headers: jsonHeaders,
       body: JSON.stringify(message === undefined ? {} : { message }),
     }).then(json<{ delivery: Delivery }>),
+  files: (id: string) =>
+    fetch(`/api/commissions/${id}/files`)
+      .then(json<{ files: CommissionFile[] }>)
+      .then((d) => d.files),
+  uploadFile: (id: string, file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return fetch(`/api/commissions/${id}/files`, {
+      method: "POST",
+      body: fd,
+    }).then(json<{ file: CommissionFile }>);
+  },
+  removeFile: (id: string, fileId: string) =>
+    fetch(`/api/commissions/${id}/files/${fileId}`, {
+      method: "DELETE",
+    }).then(json<{ ok: true }>),
+};
+
+export type CommissionFile = {
+  id: string;
+  name: string;
+  sizeBytes: number | null;
+  kind: string;
+  createdAt: string;
 };
 
 export type Delivery = {
