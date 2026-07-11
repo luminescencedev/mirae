@@ -222,8 +222,8 @@ Post-MVP hardening. Goal: every button does something, every screen shows the si
 
 - [x] AUDIT-001 Gate /app on an artist profile (redirect to /onboarding if none)
 - [x] AUDIT-002 Wire the Overview screen to real data (stats + recent activity from commissions/requests)
-- [ ] AUDIT-003 Real Clients page (derive from requests/commissions; replace ComingSoon)
-- [ ] AUDIT-004 Real Deliveries page (list commissions with a delivery; replace ComingSoon)
+- [x] AUDIT-003 Real Clients page (derive from requests/commissions; replace ComingSoon)
+- [x] AUDIT-004 Real Deliveries page (list commissions with a delivery; replace ComingSoon)
 - [x] AUDIT-005 Remove or wire dead controls (sidebar search, notification bell)
 - [ ] AUDIT-006 Refresh the marketing DashboardPreview to match the real UI
 - [ ] AUDIT-007 Queue calendar view (real deadlines) or drop the tab
