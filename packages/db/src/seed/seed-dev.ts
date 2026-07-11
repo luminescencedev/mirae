@@ -6,6 +6,8 @@ import {
   commissionRequests,
   commissionTypes,
   commissions,
+  deliveries,
+  files,
   quoteItems,
   quotes,
   users,
@@ -157,6 +159,37 @@ await db.insert(activityLogs).values([
     message: "Ava Chen sent a new request",
   },
 ]);
+
+// A finished commission with a public delivery + one deliverable file, so
+// /delivery/:token has something to show. (The R2 object isn't seeded, so the
+// download link is illustrative only.)
+const [delivered] = await db
+  .insert(commissions)
+  .values({
+    artistId: artist.id,
+    clientId: insertedClients[2].id,
+    title: "Sticker sheet",
+    status: "delivered",
+    priceCents: 11000,
+    paidCents: 11000,
+    portalToken: "portal_ludo_stickers",
+  })
+  .returning();
+
+await db.insert(deliveries).values({
+  commissionId: delivered.id,
+  token: "deliver_ludo_stickers",
+  message: "Final sticker sheet + source files attached. Thank you!",
+  deliveredAt: new Date(),
+});
+
+await db.insert(files).values({
+  commissionId: delivered.id,
+  kind: "deliverable",
+  key: "commissions/demo/sticker-sheet.png",
+  name: "sticker-sheet.png",
+  sizeBytes: 2_400_000,
+});
 
 console.log("✓ Seed complete — studio @rainaoki");
 process.exit(0);
