@@ -1,6 +1,11 @@
 import { Hono } from "hono";
 import { and, desc, eq } from "drizzle-orm";
-import { commissions, commissionStatus, createDb } from "@mirae/db";
+import {
+  commissionRequests,
+  commissionStatus,
+  commissions,
+  createDb,
+} from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
 
@@ -46,14 +51,31 @@ function parse(body: Body) {
   return out;
 }
 
-// GET /api/commissions — the artist's commissions, newest first.
+// GET /api/commissions — the artist's commissions for the queue, newest
+// first, enriched with the originating request's client name/email.
 commissionsRoutes.get("/", async (c) => {
   const artist = await getArtist(c);
   if (!artist) return c.json({ error: "unauthorized" }, 401);
   const db = createDb(c.env.DATABASE_URL);
   const rows = await db
-    .select()
+    .select({
+      id: commissions.id,
+      title: commissions.title,
+      status: commissions.status,
+      priceCents: commissions.priceCents,
+      paidCents: commissions.paidCents,
+      deadline: commissions.deadline,
+      requestId: commissions.requestId,
+      createdAt: commissions.createdAt,
+      updatedAt: commissions.updatedAt,
+      clientName: commissionRequests.clientName,
+      clientEmail: commissionRequests.clientEmail,
+    })
     .from(commissions)
+    .leftJoin(
+      commissionRequests,
+      eq(commissionRequests.id, commissions.requestId),
+    )
     .where(eq(commissions.artistId, artist.id))
     .orderBy(desc(commissions.createdAt));
   return c.json({ commissions: rows });
