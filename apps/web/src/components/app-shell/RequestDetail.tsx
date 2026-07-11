@@ -7,6 +7,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  useToast,
 } from "@mirae/ui";
 import { Cancel01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import {
@@ -60,6 +61,7 @@ export function RequestDetail({
   onDone: () => void;
 }) {
   const qc = useQueryClient();
+  const { toast } = useToast();
   const badge = STATUS_BADGE[req.status];
   const { deadline, brief } = splitMessage(req.message);
   const submitted = new Date(req.createdAt).toLocaleString();
@@ -68,6 +70,7 @@ export function RequestDetail({
     mutationFn: () => requestsApi.setStatus(req.id, "declined"),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["requests"] });
+      toast({ title: "Request declined", variant: "default" });
       onDone();
     },
   });
@@ -80,6 +83,11 @@ export function RequestDetail({
         qc.invalidateQueries({ queryKey: ["requests"] }),
         qc.invalidateQueries({ queryKey: ["commissions"] }),
       ]);
+      toast({
+        title: "Request accepted",
+        description: "Added to your commission queue.",
+        variant: "success",
+      });
       onDone();
     },
   });

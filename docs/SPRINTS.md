@@ -196,7 +196,7 @@ Completion notes (2026-07-11):
 - [x] POLISH-001 Add empty states
 - [x] POLISH-002 Add loading states
 - [x] POLISH-003 Add error states
-- [ ] POLISH-004 Add toast feedback
+- [x] POLISH-004 Add toast feedback
 - [ ] POLISH-005 Improve keyboard/focus states
 - [ ] POLISH-006 Responsive pass
 - [ ] POLISH-007 Demo seed data
