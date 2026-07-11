@@ -39,6 +39,17 @@ export function DeliverySection({ commissionId }: { commissionId: string }) {
       commissionsApi.removeFile(commissionId, fileId),
     onSuccess: () => qc.invalidateQueries({ queryKey: filesKey }),
   });
+  const deliver = useMutation({
+    mutationFn: () => commissionsApi.markDelivered(commissionId),
+    onSuccess: () =>
+      Promise.all([
+        qc.invalidateQueries({ queryKey: deliveryKey }),
+        qc.invalidateQueries({ queryKey: ["commissions"] }),
+        qc.invalidateQueries({
+          queryKey: ["commissions", commissionId, "activity"],
+        }),
+      ]),
+  });
 
   const url = delivery
     ? `${window.location.origin}/delivery/${delivery.token}`
@@ -118,14 +129,29 @@ export function DeliverySection({ commissionId }: { commissionId: string }) {
               e.target.value = "";
             }}
           />
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={upload.isPending}
-            onClick={() => fileInput.current?.click()}
-          >
-            {upload.isPending ? "Uploading…" : "Upload file"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={upload.isPending}
+              onClick={() => fileInput.current?.click()}
+            >
+              {upload.isPending ? "Uploading…" : "Upload file"}
+            </Button>
+            {delivery.deliveredAt ? (
+              <span className="text-xs font-medium text-emerald-600">
+                Delivered {new Date(delivery.deliveredAt).toLocaleDateString()}
+              </span>
+            ) : (
+              <Button
+                size="sm"
+                disabled={deliver.isPending || files.length === 0}
+                onClick={() => deliver.mutate()}
+              >
+                {deliver.isPending ? "Delivering…" : "Mark as delivered"}
+              </Button>
+            )}
+          </div>
         </div>
       )}
     </div>

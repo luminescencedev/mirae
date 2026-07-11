@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 8 — Client portal and delivery
+Sprint 9 — Polish and beta readiness
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -170,7 +170,7 @@ Completion notes (2026-07-11):
 - Known issues / follow-ups: quote isn't actually emailed (placeholder → Resend in Sprint 9); no client-facing quote acceptance yet (the client portal is Sprint 8, `accepted` status unused for now); payment is manual amounts (no Stripe — post-MVP); one quote per commission (no revisions/history). Backlog unchanged.
 - **Next sprint:** Sprint 8 — Client portal and delivery (first ticket PORTAL-001: generate portal token).
 
-## Sprint 8 — Client portal and delivery
+## Sprint 8 — Client portal and delivery ✅ complete
 
 - [x] PORTAL-001 Generate portal token
 - [x] PORTAL-002 Build /portal/:token
@@ -179,7 +179,17 @@ Completion notes (2026-07-11):
 - [x] DELIV-001 Add delivery model
 - [x] DELIV-002 Build /delivery/:token
 - [x] DELIV-003 Wire file uploads/downloads to Cloudflare R2
-- [ ] DELIV-004 Add mark delivered action
+- [x] DELIV-004 Add mark delivered action
+
+Acceptance: portal token per commission · public `/portal/:token` with status timeline + feedback · delivery model + public `/delivery/:token` · R2 file uploads/downloads · mark-delivered. **All met.**
+
+Completion notes (2026-07-11):
+
+- End-to-end verified live (Worker :8787 / web :5173): generate portal token → public `GET /api/portal/:token` returns title + artist + quote · prepare delivery → token · multipart upload streams to R2 (local sim) → public `GET /api/delivery/:token` lists the file → public download streams the file bytes (200) · mark delivered → `deliveredAt` stamped, commission status → `delivered`. lint/typecheck/build/format green.
+- **API**: `POST /api/commissions/:id/portal` (idempotent token); public `GET /api/portal/:token` (`routes/portal.ts`); `GET/POST /api/commissions/:id/delivery` (+ `/deliver`); files `GET/POST(multipart→R2)/DELETE` on `/api/commissions/:id/files`; public `GET /api/delivery/:token` + `/files/:fileId` streaming download (`routes/delivery.ts`). R2 bucket binding `FILES` in `wrangler.toml`.
+- **Web**: public routes `/portal/:token` (PortalPage: status/price/paid/quote + shared milestone timeline + local feedback placeholder) and `/delivery/:token` (DeliveryPage: message + downloadable files). Commission detail gains Client-portal (generate/copy link), Delivery (prepare link, upload/list/remove files, mark delivered) sections; shared `milestones()` helper in `lib/commissions.ts`.
+- Known issues / follow-ups: **production R2 bucket must be provisioned** (`wrangler r2 bucket create mirae-files`) — dev uses the local simulated bucket; portal feedback + email notifications not persisted/sent (Resend → Sprint 9); no upload size/type limits or virus scan; single delivery per commission. Backlog unchanged.
+- **Next sprint:** Sprint 9 — Polish and beta readiness (first ticket POLISH-001: empty states).
 
 ## Sprint 9 — Polish and beta readiness
 

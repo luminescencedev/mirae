@@ -262,6 +262,10 @@ export const commissionsApi = {
     fetch(`/api/commissions/${id}/files/${fileId}`, {
       method: "DELETE",
     }).then(json<{ ok: true }>),
+  markDelivered: (id: string) =>
+    fetch(`/api/commissions/${id}/delivery/deliver`, {
+      method: "POST",
+    }).then(json<{ delivery: Delivery }>),
 };
 
 export type CommissionFile = {

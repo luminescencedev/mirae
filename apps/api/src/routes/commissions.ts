@@ -267,6 +267,44 @@ commissionsRoutes.post("/:id/delivery", async (c) => {
   return c.json({ delivery: row }, 201);
 });
 
+// POST /api/commissions/:id/delivery/deliver — mark delivered: stamp the
+// delivery, move the commission to "delivered", log activity.
+commissionsRoutes.post("/:id/delivery/deliver", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const [delivery] = await db
+    .select()
+    .from(deliveries)
+    .where(eq(deliveries.commissionId, commissionId))
+    .limit(1);
+  if (!delivery) return c.json({ error: "Prepare a delivery first." }, 400);
+
+  const [updated] = await db
+    .update(deliveries)
+    .set({ deliveredAt: new Date() })
+    .where(eq(deliveries.id, delivery.id))
+    .returning();
+  await db
+    .update(commissions)
+    .set({ status: "delivered" })
+    .where(eq(commissions.id, commissionId));
+  await db.insert(activityLogs).values({
+    artistId: artist.id,
+    commissionId,
+    type: "delivery",
+    message: "Marked as delivered",
+  });
+  return c.json({ delivery: updated });
+});
+
 // --- Files (deliverables in R2) -------------------------------------------
 
 // GET /api/commissions/:id/files — the commission's files.
