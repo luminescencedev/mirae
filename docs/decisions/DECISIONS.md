@@ -28,7 +28,7 @@
 
 ## 2026-07-09 — Pinned dependency versions for Sprint 0
 
-**Decision:** Pin exact versions (no `^`, no `latest`) across all workspaces. Node 24.x engines target (`"node": ">=24"`), pnpm 11.10.0. Full authoritative list: **`docs/VERSIONS.md`**.
+**Decision:** Pin exact versions (no `^`, no `latest`) across all workspaces. Node 24.x engines target (`"node": ">=24"`), pnpm 11.10.0. Full authoritative list: **`docs/architecture/VERSIONS.md`**.
 
 Key pins:
 
@@ -40,7 +40,7 @@ vite 8.1.3              react 19.2.7            react-dom 19.2.7
 @tanstack/react-query 5.101.2     @tanstack/react-table 8.21.3
 tailwindcss 4.3.2       motion 12.42.2          react-hook-form 7.81.0
 zod 4.4.3               (Zod v4 — write validators against v4 docs, not v3 patterns)
-lucide-react 1.23.0     class-variance-authority 0.7.1  tailwind-merge 3.6.0  clsx 2.1.1  date-fns 4.4.0
+@hugeicons/react 1.1.9     class-variance-authority 0.7.1  tailwind-merge 3.6.0  clsx 2.1.1  date-fns 4.4.0
 Radix: dialog 1.1.19  dropdown-menu 2.1.20  popover 1.1.19  tooltip 1.2.12  tabs 1.1.17
        select 2.3.3   switch 1.3.3          checkbox 1.3.7  toast 1.2.19
 hono 4.12.28            @hono/zod-validator 0.8.0
@@ -58,7 +58,7 @@ concurrently 10.0.3
 
 **Reason:** The two-process setup maps directly onto the documented `apps/web` (builds to `dist/`) + `apps/api` (the Worker, `assets.directory = ../web/dist`) split and keeps the workspace boundaries clean. The vite-plugin (workerd inside Vite, single `vite dev`, tighter prod parity) would blur the app boundary by pulling the worker entry into the web Vite project.
 
-**Update (REPO-006):** originally recorded as `concurrently 10.0.3`, but Turborepo already runs both persistent `dev` tasks in parallel from one `pnpm dev`, so `concurrently` was dropped as a redundant dependency. Ports pinned deterministically (`strictPort` on vite, `[dev] port = 8787` in `wrangler.toml`). Revisit `@cloudflare/vite-plugin` if dev/prod parity issues appear; if adopted, update `docs/CONTRIBUTING.md` + `docs/ARCHITECTURE.md` and record here.
+**Update (REPO-006):** originally recorded as `concurrently 10.0.3`, but Turborepo already runs both persistent `dev` tasks in parallel from one `pnpm dev`, so `concurrently` was dropped as a redundant dependency. Ports pinned deterministically (`strictPort` on vite, `[dev] port = 8787` in `wrangler.toml`). Revisit `@cloudflare/vite-plugin` if dev/prod parity issues appear; if adopted, update `docs/architecture/CONTRIBUTING.md` + `docs/architecture/ARCHITECTURE.md` and record here.
 
 ## 2026-07-10 — Design system: shadcn-style base, clean light SaaS, Inter, Hugeicons
 

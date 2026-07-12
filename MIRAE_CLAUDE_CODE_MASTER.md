@@ -8,7 +8,7 @@
 
 Domains: marketing `usemirae.com` · app `app.usemirae.com` · public artist pages `usemirae.com/@artist` · request form `usemirae.com/@artist/request` · client portal `usemirae.com/portal/:token` · delivery `usemirae.com/delivery/:token`.
 
-Positioning: **Calendly, not VGen.** Mirae takes over _after_ an artist and client already agreed to work together — it never helps find clients. Not a marketplace, not a social network, not a discovery/matching platform, not AI-first, not escrow. Subscription-only business model; Mirae never takes a cut of commission revenue.
+Positioning: **Calendly, not VGen.** Mirae does not discover or match artists and clients. Artists bring their own audience; Mirae turns that audience into structured requests and manages the relationship from intake to delivery — the public studio + request intake intentionally happen _before_ final agreement, Mirae just never helps find the clients. Not a marketplace, not a social network, not a discovery/matching platform, not AI-first, not escrow. Subscription-only business model; Mirae never takes a cut of commission revenue.
 
 ## Source of truth
 
@@ -61,7 +61,7 @@ Hono (NOT Express) for the API.
 Single Cloudflare Worker serving both the built web app (static assets) and the Hono API.
 PostgreSQL via Neon serverless driver (NOT raw TCP / self-hosted).
 Drizzle ORM. Better Auth. Cloudflare R2 for files. Resend for email.
-Stripe for subscription billing; Stripe Connect is post-MVP.
+Billing: none yet — payment status is manual; Stripe subscription billing is planned post-MVP (Sprint 25); Stripe Connect parked. Never take a commission cut.
 Radix primitives for accessibility; NO shadcn blocks; keep UI custom and premium.
 No marketplace / discovery / matching in MVP. No AI features unless requested.
 Do not push without approval. Do not merge PRs.

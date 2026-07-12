@@ -4,7 +4,7 @@
 
 > Mirae helps digital artists manage requests, quotes, queues, revisions and deliveries in one calm workspace.
 
-Mirae is a workspace for digital artists who **already have their own clients** and want a clean place to manage the work once a client relationship exists — a public studio page to take structured requests, then quoting, queue tracking, revisions, and file delivery. Think **Calendly, not VGen**: it takes over after both sides agreed to work together; it never finds clients. Not a marketplace, discovery platform, or escrow. Subscription-only — Mirae never takes a cut of commission revenue.
+Mirae is the public **and** private studio for digital artists who bring their own audience: a public studio page + structured request intake, then quoting, queue tracking, revisions, and file delivery. Think **Calendly, not VGen** — **Mirae does not discover or match artists and clients. Artists bring their own audience; Mirae turns that audience into structured requests and manages the relationship from intake to delivery.** Not a marketplace, discovery platform, or escrow. Subscription-only — Mirae never takes a cut of commission revenue.
 
 ## Status
 
@@ -20,6 +20,26 @@ Next cycle turns the functional MVP into a differentiated, portfolio-first, mobi
 - **Public studio** (`usemirae.com/@handle`) — profile, commission types, open/waitlist/closed state, request form. _Portfolio + link-in-bio + appearance are the next cycle (planned)._
 - **Private workspace** (`app.usemirae.com`) — requests inbox, commission queue (board/list/calendar), quotes + manual payment status, deliveries, client management, ⌘K search, notifications.
 - **Client portal / delivery** (token-addressed, no account) — status timeline, quote, feedback, downloadable files from R2.
+
+## Screenshots
+
+Current build (light theme; dark tokens dormant).
+
+### Marketing + public
+
+| Landing                                  | Public studio (`/@handle`)                           | Public request form                                         |
+| ---------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------- |
+| ![Landing page](screenshots/landing.png) | ![Public studio page](screenshots/public-studio.png) | ![Public request form](screenshots/public-request-form.png) |
+
+### Private workspace
+
+| Overview                                            | Commission queue (board)                               | Requests inbox                              |
+| --------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------- |
+| ![Dashboard overview](screenshots/app-overview.png) | ![Commission queue board](screenshots/queue-board.png) | ![Requests inbox](screenshots/requests.png) |
+
+| Clients                                  | Studio-page editor                                        |
+| ---------------------------------------- | --------------------------------------------------------- |
+| ![Clients list](screenshots/clients.png) | ![Studio-page editor](screenshots/studio-page-editor.png) |
 
 ## Stack
 
@@ -101,6 +121,7 @@ Current / implemented:
 - [`docs/roadmap/SPRINTS.md`](docs/roadmap/SPRINTS.md) — sprint history + ticket queue
 - [`docs/architecture/VERSIONS.md`](docs/architecture/VERSIONS.md) — pinned dependency versions
 - [`docs/architecture/CONTRIBUTING.md`](docs/architecture/CONTRIBUTING.md) — local dev, checks, commit/PR rules
+- [`docs/architecture/RELEASE.md`](docs/architecture/RELEASE.md) — pre-release + production smoke-test checklists
 
 Post-MVP direction (planning, not yet built):
 

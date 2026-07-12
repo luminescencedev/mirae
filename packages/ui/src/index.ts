@@ -20,6 +20,7 @@ export {
   ErrorState,
 } from "./feedback/states.tsx";
 export { ToastProvider, useToast } from "./feedback/toast.tsx";
+export { ErrorBoundary } from "./feedback/error-boundary.tsx";
 
 // Layout
 export {

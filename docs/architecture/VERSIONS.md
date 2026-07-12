@@ -2,7 +2,7 @@
 
 > Authoritative dependency reference for Mirae. Checked against registry.npmjs.org on **2026-07-09**.
 > Pin **exact** versions (no `^`, no `latest`) in every workspace `package.json`. Do not silently substitute newer majors that appear during install unless a line says "use latest".
-> Rationale for the notable pins lives in `docs/DECISIONS.md`.
+> Rationale for the notable pins lives in `docs/decisions/DECISIONS.md`.
 
 ## Runtime
 
@@ -123,8 +123,8 @@ Radix UI primitives (pin each individually, same release wave):
 
 ## Dev-runtime choice
 
-- **Adopted:** two-process dev (`vite dev` + `wrangler dev`) orchestrated by `turbo run dev` — no extra dependency (`concurrently` was dropped as redundant; Turborepo runs both persistent tasks). See `docs/DECISIONS.md`.
-- **Deferred:** `@cloudflare/vite-plugin` **1.43.1** — single `vite dev` running workerd for full prod parity. Considered, not adopted. If adopted later, update `docs/CONTRIBUTING.md` + `docs/ARCHITECTURE.md` and record in `docs/DECISIONS.md`.
+- **Adopted:** two-process dev (`vite dev` + `wrangler dev`) orchestrated by `turbo run dev` — no extra dependency (`concurrently` was dropped as redundant; Turborepo runs both persistent tasks). See `docs/decisions/DECISIONS.md`.
+- **Deferred:** `@cloudflare/vite-plugin` **1.43.1** — single `vite dev` running workerd for full prod parity. Considered, not adopted. If adopted later, update `docs/architecture/CONTRIBUTING.md` + `docs/architecture/ARCHITECTURE.md` and record in `docs/decisions/DECISIONS.md`.
 
 ## Verification
 

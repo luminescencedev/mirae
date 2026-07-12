@@ -21,7 +21,7 @@ No raw/unstyled shadcn look shipped as-is.
 
 The first public version must feel like a **premium client/workflow OS for artists**, not an enterprise SaaS template. Every screen should look good enough to be a product marketing screenshot.
 
-## Foundations (2026-07-10 — see docs/DECISIONS.md)
+## Foundations (2026-07-10 — see docs/decisions/DECISIONS.md)
 
 - **Component base:** shadcn/ui architecture (Radix + `cva` + `cn`) restyled onto Mirae tokens. Not copied blocks; `Button` mirrors shadcn's variants/sizes/`asChild`.
 - **Bar:** clean light SaaS at shadcn/Linear polish — thin borders, small radii, calm whitespace, pastel tag chips, status dots. Reference boards: Taskk, widelab, logip, Shopeers.
@@ -70,7 +70,7 @@ Light UI, pure white surfaces, zinc/neutral grays, black text, pastel blue accen
 Radix behavior + Mirae visuals.
 ```
 
-Use: `cva` for variants · `cn` for class merging · Tailwind tokens for consistency · Lucide for icons · Radix for accessible primitives.
+Use: `cva` for variants · `cn` for class merging · Tailwind tokens for consistency · Hugeicons for icons · Radix for accessible primitives.
 
 Avoid: shadcn visual defaults · random block copy-paste · large component libraries · scattered one-off inline styles.
 
@@ -132,7 +132,7 @@ When mockups are provided: identify the screen, extract layout/spacing/colors/co
 
 ## Pinned front-end library versions
 
-Tokens/tooling this system is built on (see `docs/DECISIONS.md` for full pin list): `tailwindcss 4.3.2`, `motion 12.42.2`, `lucide-react 1.23.0`, `class-variance-authority 0.7.1`, `tailwind-merge 3.6.0`, `clsx 2.1.1`, Radix primitives (dialog 1.1.19, dropdown-menu 2.1.20, popover 1.1.19, tooltip 1.2.12, tabs 1.1.17, select 2.3.3, switch 1.3.3, checkbox 1.3.7, toast 1.2.19).
+Tokens/tooling this system is built on (see `docs/decisions/DECISIONS.md` for full pin list): `tailwindcss 4.3.2`, `motion 12.42.2`, `@hugeicons/react 1.1.9`, `class-variance-authority 0.7.1`, `tailwind-merge 3.6.0`, `clsx 2.1.1`, Radix primitives (dialog 1.1.19, dropdown-menu 2.1.20, popover 1.1.19, tooltip 1.2.12, tabs 1.1.17, select 2.3.3, switch 1.3.3, checkbox 1.3.7, toast 1.2.19).
 
 ## Public & mobile principles (post-MVP direction)
 
