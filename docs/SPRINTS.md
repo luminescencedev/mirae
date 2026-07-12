@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-MVP + audit complete — all sprints shipped. Live on Cloudflare (usemirae.com + app.usemirae.com).
+Sprint 10.5 — Repository and production baseline (start of the post-MVP cycle). Full ticket detail in docs/POST_MVP_ROADMAP.md. Next ticket: META-001.
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -242,3 +242,24 @@ Acceptance: signing up → a fresh studio shows _your_ data (not Rain Aoki); no 
 ## Notes
 
 - Init (2026-07-09): docs created, master rewritten into index. Dev runtime = two-process concurrently (see DECISIONS). Versions pinned per DECISIONS.
+
+## Post-MVP cycle — Sprint index (planned)
+
+Execution order for the next cycle. **Full ticket lists + acceptance live in [`docs/POST_MVP_ROADMAP.md`](POST_MVP_ROADMAP.md)** — this is the index, not a second copy. Nothing below is started yet.
+
+- **10.5 — Repository & production baseline** — make repo/docs/prod match reality (default branch, README, env docs, error boundary + logging, checklists). _First ticket: META-001._
+- **11 — Mirae identity foundation** — brand: symbol, wordmark, favicon/app icon, OG system, email assets, motion.
+- **12 — Portfolio data & media infrastructure** — `portfolio_projects` + `portfolio_assets`, avatar/cover, R2 upload flow, CRUD API, public response extension.
+- **13 — Portfolio manager** — visual, touch-friendly portfolio editor (upload, reorder, cover, alt-text, draft/publish, featured).
+- **14 — Artist links & public hub** — `artist_links`, link manager, curated styles (simple/card/media/featured), URL validation, click analytics.
+- **15 — Creative public studio** — portfolio-first `@handle` homepage (hero, featured work, grid, lightbox, integrated commission cards).
+- **16 — Integrated request flow** — reusable multi-step request (dialog/sheet + standalone route), reference uploads, draft persistence, spam controls.
+- **17 — Appearance editor & live preview** — curated customization (accent/typography/layout/section order) with desktop split + mobile edit/preview.
+- **18 — Mobile product experience** — bottom nav, mobile shell, full-screen detail flows, sticky actions, responsive images; genuinely mobile-first.
+- **19 — Sharing, SEO & analytics** — dynamic OG images, canonical/metadata/sitemap/robots, privacy-friendly studio analytics.
+- **20 — Onboarding & guided launch** — signup → publish → share in one resumable journey; dashboard checklist + tour.
+- **21 — Premium client portal** — branded portal, milestone timeline, structured feedback threads + revision rounds, quote accept/decline, token rotation.
+- **22 — Trust, security & beta hardening** — upload threat model/quotas, rate limiting, token revocation, data export/deletion, policies, critical-path tests.
+- **23 — Closed artist beta** — 5–10 real artists, interviews, activation + conversion metrics, prioritized fixes.
+- **24 — Commission operations polish** — only from validated beta feedback (notes, deadlines, revision counters, templates, manual ordering, archive/cancel).
+- **25 — Subscription foundation** — Free/Pro plans, Stripe Checkout + portal + webhooks, server-side entitlements. **No commission cut, ever.**

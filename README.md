@@ -4,7 +4,22 @@
 
 > Mirae helps digital artists manage requests, quotes, queues, revisions and deliveries in one calm workspace.
 
-Mirae is a private workspace for digital artists who **already have their own clients** and want a clean place to manage the work once a client relationship exists — receiving structured requests, quoting, tracking the queue, handling revisions, and delivering final files. Think **Calendly, not VGen**: it takes over after both sides agreed to work together; it never finds clients. Not a marketplace, discovery platform, or escrow. Subscription-only — Mirae never takes a cut of commission revenue.
+Mirae is a workspace for digital artists who **already have their own clients** and want a clean place to manage the work once a client relationship exists — a public studio page to take structured requests, then quoting, queue tracking, revisions, and file delivery. Think **Calendly, not VGen**: it takes over after both sides agreed to work together; it never finds clients. Not a marketplace, discovery platform, or escrow. Subscription-only — Mirae never takes a cut of commission revenue.
+
+## Status
+
+**MVP complete and deployed** (Sprints 0–9 shipped, plus a Sprint 10 audit/polish pass). Live on Cloudflare:
+
+- **Marketing + public studio:** https://usemirae.com (landing, public `/@handle`, `/portal/:token`, `/delivery/:token`)
+- **Dashboard:** https://app.usemirae.com (auth + the private workspace)
+
+Next cycle turns the functional MVP into a differentiated, portfolio-first, mobile-first artist product — see **[`docs/POST_MVP_VISION.md`](docs/POST_MVP_VISION.md)** and **[`docs/POST_MVP_ROADMAP.md`](docs/POST_MVP_ROADMAP.md)**. Current sprint + next ticket live in [`docs/SPRINTS.md`](docs/SPRINTS.md).
+
+## Product surfaces
+
+- **Public studio** (`usemirae.com/@handle`) — profile, commission types, open/waitlist/closed state, request form. _Portfolio + link-in-bio + appearance are the next cycle (planned)._
+- **Private workspace** (`app.usemirae.com`) — requests inbox, commission queue (board/list/calendar), quotes + manual payment status, deliveries, client management, ⌘K search, notifications.
+- **Client portal / delivery** (token-addressed, no account) — status timeline, quote, feedback, downloadable files from R2.
 
 ## Stack
 
@@ -12,7 +27,8 @@ Mirae is a private workspace for digital artists who **already have their own cl
 - **Web:** Vite + React + TanStack Router + Tailwind CSS v4 (`apps/web`)
 - **API:** Hono, deployed as a single Cloudflare Worker that also serves the built web app (`apps/api`)
 - **Database:** PostgreSQL on Neon (serverless HTTP driver) + Drizzle ORM (`packages/db`)
-- **Auth:** Better Auth · **Email:** Resend · **Files:** Cloudflare R2 · **Billing:** Stripe (subscription; Connect post-MVP)
+- **Auth:** Better Auth · **Email:** Resend (transactional notifications) · **Files:** Cloudflare R2
+- **Billing:** none yet — subscription billing (Stripe) is **planned post-MVP** (Sprint 25), not implemented. Payment status in-app is currently manual.
 
 Full rationale in [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
@@ -32,13 +48,14 @@ docs/         Source of truth (see below)
 
 ## Prerequisites
 
-- **Node.js** 24.x (Active LTS)
+- **Node.js** 24.x (Active LTS) — pinned via `.node-version`
 - **pnpm** 11.10.0
 
 ## Getting started
 
 ```bash
 pnpm install
+cp .env.example .env   # fill DATABASE_URL + BETTER_AUTH_SECRET (see docs/CONTRIBUTING.md)
 pnpm dev
 ```
 
@@ -48,8 +65,6 @@ pnpm dev
 | -------------- | --------------------- | ------------------------------------ |
 | web (vite)     | http://localhost:5173 | proxies `/api/*` to the Worker       |
 | api (wrangler) | http://localhost:8787 | health: http://localhost:8787/health |
-
-Copy `.env.example` → `.env` and fill values as sprints require them (the DB is wired in Sprint 3; the app runs without it before then).
 
 ## Scripts
 
@@ -66,23 +81,31 @@ Copy `.env.example` → `.env` and fill values as sprints require them (the DB i
 
 ## Deployment
 
-One Worker, one deploy. Hono handles `/api/*` and the `/@:handle` OG bot-detection; everything else falls through to the static assets binding serving `apps/web/dist`.
+One Worker, one deploy. `run_worker_first` lets Hono see every request: it handles `/api/*`, `/@:handle` OG bot-detection, and host-split routing (dashboard on `app.usemirae.com`, marketing/public on `usemirae.com`); everything else falls through to the static assets binding serving `apps/web/dist`. Custom domains + the R2 `FILES` bucket are declared in `apps/api/wrangler.toml`.
 
 ```bash
-pnpm --filter @mirae/web build   # produce dist/
-pnpm --filter @mirae/api deploy  # wrangler deploy
+pnpm build
+npx wrangler deploy --config apps/api/wrangler.toml
 ```
+
+Production secrets (set via `wrangler secret`): `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and optionally `RESEND_API_KEY` + `MAIL_FROM` (notification emails no-op without them). The deploy does not run from git — deploy the working tree from `main`.
 
 ## Documentation (source of truth)
 
+Current / implemented:
+
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — structure, single-Worker deployment, module rules, endpoints
-- [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) — visual direction, palette, components
-- [`docs/SPRINTS.md`](docs/SPRINTS.md) — sprint roadmap + ticket queue
-- [`docs/DATABASE.md`](docs/DATABASE.md) — schema, Neon + Drizzle conventions
-- [`docs/DECISIONS.md`](docs/DECISIONS.md) — stack, single-Worker reasoning, business model
+- [`docs/DATABASE.md`](docs/DATABASE.md) — current schema + planned post-MVP schema
+- [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) — visual direction, palette, components, public/mobile principles
+- [`docs/DECISIONS.md`](docs/DECISIONS.md) — locked stack + product decisions
+- [`docs/SPRINTS.md`](docs/SPRINTS.md) — sprint history + ticket queue
 - [`docs/VERSIONS.md`](docs/VERSIONS.md) — pinned dependency versions
 - [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) — local dev, checks, commit/PR rules
 
-## Status
+Post-MVP direction (planning, not yet built):
 
-Early development — Sprint 0 (repository foundation) complete; Sprint 1 (brand UI foundation) next. See [`docs/SPRINTS.md`](docs/SPRINTS.md) for progress.
+- [`docs/POST_MVP_VISION.md`](docs/POST_MVP_VISION.md) — strategic product direction
+- [`docs/POST_MVP_ROADMAP.md`](docs/POST_MVP_ROADMAP.md) — Sprint 10.5 → 25 ticket roadmap
+- [`docs/PUBLIC_STUDIO_SPEC.md`](docs/PUBLIC_STUDIO_SPEC.md) — public studio UX spec
+- [`docs/MOBILE_PRODUCT_SPEC.md`](docs/MOBILE_PRODUCT_SPEC.md) — mobile-first requirements
+- [`docs/DATA_AND_API_EXTENSION.md`](docs/DATA_AND_API_EXTENSION.md) — planned schema + API additions

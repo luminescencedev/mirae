@@ -92,3 +92,16 @@ Do not push without approval. Do not merge PRs. Do not silently change architect
 ## Guardrails
 
 One ticket at a time unless approved. Don't reintroduce Express, React Router, Vercel code, or a second deployable Worker (locked — see `docs/DECISIONS.md`). Don't copy shadcn blocks wholesale. If a decision changes, update the relevant `docs/*` file (architectural changes → `docs/DECISIONS.md`), not just this file.
+
+## Post-MVP working rules
+
+The MVP is shipped + deployed; the next cycle is a locked product direction (see `docs/POST_MVP_VISION.md`, `docs/POST_MVP_ROADMAP.md`). When implementing post-MVP work:
+
+- **Read the vision first.** Before building a new feature, read `docs/POST_MVP_VISION.md` + the relevant spec (`docs/PUBLIC_STUDIO_SPEC.md`, `docs/MOBILE_PRODUCT_SPEC.md`, `docs/DATA_AND_API_EXTENSION.md`).
+- **Mobile is designed, not patched.** Every screen/flow accounts for mobile from the start (bottom nav, full-screen detail flows, sticky actions, no hover-only controls, keyboard-safe).
+- **Public artist pages prioritize artwork.** Portfolio-first hierarchy; link-in-bio features must never reduce the page to a stack of identical buttons.
+- **Every upload endpoint** enforces authenticated ownership (or a scoped short-lived token for public uploads), MIME + size limits, and storage cleanup on delete.
+- **Never mark planned features as shipped.** Docs distinguish shipped / current / planned. Planned tables, endpoints and UI stay labeled planned until they exist.
+- **Preserve locked architecture** (see `docs/DECISIONS.md`) unless a decision doc explicitly changes it. Don't rewrite the existing Hono route modules into a fictional controller/service/repository layering.
+- **Every sprint updates docs, tests and acceptance notes**; keep one source of truth per topic (link between docs, don't duplicate).
+- **Billing is last** (Sprint 25) and Mirae never takes a commission percentage.

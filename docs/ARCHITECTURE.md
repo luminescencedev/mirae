@@ -132,3 +132,19 @@ api:  wrangler dev  -> http://localhost:8787    (health: /health)
 ```
 
 Run together from root with `pnpm dev` (= `turbo run dev`, both persistent tasks in parallel). See `docs/CONTRIBUTING.md`.
+
+## Planned post-MVP modules (NOT yet implemented)
+
+> Planned for the next cycle (Sprints 11+). These do **not** exist in the code yet — document the code that exists, not these, until they ship. The current API keeps its existing shape (Hono route modules under `apps/api/src/routes/*`, owner-scoping via `getArtist`); do **not** rewrite it into a fictional controller/service/repository layering. New modules should follow the same existing pattern. Endpoint lists: [`DATA_AND_API_EXTENSION.md`](DATA_AND_API_EXTENSION.md).
+
+Planned route modules (same single Worker, same Neon/R2/Better-Auth stack):
+
+- **portfolio** — `/api/portfolio/projects*` + `/assets*` CRUD, reorder, controlled R2 upload, MIME/size validation, orphan cleanup.
+- **artist media** — `/api/artists/me/avatar|cover` upload/delete.
+- **artist links** — `/api/artist-links*` CRUD + reorder, URL validation/normalization.
+- **appearance** — `/api/studio-appearance` draft/publish/reset (server-validated presets).
+- **request references** — `/api/studio/:handle/request-upload-session*` (short-lived token, private uploads).
+- **analytics** — `/api/studio/:handle/events` (ingest) + `/api/analytics/studio` (aggregate).
+- **public studio** — the public `@handle` response grows into a single composed payload (profile + appearance + links + featured project + projects + commission types + availability), returning published/enabled content only.
+
+Every new upload endpoint must enforce: authenticated ownership (private) or scoped token (public), MIME + size limits, and storage cleanup on delete. Mobile behavior is a design input for these modules from the start (see [`MOBILE_PRODUCT_SPEC.md`](MOBILE_PRODUCT_SPEC.md)), not a later patch.
