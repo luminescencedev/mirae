@@ -1,6 +1,6 @@
 # Contributing
 
-> Local workflow, preview, checks, and commit/PR rules. `docs/SPRINTS.md` is the ticket queue; docs are the source of truth after init.
+> Local workflow, preview, checks, and commit/PR rules. `docs/roadmap/SPRINTS.md` is the ticket queue; docs are the source of truth after init.
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ After install, verify pinned versions:
 pnpm ls --depth 0 -r
 ```
 
-Confirm they match `docs/VERSIONS.md`. Flag any mismatch instead of continuing.
+Confirm they match `docs/architecture/VERSIONS.md`. Flag any mismatch instead of continuing.
 
 ## Local dev
 
@@ -72,7 +72,7 @@ User can review locally.
 ```txt
 All sprint tickets meet acceptance criteria.
 End-to-end flow works for that sprint scope.
-docs/SPRINTS.md updated.
+docs/roadmap/SPRINTS.md updated.
 Known issues listed.
 Next sprint clearly identified.
 ```
@@ -125,5 +125,5 @@ Do not copy shadcn blocks wholesale.
 Do not add marketplace or discovery/matching features in MVP.
 Do not add AI features unless explicitly requested.
 Do not push without approval. Do not merge PRs.
-Do not reintroduce Express, React Router, Vercel code, or a second Worker (locked — see docs/DECISIONS.md).
+Do not reintroduce Express, React Router, Vercel code, or a second Worker (locked — see docs/decisions/DECISIONS.md).
 ```

@@ -26,14 +26,14 @@ Make the repository, documentation and production setup accurately represent the
 
 ## Tickets
 
-- [ ] META-001 Change the GitHub default branch to `main`
-- [ ] META-002 Update README status from Sprint 0 to deployed MVP
-- [ ] META-003 Add production URLs
+- [x] META-001 Change the GitHub default branch to `main`
+- [x] META-002 Update README status from Sprint 0 to deployed MVP
+- [x] META-003 Add production URLs
 - [ ] META-004 Add current product screenshots
-- [ ] META-005 Clarify Stripe as post-MVP subscription work
-- [ ] META-006 Remove or archive merged branches
-- [ ] META-007 Audit outdated architecture documentation
-- [ ] META-008 Document all production environment variables
+- [x] META-005 Clarify Stripe as post-MVP subscription work
+- [x] META-006 Remove or archive merged branches
+- [x] META-007 Audit outdated architecture documentation
+- [x] META-008 Document all production environment variables
 - [ ] META-009 Add client-side error boundary
 - [ ] META-010 Add structured production error logging
 - [ ] META-011 Create pre-release checklist

@@ -1,6 +1,6 @@
 # Architecture
 
-> Canonical source for repo structure, deployment model, and module rules. See `docs/DECISIONS.md` for the _why_ behind the locked choices.
+> Canonical source for repo structure, deployment model, and module rules. See `docs/decisions/DECISIONS.md` for the _why_ behind the locked choices.
 
 ## Deployment model — single Cloudflare Worker
 
@@ -42,78 +42,67 @@ TanStack Router file-based routes (NOT React Router).
 
 ```txt
 src/
-├─ routes/
+├─ routes/                 # TanStack file-based (routeTree.gen.ts is generated)
 │  ├─ __root.tsx
-│  ├─ index.tsx            # marketing home
-│  ├─ pricing.tsx  waitlist.tsx  login.tsx  signup.tsx  onboarding.tsx
-│  ├─ app/
-│  │  ├─ route.tsx         # /app layout (protected)
-│  │  ├─ overview.tsx  queue.tsx  requests.tsx  clients.tsx
-│  │  ├─ deliveries.tsx  studio-page.tsx  settings.tsx
-│  └─ $handle/
-│     ├─ index.tsx         # public artist page /@:handle
-│     └─ request.tsx       # /@:handle/request
-├─ features/              # commissions, requests, clients, quotes, files, studio, settings
-├─ components/            # marketing, app-shell, mockups
-├─ lib/                   # api-client.ts, auth-client.ts, cn.ts, format.ts
+│  ├─ index.tsx            # marketing landing (hero + pricing section + CTA)
+│  ├─ waitlist.tsx  login.tsx  signup.tsx  onboarding.tsx
+│  ├─ app.tsx              # /app layout (protected; gated on a studio profile)
+│  ├─ app/                 # overview, queue, requests, clients, deliveries, studio-page, index
+│  ├─ $handle/             # index.tsx (public /@:handle) · request.tsx
+│  └─ portal/$token.tsx    delivery/$token.tsx
+├─ components/             # app-shell, marketing, public, mockups
+├─ lib/                    # api.ts, auth-client.ts, query.ts, commissions.ts
 ├─ styles/globals.css
-├─ router.tsx
 └─ main.tsx
 ```
 
 ### Route map
 
 ```txt
-/  /pricing  /waitlist  /login  /signup  /onboarding
-/app  /app/overview  /app/queue  /app/requests  /app/clients
-/app/deliveries  /app/studio-page  /app/settings
+/  /waitlist  /login  /signup  /onboarding
+/app  /app/overview  /app/queue  /app/requests  /app/clients  /app/deliveries  /app/studio-page
 /@:handle  /@:handle/request  /portal/:token  /delivery/:token
 ```
 
-**Domains vs paths.** Production: marketing on `usemirae.com`, the private dashboard on `app.usemirae.com`. The router uses the `/app/*` path prefix (dev: `localhost:5173/app/...`); the single Worker maps the `app.` host to the `/app` subtree at deploy time (Sprint 4). So `/app/*` is the internal path — the dashboard is reached at `app.usemirae.com` in production.
+**Domains vs paths.** Production: marketing + public pages on `usemirae.com`, the private dashboard on `app.usemirae.com` (both are custom domains on the one Worker). The router uses the `/app/*` path prefix (dev: `localhost:5173/app/...`); in production the Worker's `hostSplitRedirect` (in `index.ts`) sends `/app|/login|/signup|/onboarding` to `app.usemirae.com` and everything else to the apex, no-op on localhost. This host-split is **implemented** (shipped at deploy).
 
 ## API (`apps/api`, the Worker)
 
 ```txt
 src/
-├─ index.ts                 # Hono entrypoint — the Worker `main`
-├─ env.ts
-├─ routes/                  # auth, artists, commission-types, requests, commissions,
-│                           #   clients, quotes, deliveries, webhooks (Stripe), public-page (OG)
-├─ modules/<module>/        # artists, commission-types, requests, commissions, clients,
-│                           #   quotes, deliveries, files (R2), emails (Resend)
-├─ middleware/              # auth, error-handler, rate-limit, validate (zod)
-├─ lib/                     # db (Drizzle+Neon), logger, response, slug
-└─ types/
+├─ index.ts                 # Hono entrypoint (Worker `main`): mounts routes,
+│                           #   /api/waitlist, /@:handle OG + host-split, SPA fallback
+├─ auth.ts                  # makeAuth(env) — Better Auth built per request
+├─ routes/                  # one flat Hono module per area (see below)
+│  ├─ artists.ts   commission-types.ts   studio.ts   requests.ts
+│  └─ commissions.ts   portal.ts   delivery.ts
+└─ lib/                     # session.ts (getArtist/getUserId), og.ts, mail.ts (Resend)
 ```
 
-### Module rules (per `modules/<module>/`)
+Route files are **flat Hono modules** — a module owns its handlers + Drizzle queries directly (owner-scoping via `getArtist`). There is intentionally no controller/service/repository layering and no `middleware/` or `env.ts`; env is the request-scoped `Bindings` type. Keep new modules in this same shape.
+
+### Endpoints (implemented)
 
 ```txt
-<module>.controller.ts  -> Hono route handler only (request/response)
-<module>.service.ts     -> business logic
-<module>.repository.ts  -> DB queries via Drizzle
-<module>.validators.ts  -> Zod schemas (used with @hono/zod-validator)
-<module>.types.ts       -> local module types
+GET  /health   GET /api/health
+ALL  /api/auth/*                          (Better Auth: sign-up, sign-in, session…)
+POST /api/waitlist
+GET  /api/artists/me   PATCH /api/artists/me   POST /api/artists
+GET  /api/commission-types   POST …   PATCH /:id   DELETE /:id
+GET  /api/studio/:handle                  POST /api/studio/:handle/requests
+GET  /api/requests   PATCH /api/requests/:id   POST /api/requests/:id/convert
+GET  /api/commissions   POST …   PATCH /:id   DELETE /:id
+GET  /api/commissions/:id/activity
+GET|POST /api/commissions/:id/delivery    POST /api/commissions/:id/delivery/deliver
+GET  /api/commissions/:id/files   POST … (multipart→R2)   DELETE /:id/files/:fileId
+GET|PUT /api/commissions/:id/quote        POST /api/commissions/:id/quote/send
+POST /api/commissions/:id/portal          (generate portal token)
+GET  /api/portal/:token                   POST /api/portal/:token/feedback
+GET  /api/delivery/:token                 GET /api/delivery/:token/files/:fileId
+GET  /:handle                             (bot → OG HTML; human → SPA)
 ```
 
-### MVP endpoints
-
-```txt
-GET  /health
-POST /auth/*                              GET  /me
-GET  /artists/me                          PATCH /artists/me
-GET  /studio/:handle                      GET  /studio/:handle/commission-types
-POST /studio/:handle/requests
-GET  /commission-types  POST /commission-types  PATCH /commission-types/:id  DELETE /commission-types/:id
-GET  /requests  GET /requests/:id  PATCH /requests/:id  POST /requests/:id/accept  POST /requests/:id/decline
-GET  /commissions  POST /commissions  GET /commissions/:id  PATCH /commissions/:id  PATCH /commissions/:id/status
-GET  /clients  GET /clients/:id  PATCH /clients/:id
-POST /quotes  GET /quotes/:id  PATCH /quotes/:id  POST /quotes/:id/send
-GET  /portal/:token  POST /portal/:token/feedback
-POST /deliveries  GET /deliveries/:token
-POST /webhooks/stripe
-```
+Payment status is manual (`PATCH /api/commissions/:id` sets `paidCents`); there is **no** Stripe webhook — billing is planned post-MVP (Sprint 25). Planned modules (portfolio, links, appearance, analytics, request uploads) are in the post-MVP section below.
 
 ## Packages
 
@@ -124,14 +113,14 @@ POST /webhooks/stripe
 
 ## Local dev
 
-Two-process setup (see `docs/DECISIONS.md` — `@cloudflare/vite-plugin` was considered and deferred):
+Two-process setup (see `docs/decisions/DECISIONS.md` — `@cloudflare/vite-plugin` was considered and deferred):
 
 ```txt
 web:  vite dev      -> http://localhost:5173   (strictPort; proxies /api/* to wrangler)
 api:  wrangler dev  -> http://localhost:8787    (health: /health)
 ```
 
-Run together from root with `pnpm dev` (= `turbo run dev`, both persistent tasks in parallel). See `docs/CONTRIBUTING.md`.
+Run together from root with `pnpm dev` (= `turbo run dev`, both persistent tasks in parallel). See `docs/architecture/CONTRIBUTING.md`.
 
 ## Planned post-MVP modules (NOT yet implemented)
 

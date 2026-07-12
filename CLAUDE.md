@@ -8,7 +8,7 @@ Operating guide for Claude Code in this repo. Docs in `docs/` are the source of 
 
 > Mirae helps digital artists manage requests, quotes, queues, revisions and deliveries in one calm workspace.
 
-Positioning: **Calendly, not VGen.** Manages the relationship _after_ artist and client already agreed to work together; never finds clients. Not a marketplace, social network, discovery/matching platform, AI-first product, or escrow. Subscription-only; never takes a cut of commission revenue.
+Positioning: **Calendly, not VGen.** Mirae does not discover or match artists and clients. Artists bring their own audience; Mirae turns that audience into structured requests and manages the relationship from intake to delivery (the public studio + request intake intentionally happen _before_ final agreement — Mirae just never finds the clients). Not a marketplace, social network, discovery/matching platform, AI-first product, or escrow. Subscription-only; never takes a cut of commission revenue.
 
 ## Source of truth (`docs/`)
 
@@ -82,7 +82,7 @@ Hono (NOT Express) for the API.
 Single Cloudflare Worker serving built web app (static assets) + Hono API.
 PostgreSQL via Neon serverless driver (NOT raw TCP / self-hosted).
 Drizzle ORM. Better Auth. Cloudflare R2 for files. Resend for email.
-Stripe subscription billing; Stripe Connect post-MVP.
+Billing: NONE yet — payment status is manual (`paidCents`); Stripe subscription billing is planned post-MVP (Sprint 25), Stripe Connect is parked (never take a commission cut).
 Radix primitives for accessibility; NO shadcn blocks; keep UI custom + premium.
 No marketplace / discovery / matching in MVP. No AI features unless requested.
 Pin exact dependency versions (docs/architecture/VERSIONS.md).

@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 10.5 — Repository and production baseline (start of the post-MVP cycle). Full ticket detail in docs/POST_MVP_ROADMAP.md. Next ticket: META-001.
+Sprint 10.5 — Repository and production baseline (in progress). Done: META-001/002/003/005/006/007/008. Remaining: META-004 (screenshots — needs user assets), META-009 + META-010 (client error boundary + prod error logging — code), META-011 + META-012 (pre-release + smoke-test checklists — docs). Full detail in docs/roadmap/POST_MVP_ROADMAP.md. **Next code ticket: META-009.**
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -21,8 +21,8 @@ Acceptance: `pnpm install` works · `pnpm dev` runs web (vite) + api (wrangler d
 Completion notes (2026-07-09):
 
 - End-to-end verified: `pnpm dev` → web :5173 (200), api :8787/health (`{"status":"ok"}`), proxy `/api/*` :5173 → wrangler (200). Build, lint, typecheck, format all green.
-- Deviations from plan, recorded in `docs/DECISIONS.md`: dropped `concurrently` (turbo orchestrates the two-process dev); `@cloudflare/vite-plugin` deferred.
-- Extra pins resolved & recorded in `docs/VERSIONS.md`: @vitejs/plugin-react, @types/react(-dom), the ESLint/Prettier ecosystem, @tailwindcss/vite.
+- Deviations from plan, recorded in `docs/decisions/DECISIONS.md`: dropped `concurrently` (turbo orchestrates the two-process dev); `@cloudflare/vite-plugin` deferred.
+- Extra pins resolved & recorded in `docs/architecture/VERSIONS.md`: @vitejs/plugin-react, @types/react(-dom), the ESLint/Prettier ecosystem, @tailwindcss/vite.
 - Known issues / follow-ups: TanStack Router not yet wired (WEB-001); `@mirae/db` schema is a placeholder (DB-002); seed script pending (DB-004); apps don't consume the shared packages yet.
 - **Next sprint:** Sprint 1 — Brand UI foundation (first ticket UI-001).
 
@@ -41,8 +41,8 @@ Acceptance: landing close to Mirae direction · app shell has one clear sidebar 
 Completion notes (2026-07-10):
 
 - End-to-end verified: `pnpm dev` → landing at :5173 (200, renders the hero + framed AppShell preview), api :8787/health ok, proxy `/api/*` ok. lint/typecheck/build/format all green.
-- Direction locked (see `docs/DECISIONS.md` 2026-07-10): clean **light-only** SaaS at shadcn/Linear polish; shadcn-style base components on Mirae tokens; **Hugeicons** Stroke Rounded as the house icon family (lucide dropped); **Inter** self-hosted; premium motion (strong easing, scale-on-press, spring `HoverBarList`) per the user-global emil/apple design skills. Dark tokens kept dormant.
-- New pins in `docs/VERSIONS.md`: motion, @hugeicons/react + core-free-icons, react-icons, @radix-ui/{react-slot,dialog,dropdown-menu,tooltip,tabs}.
+- Direction locked (see `docs/decisions/DECISIONS.md` 2026-07-10): clean **light-only** SaaS at shadcn/Linear polish; shadcn-style base components on Mirae tokens; **Hugeicons** Stroke Rounded as the house icon family (lucide dropped); **Inter** self-hosted; premium motion (strong easing, scale-on-press, spring `HoverBarList`) per the user-global emil/apple design skills. Dark tokens kept dormant.
+- New pins in `docs/architecture/VERSIONS.md`: motion, @hugeicons/react + core-free-icons, react-icons, @radix-ui/{react-slot,dialog,dropdown-menu,tooltip,tabs}.
 - Built in `@mirae/ui`: Button, Input, Textarea, Badge (pastel tags), Card (+bezel), Panel, cn/cva helpers, HoverBarList, Icon wrapper, bespoke BranchReturn/EnterKey icons, Radix Dialog/Dropdown/Tooltip/Tabs skins. In `apps/web`: AppShell (collapsible sidebar + Overview/Queue views), Landing hero, seed data.
 - Known issues / follow-ups: still **prototype** — no router yet (TanStack Router = WEB-001, Sprint 2); AppShell/Landing are mock, seed-driven (no backend); `@mirae/db` schema still placeholder (Sprint 3); design-system business components (CommissionCard etc.) live in apps/web, graduate to `@mirae/ui` when stable.
 - **Next sprint:** Sprint 2 — Static product screens (first ticket WEB-001: set up TanStack Router file-based route tree).
@@ -88,7 +88,7 @@ Completion notes (2026-07-11):
 - End-to-end verified live: `pnpm db:check` (Neon Postgres 18, `neondb`) · `pnpm db:seed` (rows counted) · sign-up → session persisted → `get-session` · sign-in → `POST /api/artists` creates the profile → `GET /api/artists/me` 200 · unauthenticated `/me` → 401 · `/app` redirects to `/login` when logged out. lint/typecheck/build/format green.
 - **DB**: 11 MVP tables + Better Auth tables (sessions/accounts/verifications), enums mirror `@mirae/shared`, money in integer cents. Migrations `0000`+`0001` committed under `packages/db/drizzle` and applied to Neon.
 - **Auth**: Better Auth (email+password) built per-request in the Hono Worker with the Drizzle adapter (`usePlural`); `/api/auth/*`; web `auth-client`; login/signup/onboarding wired; `/app` protected via `beforeLoad`; sidebar sign-out.
-- **New pins** (docs/VERSIONS.md): better-auth 1.6.23, @types/node 24.13.3, drizzle-orm in apps/api.
+- **New pins** (docs/architecture/VERSIONS.md): better-auth 1.6.23, @types/node 24.13.3, drizzle-orm in apps/api.
 - Config: Worker secrets in `apps/api/.dev.vars` (gitignored: DATABASE_URL, BETTER_AUTH_SECRET/URL); tooling reads root `.env` via Node `loadEnvFile`.
 - Known issues / follow-ups: the **seed user has no password** (created via direct insert) — log in via `/signup` or the demo `demo@mirae.test` / `commissions123`. App screens still show seed/mock data (not yet the logged-in user's real commissions — later sprints). Prod deploy (wrangler secrets, subdomain→/app) = Sprint 4/deploy. Onboarding doesn't yet redirect existing-profile users or gate `/app` on profile presence.
 - **Next sprint:** Sprint 4 — Commission types and public page (first ticket CT-001: commission types API).
@@ -245,9 +245,9 @@ Acceptance: signing up → a fresh studio shows _your_ data (not Rain Aoki); no 
 
 ## Post-MVP cycle — Sprint index (planned)
 
-Execution order for the next cycle. **Full ticket lists + acceptance live in [`docs/POST_MVP_ROADMAP.md`](POST_MVP_ROADMAP.md)** — this is the index, not a second copy. Nothing below is started yet.
+Execution order for the next cycle. **Full ticket lists + acceptance live in [`docs/roadmap/POST_MVP_ROADMAP.md`](POST_MVP_ROADMAP.md)** — this is the index, not a second copy. Nothing below is started yet.
 
-- **10.5 — Repository & production baseline** — make repo/docs/prod match reality (default branch, README, env docs, error boundary + logging, checklists). _First ticket: META-001._
+- **10.5 — Repository & production baseline** _(in progress)_ — make repo/docs/prod match reality. Done: META-001/002/003/005/006/007/008. Remaining: META-004 (screenshots), META-009/010 (error boundary + prod logging), META-011/012 (checklists).
 - **11 — Mirae identity foundation** — brand: symbol, wordmark, favicon/app icon, OG system, email assets, motion.
 - **12 — Portfolio data & media infrastructure** — `portfolio_projects` + `portfolio_assets`, avatar/cover, R2 upload flow, CRUD API, public response extension.
 - **13 — Portfolio manager** — visual, touch-friendly portfolio editor (upload, reorder, cover, alt-text, draft/publish, featured).
