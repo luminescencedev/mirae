@@ -31,7 +31,7 @@ Tell the user the exact routes/screens/behaviour this ticket touched, e.g.:
 
 ## 3. For UI tickets — recall the quality bar
 
-From `docs/DESIGN_SYSTEM.md`: pure white/black/zinc, pastel blue accent used tastefully, one clean border around dashboard containers, intentional single sidebar, premium-product-shot feel, calm empty states. No beige, no shadcn default look.
+From `docs/product/DESIGN_SYSTEM.md`: pure white/black/zinc, pastel blue accent used tastefully, one clean border around dashboard containers, intentional single sidebar, premium-product-shot feel, calm empty states. No beige, no shadcn default look.
 
 ## 4. Wait
 

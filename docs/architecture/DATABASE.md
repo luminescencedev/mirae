@@ -84,3 +84,20 @@ Tokens: client portal (`/portal/:token`) and delivery (`/delivery/:token`) are a
 - Foreign keys explicit; cascade rules decided per table when schema is written (Sprint 3, DB-002).
 - Money stored as integer minor units (cents) — never floats.
 - Status columns are Postgres enums mirroring the lists above; keep enum values in sync with `packages/shared/src/constants/commission-status.ts`.
+
+## Planned post-MVP schema (NOT yet implemented)
+
+> These tables/columns are **planned** for the next cycle (Sprints 12+). No migrations exist yet — do not treat as live. Full field lists + API in [`DATA_AND_API_EXTENSION.md`](DATA_AND_API_EXTENSION.md); product intent in [`PUBLIC_STUDIO_SPEC.md`](../product/PUBLIC_STUDIO_SPEC.md). Migration strategy: add nullable fields + new tables first, keep the current public response compatible, deploy backend before switching public UI, never force existing artists to backfill.
+
+Planned tables:
+
+- **`portfolio_projects`** — artist work grouped into projects (title, slug, description, `project_type` enum, `visibility` draft/published/archived, position, featured). Owner-scoped; public reads return published only.
+- **`portfolio_assets`** — images per project (R2 key, mime, width/height, size, alt text, position, blur placeholder). Deleting a project removes rows **and** R2 objects (retryable cleanup).
+- **`artist_links`** — link-in-bio hub (title, url, `platform`, `type` social/shop/support/video/stream/newsletter/contact/custom, `style` simple/card/media/featured, position, featured, enabled). URLs `https`-only, normalized, sanitized.
+- **`studio_appearance`** — curated customization (`draft_config_json` + `published_config_json`): accent/typography/hero/portfolio layout/image radius/section order/visibility. Allowed values **server-validated**.
+- **`request_assets`** — public request reference uploads under a short-lived upload token (R2 key, mime, size, dims, `expires_at`). Size/count/MIME limited; expired unlinked assets cleaned up.
+- **`studio_events`** — privacy-friendly analytics (`event_type` studio_view/project_view/link_click/request_start/request_submit, optional salted rotating `session_hash`, referrer host). No raw IP, no cross-site tracking.
+
+Planned artist columns: `avatar_asset_key`, `cover_asset_key`, `featured_project_id`.
+
+Planned R2 layout: `artists/{artistId}/avatar|cover/…`, `artists/{artistId}/portfolio/{projectId}/{assetId}`, `public-requests/{uploadToken}/{assetId}`.

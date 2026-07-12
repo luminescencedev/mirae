@@ -5,7 +5,7 @@ description: Evolve the Mirae PostgreSQL schema cleanly with Drizzle against Neo
 
 # Skill: migration — change the DB schema without breaking things
 
-The schema is the **source of truth**: `packages/db/src/schema/*` (one file per table, re-exported from `schema/index.ts`). Never edit the database by hand. See `docs/DATABASE.md`.
+The schema is the **source of truth**: `packages/db/src/schema/*` (one file per table, re-exported from `schema/index.ts`). Never edit the database by hand. See `docs/architecture/DATABASE.md`.
 
 ## 1. Edit the schema
 
@@ -44,4 +44,4 @@ Plus exercise the affected query path if a seed/route uses it.
 
 - No `db:migrate` without `db:generate` first (the versioned migration would be missing).
 - `NOT NULL` on an already-populated table breaks — add a default or backfill.
-- Never swap `@neondatabase/serverless` for `pg`/`postgres.js` (raw TCP, impossible on Workers — locked in `docs/DECISIONS.md`).
+- Never swap `@neondatabase/serverless` for `pg`/`postgres.js` (raw TCP, impossible on Workers — locked in `docs/decisions/DECISIONS.md`).

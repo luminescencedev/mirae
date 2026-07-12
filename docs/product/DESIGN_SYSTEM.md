@@ -133,3 +133,28 @@ When mockups are provided: identify the screen, extract layout/spacing/colors/co
 ## Pinned front-end library versions
 
 Tokens/tooling this system is built on (see `docs/DECISIONS.md` for full pin list): `tailwindcss 4.3.2`, `motion 12.42.2`, `lucide-react 1.23.0`, `class-variance-authority 0.7.1`, `tailwind-merge 3.6.0`, `clsx 2.1.1`, Radix primitives (dialog 1.1.19, dropdown-menu 2.1.20, popover 1.1.19, tooltip 1.2.12, tabs 1.1.17, select 2.3.3, switch 1.3.3, checkbox 1.3.7, toast 1.2.19).
+
+## Public & mobile principles (post-MVP direction)
+
+> Additive to the existing tokens/components above — these guide the next cycle's public studio + mobile work. Specs: [`PUBLIC_STUDIO_SPEC.md`](PUBLIC_STUDIO_SPEC.md), [`MOBILE_PRODUCT_SPEC.md`](MOBILE_PRODUCT_SPEC.md).
+
+### Public pages are portfolio-first
+
+- Artwork dominates the layout; artist identity is immediate but not visually dominant.
+- Commission availability (open/waitlist/closed) is understandable in seconds, via text + status — never color alone.
+- Links are **curated artist cards** (simple / card / media / featured), not a stack of identical buttons; only one or two featured at a time.
+- The request flow feels like part of the studio, not a bolted-on form.
+- Responsive images, lazy loading, placeholders and no layout shift are part of visual quality — a slow or janky page is a broken page.
+
+### Mobile is a first-class design target
+
+- Design from mobile constraints first, not by compressing desktop.
+- Private app uses **bottom navigation** for frequent destinations (Overview / Requests / Queue / Studio / More); respect safe-area insets.
+- Detail flows (commission, request) are **full-screen pages or sheets** with a sticky action bar — never a desktop side panel squeezed into the viewport.
+- No hover-only actions; every gesture (drag, swipe) has a visible button alternative; comfortable touch targets; clear pressed states.
+- Keyboard must never cover the active field or primary action.
+
+### Customization is curated, not a page builder
+
+- Artists pick from **presets** (accent, typography, hero/portfolio layout, image radius, section order/visibility) — not arbitrary CSS, fonts, scripts, or raw HTML.
+- Every appearance combination must stay accessible (contrast validated server-side); invalid combinations are impossible by construction.

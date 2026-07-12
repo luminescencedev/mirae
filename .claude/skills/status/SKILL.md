@@ -9,7 +9,7 @@ Trigger at the start of a session or on demand. Keep it short — the reader sho
 
 ## 1. Sprint state (source of truth)
 
-Read `docs/SPRINTS.md`:
+Read `docs/roadmap/SPRINTS.md`:
 
 - **Current sprint** (the `## Current sprint` line).
 - Done tickets (`- [x]`) vs remaining (`- [ ]`) in that sprint.
