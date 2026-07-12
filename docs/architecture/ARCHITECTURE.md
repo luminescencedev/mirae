@@ -147,4 +147,4 @@ Planned route modules (same single Worker, same Neon/R2/Better-Auth stack):
 - **analytics** — `/api/studio/:handle/events` (ingest) + `/api/analytics/studio` (aggregate).
 - **public studio** — the public `@handle` response grows into a single composed payload (profile + appearance + links + featured project + projects + commission types + availability), returning published/enabled content only.
 
-Every new upload endpoint must enforce: authenticated ownership (private) or scoped token (public), MIME + size limits, and storage cleanup on delete. Mobile behavior is a design input for these modules from the start (see [`MOBILE_PRODUCT_SPEC.md`](MOBILE_PRODUCT_SPEC.md)), not a later patch.
+Every new upload endpoint must enforce: authenticated ownership (private) or scoped token (public), MIME + size limits, and storage cleanup on delete. Mobile behavior is a design input for these modules from the start (see [`MOBILE_PRODUCT_SPEC.md`](../product/MOBILE_PRODUCT_SPEC.md)), not a later patch.

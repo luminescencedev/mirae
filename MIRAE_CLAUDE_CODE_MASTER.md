@@ -14,18 +14,18 @@ Positioning: **Calendly, not VGen.** Mirae takes over _after_ an artist and clie
 
 After initialization, these docs are canonical (this file is only an index):
 
-- Architecture: `docs/ARCHITECTURE.md` — repo structure, single-Worker deployment, module rules, endpoints
-- Design system: `docs/DESIGN_SYSTEM.md` — visual direction, palette, components, UI rules
-- Sprints: `docs/SPRINTS.md` — sprint roadmap, ticket queue, completion tracker
-- Database: `docs/DATABASE.md` — MVP schema, Neon + Drizzle conventions, migrations
-- Decisions: `docs/DECISIONS.md` — stack, single-Worker reasoning, business model, dev-runtime choice
-- Versions: `docs/VERSIONS.md` — pinned dependency versions (exact, no `^`/`latest`)
-- Workflow: `docs/CONTRIBUTING.md` — local dev, preview, checks, commit/PR rules
+- Architecture: `docs/architecture/ARCHITECTURE.md` — repo structure, single-Worker deployment, module rules, endpoints
+- Design system: `docs/product/DESIGN_SYSTEM.md` — visual direction, palette, components, UI rules
+- Sprints: `docs/roadmap/SPRINTS.md` — sprint roadmap, ticket queue, completion tracker
+- Database: `docs/architecture/DATABASE.md` — MVP schema, Neon + Drizzle conventions, migrations
+- Decisions: `docs/decisions/DECISIONS.md` — stack, single-Worker reasoning, business model, dev-runtime choice
+- Versions: `docs/architecture/VERSIONS.md` — pinned dependency versions (exact, no `^`/`latest`)
+- Workflow: `docs/architecture/CONTRIBUTING.md` — local dev, preview, checks, commit/PR rules
 
 ## Daily commands
 
 ```txt
-ticket suivant     -> next unchecked ticket in docs/SPRINTS.md; implement only that one
+ticket suivant     -> next unchecked ticket in docs/roadmap/SPRINTS.md; implement only that one
 feature suivante   -> next coherent feature; if multi-ticket, slice and do smallest useful part first
 continue sprint    -> continue current sprint from next unchecked ticket
 status             -> current sprint, done tickets, next ticket, blockers, run commands
@@ -38,7 +38,7 @@ stop               -> stop coding, summarize current state
 
 ```txt
 1. Inspect repo state.
-2. Read docs/SPRINTS.md (+ ARCHITECTURE, DESIGN_SYSTEM as relevant).
+2. Read docs/roadmap/SPRINTS.md (+ ARCHITECTURE, DESIGN_SYSTEM as relevant).
 3. Identify current sprint and next unchecked ticket.
 4. Restate the selected ticket (scope + acceptance + plan).
 5. Implement only that ticket, unless blocked.
@@ -65,7 +65,7 @@ Stripe for subscription billing; Stripe Connect is post-MVP.
 Radix primitives for accessibility; NO shadcn blocks; keep UI custom and premium.
 No marketplace / discovery / matching in MVP. No AI features unless requested.
 Do not push without approval. Do not merge PRs.
-Pin exact dependency versions per docs/DECISIONS.md.
+Pin exact dependency versions per docs/decisions/DECISIONS.md.
 ```
 
-Docs are the source of truth after init. If a decision changes, update the relevant `docs/*` file (and record architectural changes in `docs/DECISIONS.md`) — not this index.
+Docs are the source of truth after init. If a decision changes, update the relevant `docs/*` file (and record architectural changes in `docs/decisions/DECISIONS.md`) — not this index.

@@ -1,6 +1,6 @@
 ---
 name: start-ticket
-description: Start work on a Mirae ticket cleanly — verify the env is green, pick the next unchecked ticket in docs/SPRINTS.md (or a given ID), get on the right sprint branch, restate scope/acceptance/plan, then implement only that ticket. Use before coding any ticket ("ticket suivant", "next ticket", "continue sprint").
+description: Start work on a Mirae ticket cleanly — verify the env is green, pick the next unchecked ticket in docs/roadmap/SPRINTS.md (or a given ID), get on the right sprint branch, restate scope/acceptance/plan, then implement only that ticket. Use before coding any ticket ("ticket suivant", "next ticket", "continue sprint").
 ---
 
 # Skill: start-ticket — begin a ticket properly
@@ -18,8 +18,8 @@ Must be all green. Fix anything red before continuing.
 
 ## 2. Find the ticket
 
-- Read `docs/SPRINTS.md` → identify **current sprint** + the **next unchecked** `- [ ]` ticket (or the given ID).
-- Read the relevant docs for scope: `docs/ARCHITECTURE.md`, `docs/DESIGN_SYSTEM.md`, `docs/DATABASE.md`, `docs/VERSIONS.md` as applies.
+- Read `docs/roadmap/SPRINTS.md` → identify **current sprint** + the **next unchecked** `- [ ]` ticket (or the given ID).
+- Read the relevant docs for scope: `docs/architecture/ARCHITECTURE.md`, `docs/product/DESIGN_SYSTEM.md`, `docs/architecture/DATABASE.md`, `docs/architecture/VERSIONS.md` as applies.
 - Implement **only that one ticket** unless the user approves more.
 
 ## 3. Get on the sprint branch (RULE #2)
@@ -52,11 +52,11 @@ Plan:
 
 ## 5. Implement in small verified increments
 
-Keep `pnpm lint && pnpm typecheck && pnpm build` green as you go. Pin **exact** versions from `docs/VERSIONS.md` for any new dependency (no `^`, no `latest`); if a needed package isn't listed there, resolve one exact compatible version and record it in `docs/VERSIONS.md`.
+Keep `pnpm lint && pnpm typecheck && pnpm build` green as you go. Pin **exact** versions from `docs/architecture/VERSIONS.md` for any new dependency (no `^`, no `latest`); if a needed package isn't listed there, resolve one exact compatible version and record it in `docs/architecture/VERSIONS.md`.
 
 When done → run the **preview** skill, get visual approval, then the **ship-it** skill.
 
 ## Gotchas
 
-- One ticket at a time. Don't silently change architecture (locked decisions live in `docs/DECISIONS.md`).
-- UI tickets must clear the quality bar in `docs/DESIGN_SYSTEM.md` (white/black/zinc + pastel blue, one border, no shadcn look).
+- One ticket at a time. Don't silently change architecture (locked decisions live in `docs/decisions/DECISIONS.md`).
+- UI tickets must clear the quality bar in `docs/product/DESIGN_SYSTEM.md` (white/black/zinc + pastel blue, one border, no shadcn look).

@@ -13,7 +13,7 @@ Mirae is a workspace for digital artists who **already have their own clients** 
 - **Marketing + public studio:** https://usemirae.com (landing, public `/@handle`, `/portal/:token`, `/delivery/:token`)
 - **Dashboard:** https://app.usemirae.com (auth + the private workspace)
 
-Next cycle turns the functional MVP into a differentiated, portfolio-first, mobile-first artist product — see **[`docs/POST_MVP_VISION.md`](docs/POST_MVP_VISION.md)** and **[`docs/POST_MVP_ROADMAP.md`](docs/POST_MVP_ROADMAP.md)**. Current sprint + next ticket live in [`docs/SPRINTS.md`](docs/SPRINTS.md).
+Next cycle turns the functional MVP into a differentiated, portfolio-first, mobile-first artist product — see **[`docs/vision/POST_MVP_VISION.md`](docs/vision/POST_MVP_VISION.md)** and **[`docs/roadmap/POST_MVP_ROADMAP.md`](docs/roadmap/POST_MVP_ROADMAP.md)**. Current sprint + next ticket live in [`docs/roadmap/SPRINTS.md`](docs/roadmap/SPRINTS.md).
 
 ## Product surfaces
 
@@ -30,7 +30,7 @@ Next cycle turns the functional MVP into a differentiated, portfolio-first, mobi
 - **Auth:** Better Auth · **Email:** Resend (transactional notifications) · **Files:** Cloudflare R2
 - **Billing:** none yet — subscription billing (Stripe) is **planned post-MVP** (Sprint 25), not implemented. Payment status in-app is currently manual.
 
-Full rationale in [`docs/DECISIONS.md`](docs/DECISIONS.md).
+Full rationale in [`docs/decisions/DECISIONS.md`](docs/decisions/DECISIONS.md).
 
 ## Repository layout
 
@@ -55,7 +55,7 @@ docs/         Source of truth (see below)
 
 ```bash
 pnpm install
-cp .env.example .env   # fill DATABASE_URL + BETTER_AUTH_SECRET (see docs/CONTRIBUTING.md)
+cp .env.example .env   # fill DATABASE_URL + BETTER_AUTH_SECRET (see docs/architecture/CONTRIBUTING.md)
 pnpm dev
 ```
 
@@ -94,18 +94,18 @@ Production secrets (set via `wrangler secret`): `DATABASE_URL`, `BETTER_AUTH_SEC
 
 Current / implemented:
 
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — structure, single-Worker deployment, module rules, endpoints
-- [`docs/DATABASE.md`](docs/DATABASE.md) — current schema + planned post-MVP schema
-- [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) — visual direction, palette, components, public/mobile principles
-- [`docs/DECISIONS.md`](docs/DECISIONS.md) — locked stack + product decisions
-- [`docs/SPRINTS.md`](docs/SPRINTS.md) — sprint history + ticket queue
-- [`docs/VERSIONS.md`](docs/VERSIONS.md) — pinned dependency versions
-- [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) — local dev, checks, commit/PR rules
+- [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md) — structure, single-Worker deployment, module rules, endpoints
+- [`docs/architecture/DATABASE.md`](docs/architecture/DATABASE.md) — current schema + planned post-MVP schema
+- [`docs/product/DESIGN_SYSTEM.md`](docs/product/DESIGN_SYSTEM.md) — visual direction, palette, components, public/mobile principles
+- [`docs/decisions/DECISIONS.md`](docs/decisions/DECISIONS.md) — locked stack + product decisions
+- [`docs/roadmap/SPRINTS.md`](docs/roadmap/SPRINTS.md) — sprint history + ticket queue
+- [`docs/architecture/VERSIONS.md`](docs/architecture/VERSIONS.md) — pinned dependency versions
+- [`docs/architecture/CONTRIBUTING.md`](docs/architecture/CONTRIBUTING.md) — local dev, checks, commit/PR rules
 
 Post-MVP direction (planning, not yet built):
 
-- [`docs/POST_MVP_VISION.md`](docs/POST_MVP_VISION.md) — strategic product direction
-- [`docs/POST_MVP_ROADMAP.md`](docs/POST_MVP_ROADMAP.md) — Sprint 10.5 → 25 ticket roadmap
-- [`docs/PUBLIC_STUDIO_SPEC.md`](docs/PUBLIC_STUDIO_SPEC.md) — public studio UX spec
-- [`docs/MOBILE_PRODUCT_SPEC.md`](docs/MOBILE_PRODUCT_SPEC.md) — mobile-first requirements
-- [`docs/DATA_AND_API_EXTENSION.md`](docs/DATA_AND_API_EXTENSION.md) — planned schema + API additions
+- [`docs/vision/POST_MVP_VISION.md`](docs/vision/POST_MVP_VISION.md) — strategic product direction
+- [`docs/roadmap/POST_MVP_ROADMAP.md`](docs/roadmap/POST_MVP_ROADMAP.md) — Sprint 10.5 → 25 ticket roadmap
+- [`docs/product/PUBLIC_STUDIO_SPEC.md`](docs/product/PUBLIC_STUDIO_SPEC.md) — public studio UX spec
+- [`docs/product/MOBILE_PRODUCT_SPEC.md`](docs/product/MOBILE_PRODUCT_SPEC.md) — mobile-first requirements
+- [`docs/architecture/DATA_AND_API_EXTENSION.md`](docs/architecture/DATA_AND_API_EXTENSION.md) — planned schema + API additions

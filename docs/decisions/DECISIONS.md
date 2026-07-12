@@ -75,7 +75,7 @@ concurrently 10.0.3
 
 ## 2026-07-12 — Post-MVP product direction (locked)
 
-The MVP (Sprints 0–9) + a Sprint 10 audit are shipped and deployed. The next cycle is locked to a **product direction**, not just more features. Canonical detail: [`POST_MVP_VISION.md`](POST_MVP_VISION.md), sequencing in [`POST_MVP_ROADMAP.md`](POST_MVP_ROADMAP.md).
+The MVP (Sprints 0–9) + a Sprint 10 audit are shipped and deployed. The next cycle is locked to a **product direction**, not just more features. Canonical detail: [`POST_MVP_VISION.md`](../vision/POST_MVP_VISION.md), sequencing in [`POST_MVP_ROADMAP.md`](../roadmap/POST_MVP_ROADMAP.md).
 
 - **Scope grows to "public + private operating system for independent artists"**: a portfolio-first public studio + link-in-bio hub + structured request intake, on top of the existing private commission workflow and client portal.
 - **Still not**: marketplace, discovery feed, escrow, social network, generic website builder, generic Linktree clone, or any product taking a % of commission revenue. **Subscription-first, workflow-first.**

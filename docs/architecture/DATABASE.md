@@ -87,7 +87,7 @@ Tokens: client portal (`/portal/:token`) and delivery (`/delivery/:token`) are a
 
 ## Planned post-MVP schema (NOT yet implemented)
 
-> These tables/columns are **planned** for the next cycle (Sprints 12+). No migrations exist yet — do not treat as live. Full field lists + API in [`DATA_AND_API_EXTENSION.md`](DATA_AND_API_EXTENSION.md); product intent in [`PUBLIC_STUDIO_SPEC.md`](PUBLIC_STUDIO_SPEC.md). Migration strategy: add nullable fields + new tables first, keep the current public response compatible, deploy backend before switching public UI, never force existing artists to backfill.
+> These tables/columns are **planned** for the next cycle (Sprints 12+). No migrations exist yet — do not treat as live. Full field lists + API in [`DATA_AND_API_EXTENSION.md`](DATA_AND_API_EXTENSION.md); product intent in [`PUBLIC_STUDIO_SPEC.md`](../product/PUBLIC_STUDIO_SPEC.md). Migration strategy: add nullable fields + new tables first, keep the current public response compatible, deploy backend before switching public UI, never force existing artists to backfill.
 
 Planned tables:
 

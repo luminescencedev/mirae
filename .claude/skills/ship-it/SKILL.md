@@ -1,6 +1,6 @@
 ---
 name: ship-it
-description: Ship a Mirae ticket once the preview is approved — format, get all checks green, verify pinned versions, tick the ticket in docs/SPRINTS.md, make a focused commit, push the sprint branch, and open/update a DRAFT PR to main. Never merges. Use only after the user approves the preview ("ship it", "push", "validé").
+description: Ship a Mirae ticket once the preview is approved — format, get all checks green, verify pinned versions, tick the ticket in docs/roadmap/SPRINTS.md, make a focused commit, push the sprint branch, and open/update a DRAFT PR to main. Never merges. Use only after the user approves the preview ("ship it", "push", "validé").
 ---
 
 # Skill: ship-it — commit, push, open/update a draft PR
@@ -22,12 +22,12 @@ Fix until green.
 pnpm ls --depth 0 -r
 ```
 
-Confirm installed versions match `docs/VERSIONS.md`. Flag any mismatch — don't ship silently over it.
+Confirm installed versions match `docs/architecture/VERSIONS.md`. Flag any mismatch — don't ship silently over it.
 
 ## 3. Update docs
 
-- Tick the ticket in `docs/SPRINTS.md` (`- [ ]` → `- [x]`).
-- If a decision or architecture changed, record it in `docs/DECISIONS.md` (and the relevant `docs/*`), not just in code.
+- Tick the ticket in `docs/roadmap/SPRINTS.md` (`- [ ]` → `- [x]`).
+- If a decision or architecture changed, record it in `docs/decisions/DECISIONS.md` (and the relevant `docs/*`), not just in code.
 
 ## 4. Focused commit
 
@@ -70,4 +70,4 @@ Only the **user** merges, with the one command (`!` runs in their session):
 ## Reminders
 
 - No push without the user's approval. One focused commit per ticket. Draft PR, one per sprint.
-- Never reintroduce Express / React Router / a second Worker (locked — `docs/DECISIONS.md`).
+- Never reintroduce Express / React Router / a second Worker (locked — `docs/decisions/DECISIONS.md`).
