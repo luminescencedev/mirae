@@ -121,6 +121,7 @@ Current / implemented:
 - [`docs/roadmap/SPRINTS.md`](docs/roadmap/SPRINTS.md) — sprint history + ticket queue
 - [`docs/architecture/VERSIONS.md`](docs/architecture/VERSIONS.md) — pinned dependency versions
 - [`docs/architecture/CONTRIBUTING.md`](docs/architecture/CONTRIBUTING.md) — local dev, checks, commit/PR rules
+- [`docs/architecture/RELEASE.md`](docs/architecture/RELEASE.md) — pre-release + production smoke-test checklists
 
 Post-MVP direction (planning, not yet built):
 

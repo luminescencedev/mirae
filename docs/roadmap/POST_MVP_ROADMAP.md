@@ -18,7 +18,7 @@ The next cycle should transform Mirae from a complete workflow MVP into a differ
 
 ---
 
-# Sprint 10.5 — Repository and production baseline
+# Sprint 10.5 — Repository and production baseline ✅ complete
 
 ## Goal
 
@@ -36,8 +36,8 @@ Make the repository, documentation and production setup accurately represent the
 - [x] META-008 Document all production environment variables
 - [x] META-009 Add client-side error boundary
 - [x] META-010 Add structured production error logging
-- [ ] META-011 Create pre-release checklist
-- [ ] META-012 Create production smoke-test checklist
+- [x] META-011 Create pre-release checklist
+- [x] META-012 Create production smoke-test checklist
 
 ## Acceptance
 

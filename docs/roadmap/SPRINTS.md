@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 10.5 — Repository and production baseline (in progress). Done: META-001/002/003/004/005/006/007/008. Remaining: META-011 + META-012 (pre-release + smoke-test checklists — docs). Full detail in docs/roadmap/POST_MVP_ROADMAP.md. **Next code ticket: META-009.**
+Sprint 10.5 — Repository and production baseline ✅ complete (all META-001…012 shipped). Full detail in docs/roadmap/POST_MVP_ROADMAP.md. **Next sprint: Sprint 11 — Mirae identity foundation (BRAND-001).**
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -247,9 +247,9 @@ Acceptance: signing up → a fresh studio shows _your_ data (not Rain Aoki); no 
 
 Same ticket-queue format as above. Full goals, acceptance criteria and field/spec detail for each ticket live in [`POST_MVP_ROADMAP.md`](POST_MVP_ROADMAP.md); this is the checklist.
 
-## Sprint 10.5 — Repository & production baseline
+## Sprint 10.5 — Repository & production baseline ✅ complete
 
-_In progress._ Goal: make the repo, docs and production setup accurately represent the current product.
+_Complete._ Goal: make the repo, docs and production setup accurately represent the current product. All twelve META tickets shipped: docs reconciled with the deployed product, screenshots added, a client-side error boundary + structured server/client error logging, and pre-release + smoke-test checklists ([`docs/architecture/RELEASE.md`](../architecture/RELEASE.md)).
 
 - [x] META-001 Change the GitHub default branch to `main`
 - [x] META-002 Update README status from Sprint 0 to deployed MVP
@@ -261,10 +261,10 @@ _In progress._ Goal: make the repo, docs and production setup accurately represe
 - [x] META-008 Document all production environment variables
 - [x] META-009 Add client-side error boundary
 - [x] META-010 Add structured production error logging
-- [ ] META-011 Create pre-release checklist
-- [ ] META-012 Create production smoke-test checklist
+- [x] META-011 Create pre-release checklist
+- [x] META-012 Create production smoke-test checklist
 
-Next ticket: **META-011** (docs).
+Next sprint: **Sprint 11 — Mirae identity foundation** (BRAND-001).
 
 ## Sprint 11 — Mirae identity foundation
 
