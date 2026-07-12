@@ -243,23 +243,355 @@ Acceptance: signing up → a fresh studio shows _your_ data (not Rain Aoki); no 
 
 - Init (2026-07-09): docs created, master rewritten into index. Dev runtime = two-process concurrently (see DECISIONS). Versions pinned per DECISIONS.
 
-## Post-MVP cycle — Sprint index (planned)
+## Post-MVP sprints (planned)
 
-Execution order for the next cycle. **Full ticket lists + acceptance live in [`docs/roadmap/POST_MVP_ROADMAP.md`](POST_MVP_ROADMAP.md)** — this is the index, not a second copy. Nothing below is started yet.
+Same ticket-queue format as above. Full goals, acceptance criteria and field/spec detail for each ticket live in [`POST_MVP_ROADMAP.md`](POST_MVP_ROADMAP.md); this is the checklist.
 
-- **10.5 — Repository & production baseline** _(in progress)_ — make repo/docs/prod match reality. Done: META-001/002/003/005/006/007/008. Remaining: META-004 (screenshots), META-009/010 (error boundary + prod logging), META-011/012 (checklists).
-- **11 — Mirae identity foundation** — brand: symbol, wordmark, favicon/app icon, OG system, email assets, motion.
-- **12 — Portfolio data & media infrastructure** — `portfolio_projects` + `portfolio_assets`, avatar/cover, R2 upload flow, CRUD API, public response extension.
-- **13 — Portfolio manager** — visual, touch-friendly portfolio editor (upload, reorder, cover, alt-text, draft/publish, featured).
-- **14 — Artist links & public hub** — `artist_links`, link manager, curated styles (simple/card/media/featured), URL validation, click analytics.
-- **15 — Creative public studio** — portfolio-first `@handle` homepage (hero, featured work, grid, lightbox, integrated commission cards).
-- **16 — Integrated request flow** — reusable multi-step request (dialog/sheet + standalone route), reference uploads, draft persistence, spam controls.
-- **17 — Appearance editor & live preview** — curated customization (accent/typography/layout/section order) with desktop split + mobile edit/preview.
-- **18 — Mobile product experience** — bottom nav, mobile shell, full-screen detail flows, sticky actions, responsive images; genuinely mobile-first.
-- **19 — Sharing, SEO & analytics** — dynamic OG images, canonical/metadata/sitemap/robots, privacy-friendly studio analytics.
-- **20 — Onboarding & guided launch** — signup → publish → share in one resumable journey; dashboard checklist + tour.
-- **21 — Premium client portal** — branded portal, milestone timeline, structured feedback threads + revision rounds, quote accept/decline, token rotation.
-- **22 — Trust, security & beta hardening** — upload threat model/quotas, rate limiting, token revocation, data export/deletion, policies, critical-path tests.
-- **23 — Closed artist beta** — 5–10 real artists, interviews, activation + conversion metrics, prioritized fixes.
-- **24 — Commission operations polish** — only from validated beta feedback (notes, deadlines, revision counters, templates, manual ordering, archive/cancel).
-- **25 — Subscription foundation** — Free/Pro plans, Stripe Checkout + portal + webhooks, server-side entitlements. **No commission cut, ever.**
+## Sprint 10.5 — Repository & production baseline
+
+_In progress._ Goal: make the repo, docs and production setup accurately represent the current product.
+
+- [x] META-001 Change the GitHub default branch to `main`
+- [x] META-002 Update README status from Sprint 0 to deployed MVP
+- [x] META-003 Add production URLs
+- [ ] META-004 Add current product screenshots
+- [x] META-005 Clarify Stripe as post-MVP subscription work
+- [x] META-006 Remove or archive merged branches
+- [x] META-007 Audit outdated architecture documentation
+- [x] META-008 Document all production environment variables
+- [ ] META-009 Add client-side error boundary
+- [ ] META-010 Add structured production error logging
+- [ ] META-011 Create pre-release checklist
+- [ ] META-012 Create production smoke-test checklist
+
+Next code ticket: **META-009**. (META-004 needs screenshot assets from the user.)
+
+## Sprint 11 — Mirae identity foundation
+
+Goal: a distinctive visual identity before redesigning public surfaces.
+
+- [ ] BRAND-001 Lock brand attributes and personality
+- [ ] BRAND-002 Design the Mirae geometric symbol
+- [ ] BRAND-003 Design the Mirae wordmark
+- [ ] BRAND-004 Create responsive logo lockups
+- [ ] BRAND-005 Create monochrome variants
+- [ ] BRAND-006 Create favicon set
+- [ ] BRAND-007 Create application icon
+- [ ] BRAND-008 Create social avatar
+- [ ] BRAND-009 Define brand motion principles
+- [ ] BRAND-010 Create loading mark animation
+- [ ] BRAND-011 Create Open Graph composition system
+- [ ] BRAND-012 Create email branding assets
+- [ ] BRAND-013 Document logo and identity usage
+
+## Sprint 12 — Portfolio data & media infrastructure
+
+Goal: backend foundation for real artist work, profile imagery and public media.
+
+- [ ] PORTFOLIO-001 Add avatar and cover media fields
+- [ ] PORTFOLIO-002 Create `portfolio_projects` table
+- [ ] PORTFOLIO-003 Create `portfolio_assets` table
+- [ ] PORTFOLIO-004 Add project ordering
+- [ ] PORTFOLIO-005 Add asset ordering
+- [ ] PORTFOLIO-006 Add draft and published states
+- [ ] PORTFOLIO-007 Add featured project state
+- [ ] PORTFOLIO-008 Add portfolio CRUD API
+- [ ] PORTFOLIO-009 Add project asset upload API
+- [ ] PORTFOLIO-010 Add direct or controlled R2 upload flow
+- [ ] PORTFOLIO-011 Add MIME and size validation
+- [ ] PORTFOLIO-012 Add image dimension metadata
+- [ ] PORTFOLIO-013 Add asset deletion
+- [ ] PORTFOLIO-014 Add orphan asset cleanup
+- [ ] PORTFOLIO-015 Extend public studio response
+- [ ] PORTFOLIO-016 Add migration and demo seed
+
+## Sprint 13 — Portfolio manager
+
+Goal: a visual, fast, touch-friendly portfolio management experience.
+
+- [ ] PORTUI-001 Add Portfolio section to Studio
+- [ ] PORTUI-002 Build upload dropzone
+- [ ] PORTUI-003 Build multi-image project creation
+- [ ] PORTUI-004 Build project editor
+- [ ] PORTUI-005 Add drag-and-drop project ordering
+- [ ] PORTUI-006 Add touch-friendly reordering
+- [ ] PORTUI-007 Add asset ordering
+- [ ] PORTUI-008 Add project cover selection
+- [ ] PORTUI-009 Add title and description fields
+- [ ] PORTUI-010 Add alt-text editing
+- [ ] PORTUI-011 Add draft and publish controls
+- [ ] PORTUI-012 Add featured project control
+- [ ] PORTUI-013 Add upload progress
+- [ ] PORTUI-014 Add retry and failure states
+- [ ] PORTUI-015 Add destructive confirmation
+- [ ] PORTUI-016 Add polished empty states
+- [ ] PORTUI-017 Add mobile upload from gallery or camera
+
+## Sprint 14 — Artist links & public hub
+
+Goal: an artist-specific link-in-bio hub that stays portfolio-first.
+
+- [ ] LINKS-001 Create `artist_links` table
+- [ ] LINKS-002 Add links CRUD API
+- [ ] LINKS-003 Add predefined platform types
+- [ ] LINKS-004 Add custom links
+- [ ] LINKS-005 Add link ordering
+- [ ] LINKS-006 Add enabled and disabled state
+- [ ] LINKS-007 Add featured state
+- [ ] LINKS-008 Add display style field
+- [ ] LINKS-009 Build link manager
+- [ ] LINKS-010 Add drag-and-drop ordering
+- [ ] LINKS-011 Add URL validation and normalization
+- [ ] LINKS-012 Add platform icon mapping
+- [ ] LINKS-013 Add simple link card
+- [ ] LINKS-014 Add featured link card
+- [ ] LINKS-015 Add media link card
+- [ ] LINKS-016 Add click analytics
+- [ ] LINKS-017 Add mobile preview
+
+## Sprint 15 — Creative public studio
+
+Goal: replace the functional profile card with a portfolio-first artist homepage.
+
+- [ ] STUDIO-001 Build new public studio shell
+- [ ] STUDIO-002 Build responsive artist hero
+- [ ] STUDIO-003 Add avatar and cover rendering
+- [ ] STUDIO-004 Add status and availability presentation
+- [ ] STUDIO-005 Add featured links section
+- [ ] STUDIO-006 Add social links row
+- [ ] STUDIO-007 Build featured project section
+- [ ] STUDIO-008 Build responsive portfolio grid
+- [ ] STUDIO-009 Build artwork lightbox
+- [ ] STUDIO-010 Build project detail experience
+- [ ] STUDIO-011 Redesign commission type cards
+- [ ] STUDIO-012 Add commission representative images
+- [ ] STUDIO-013 Add persistent mobile commission CTA
+- [ ] STUDIO-014 Add artist about section
+- [ ] STUDIO-015 Add optional FAQ section
+- [ ] STUDIO-016 Add Mirae-branded footer
+- [ ] STUDIO-017 Add loading skeleton
+- [ ] STUDIO-018 Add not-found and empty states
+- [ ] STUDIO-019 Add responsive image sizes
+- [ ] STUDIO-020 Add accessibility audit
+- [ ] STUDIO-021 Add reduced-motion behavior
+
+## Sprint 16 — Integrated commission request flow
+
+Goal: let visitors start a request without breaking the public-studio experience.
+
+- [ ] REQUESTUX-001 Refactor request form into reusable flow
+- [ ] REQUESTUX-002 Keep standalone `/@handle/request` route
+- [ ] REQUESTUX-003 Add desktop dialog or side panel flow
+- [ ] REQUESTUX-004 Add mobile full-screen or bottom-sheet flow
+- [ ] REQUESTUX-005 Prefill selected commission type
+- [ ] REQUESTUX-006 Add multi-step structure
+- [ ] REQUESTUX-007 Add inline validation
+- [ ] REQUESTUX-008 Add session draft persistence
+- [ ] REQUESTUX-009 Add request reference uploads
+- [ ] REQUESTUX-010 Add temporary upload token
+- [ ] REQUESTUX-011 Add abandoned upload cleanup
+- [ ] REQUESTUX-012 Add summary step
+- [ ] REQUESTUX-013 Add polished confirmation
+- [ ] REQUESTUX-014 Add rate limiting
+- [ ] REQUESTUX-015 Add honeypot
+- [ ] REQUESTUX-016 Add Cloudflare Turnstile option
+- [ ] REQUESTUX-017 Add duplicate-submission prevention
+- [ ] REQUESTUX-018 Add form-start and completion analytics
+
+## Sprint 17 — Appearance editor & live preview
+
+Goal: meaningful artist expression through curated customization.
+
+- [ ] CUSTOM-001 Create studio appearance model
+- [ ] CUSTOM-002 Add accent presets
+- [ ] CUSTOM-003 Add typography presets
+- [ ] CUSTOM-004 Add hero layout options
+- [ ] CUSTOM-005 Add portfolio layout options
+- [ ] CUSTOM-006 Add image-radius presets
+- [ ] CUSTOM-007 Add section visibility controls
+- [ ] CUSTOM-008 Add section ordering
+- [ ] CUSTOM-009 Build desktop split preview
+- [ ] CUSTOM-010 Build mobile Edit and Preview tabs
+- [ ] CUSTOM-011 Add unsaved-change detection
+- [ ] CUSTOM-012 Add reset-to-published action
+- [ ] CUSTOM-013 Add save-draft action
+- [ ] CUSTOM-014 Add explicit publish action
+- [ ] CUSTOM-015 Add accessible contrast validation
+- [ ] CUSTOM-016 Add appearance migration defaults
+
+## Sprint 18 — Mobile product experience
+
+Goal: make the private app and public experience genuinely mobile-first.
+
+- [ ] MOBILE-001 Add bottom navigation
+- [ ] MOBILE-002 Add mobile header
+- [ ] MOBILE-003 Add safe-area support
+- [ ] MOBILE-004 Add mobile More menu
+- [ ] MOBILE-005 Adapt search and notifications
+- [ ] MOBILE-006 Handle virtual keyboard correctly
+- [ ] MOBILE-007 Remove hover-only interactions
+- [ ] MOBILE-008 Redesign Overview for mobile
+- [ ] MOBILE-009 Make Queue default to grouped list
+- [ ] MOBILE-010 Keep board as optional mobile view
+- [ ] MOBILE-011 Convert commission detail to full-screen mobile route or sheet
+- [ ] MOBILE-012 Add sticky detail actions
+- [ ] MOBILE-013 Redesign Requests list and detail
+- [ ] MOBILE-014 Add sticky Accept and Decline actions
+- [ ] MOBILE-015 Optimize Clients
+- [ ] MOBILE-016 Optimize Deliveries
+- [ ] MOBILE-017 Optimize quote builder
+- [ ] MOBILE-018 Optimize payment controls
+- [ ] MOBILE-019 Optimize portal and delivery pages
+- [ ] MOBILE-020 Add touch portfolio ordering
+- [ ] MOBILE-021 Add gallery and camera upload
+- [ ] MOBILE-022 Add Edit and Preview switch
+- [ ] MOBILE-023 Add public sticky CTA
+- [ ] MOBILE-024 Add swipe lightbox
+- [ ] MOBILE-025 Optimize multi-step request form
+- [ ] MOBILE-026 Add responsive R2 images
+- [ ] MOBILE-027 Add lazy loading
+- [ ] MOBILE-028 Prevent layout shifts
+- [ ] MOBILE-029 Test slow mobile connections
+- [ ] MOBILE-030 Audit thumb reachability
+- [ ] MOBILE-031 Audit iPhone Safari
+- [ ] MOBILE-032 Audit Android Chrome
+- [ ] MOBILE-033 Audit 320 px viewport
+- [ ] MOBILE-034 Audit landscape mode
+
+## Sprint 19 — Sharing, SEO & analytics
+
+Goal: make each public studio attractive to share and measurable without invasive tracking.
+
+- [ ] SHARE-001 Generate dynamic artist OG images
+- [ ] SHARE-002 Generate project OG images
+- [ ] SHARE-003 Add canonical URLs
+- [ ] SHARE-004 Add structured metadata
+- [ ] SHARE-005 Add sitemap strategy
+- [ ] SHARE-006 Add robots controls
+- [ ] SHARE-007 Add indexing toggle for closed studios
+- [ ] SHARE-008 Add social preview in Studio editor
+- [ ] SHARE-009 Add studio-view analytics
+- [ ] SHARE-010 Add unique-session estimate
+- [ ] SHARE-011 Add link-click analytics
+- [ ] SHARE-012 Add request-start analytics
+- [ ] SHARE-013 Add request-conversion analytics
+- [ ] SHARE-014 Add most-viewed projects
+- [ ] SHARE-015 Add privacy-friendly referrer reporting
+- [ ] SHARE-016 Add custom social title and description
+
+## Sprint 20 — Onboarding & guided launch
+
+Goal: take a new user from signup to a published, shareable studio in one journey.
+
+- [ ] ONBOARD-001 Redesign signup-to-studio journey
+- [ ] ONBOARD-002 Add resumable onboarding state
+- [ ] ONBOARD-003 Add handle selection
+- [ ] ONBOARD-004 Add profile setup
+- [ ] ONBOARD-005 Add first commission type
+- [ ] ONBOARD-006 Add first portfolio upload
+- [ ] ONBOARD-007 Add first links
+- [ ] ONBOARD-008 Add appearance preset selection
+- [ ] ONBOARD-009 Add studio preview
+- [ ] ONBOARD-010 Add publish step
+- [ ] ONBOARD-011 Add copy-link and share step
+- [ ] ONBOARD-012 Add dashboard checklist
+- [ ] ONBOARD-013 Add dismissible dashboard tour
+- [ ] ONBOARD-014 Add contextual empty-state actions
+- [ ] ONBOARD-015 Add onboarding analytics
+
+## Sprint 21 — Premium client portal
+
+Goal: bring the client-facing experience to the quality of the public studio.
+
+- [ ] CLIENTUX-001 Redesign client portal shell
+- [ ] CLIENTUX-002 Add artist branding
+- [ ] CLIENTUX-003 Improve milestone timeline
+- [ ] CLIENTUX-004 Add structured feedback threads
+- [ ] CLIENTUX-005 Add revision rounds
+- [ ] CLIENTUX-006 Add artist responses
+- [ ] CLIENTUX-007 Add thread open and resolved states
+- [ ] CLIENTUX-008 Add quote acceptance
+- [ ] CLIENTUX-009 Add quote decline with note
+- [ ] CLIENTUX-010 Add delivery acknowledgement
+- [ ] CLIENTUX-011 Add secure reference gallery
+- [ ] CLIENTUX-012 Add token rotation
+- [ ] CLIENTUX-013 Add token revocation
+- [ ] CLIENTUX-014 Add mobile portal polish
+- [ ] CLIENTUX-015 Add accessibility audit
+
+## Sprint 22 — Trust, security & beta hardening
+
+Goal: prepare Mirae for real artists, real clients and real files.
+
+- [ ] TRUST-001 Threat-model public upload endpoints
+- [ ] TRUST-002 Add upload quotas
+- [ ] TRUST-003 Add upload type and resolution limits
+- [ ] TRUST-004 Add orphan cleanup jobs
+- [ ] TRUST-005 Audit private file access
+- [ ] TRUST-006 Add global rate limiting
+- [ ] TRUST-007 Audit Better Auth configuration
+- [ ] TRUST-008 Audit portal-token entropy
+- [ ] TRUST-009 Add token revocation
+- [ ] TRUST-010 Add data export
+- [ ] TRUST-011 Add account deletion
+- [ ] TRUST-012 Add privacy policy
+- [ ] TRUST-013 Add terms of service
+- [ ] TRUST-014 Add structured audit logs
+- [ ] TRUST-015 Add dependency scanning
+- [ ] TRUST-016 Add secret scanning
+- [ ] TRUST-017 Add critical-path automated tests
+- [ ] TRUST-018 Add deploy smoke test
+- [ ] TRUST-019 Add backup and recovery documentation
+- [ ] TRUST-020 Add incident response checklist
+
+## Sprint 23 — Closed artist beta
+
+Goal: validate the complete experience with working artists before expanding features or charging.
+
+- [ ] BETA-001 Define tester profiles
+- [ ] BETA-002 Recruit 5–10 artists
+- [ ] BETA-003 Create interview script
+- [ ] BETA-004 Add in-app feedback capture
+- [ ] BETA-005 Observe studio setup
+- [ ] BETA-006 Observe mobile setup
+- [ ] BETA-007 Observe a real request workflow
+- [ ] BETA-008 Measure activation
+- [ ] BETA-009 Measure portfolio-to-request conversion
+- [ ] BETA-010 Classify issues by severity and frequency
+- [ ] BETA-011 Run prioritized beta-fix sprint
+- [ ] BETA-012 Ask permission for testimonials
+- [ ] BETA-013 Identify paid-plan boundaries
+
+## Sprint 24 — Commission operations polish
+
+Goal: improve the private workflow only from validated beta feedback.
+
+- [ ] OPS-001 Add editable commission metadata
+- [ ] OPS-002 Add internal artist notes
+- [ ] OPS-003 Add custom deadlines
+- [ ] OPS-004 Add revision counters
+- [ ] OPS-005 Add reusable quote presets
+- [ ] OPS-006 Add reusable response templates
+- [ ] OPS-007 Add manual queue ordering
+- [ ] OPS-008 Add archive flow
+- [ ] OPS-009 Add cancellation flow
+- [ ] OPS-010 Add richer activity events
+- [ ] OPS-011 Add client history
+- [ ] OPS-012 Add justified bulk actions
+
+## Sprint 25 — Subscription foundation
+
+Goal: introduce subscription billing only after repeated value is validated. **Mirae never takes a commission percentage.**
+
+- [ ] BILLING-001 Define Free and Pro plans
+- [ ] BILLING-002 Add subscription tables
+- [ ] BILLING-003 Integrate Stripe Checkout
+- [ ] BILLING-004 Add Stripe customer portal
+- [ ] BILLING-005 Add webhook processing
+- [ ] BILLING-006 Add server-side entitlements
+- [ ] BILLING-007 Add billing settings
+- [ ] BILLING-008 Add failed-payment handling
+- [ ] BILLING-009 Add upgrade prompts
+- [ ] BILLING-010 Add billing emails
+- [ ] BILLING-011 Add subscription analytics
+- [ ] BILLING-012 Add support documentation
