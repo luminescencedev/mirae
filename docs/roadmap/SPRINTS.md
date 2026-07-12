@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 10.5 — Repository and production baseline (in progress). Done: META-001/002/003/005/006/007/008. Remaining: META-004 (screenshots — needs user assets), META-009 + META-010 (client error boundary + prod error logging — code), META-011 + META-012 (pre-release + smoke-test checklists — docs). Full detail in docs/roadmap/POST_MVP_ROADMAP.md. **Next code ticket: META-009.**
+Sprint 10.5 — Repository and production baseline (in progress). Done: META-001/002/003/004/005/006/007/008. Remaining: META-009 + META-010 (client error boundary + prod error logging — code), META-011 + META-012 (pre-release + smoke-test checklists — docs). Full detail in docs/roadmap/POST_MVP_ROADMAP.md. **Next code ticket: META-009.**
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -254,7 +254,7 @@ _In progress._ Goal: make the repo, docs and production setup accurately represe
 - [x] META-001 Change the GitHub default branch to `main`
 - [x] META-002 Update README status from Sprint 0 to deployed MVP
 - [x] META-003 Add production URLs
-- [ ] META-004 Add current product screenshots
+- [x] META-004 Add current product screenshots
 - [x] META-005 Clarify Stripe as post-MVP subscription work
 - [x] META-006 Remove or archive merged branches
 - [x] META-007 Audit outdated architecture documentation
@@ -264,7 +264,7 @@ _In progress._ Goal: make the repo, docs and production setup accurately represe
 - [ ] META-011 Create pre-release checklist
 - [ ] META-012 Create production smoke-test checklist
 
-Next code ticket: **META-009**. (META-004 needs screenshot assets from the user.)
+Next code ticket: **META-009**.
 
 ## Sprint 11 — Mirae identity foundation
 

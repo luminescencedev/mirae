@@ -29,7 +29,7 @@ Make the repository, documentation and production setup accurately represent the
 - [x] META-001 Change the GitHub default branch to `main`
 - [x] META-002 Update README status from Sprint 0 to deployed MVP
 - [x] META-003 Add production URLs
-- [ ] META-004 Add current product screenshots
+- [x] META-004 Add current product screenshots
 - [x] META-005 Clarify Stripe as post-MVP subscription work
 - [x] META-006 Remove or archive merged branches
 - [x] META-007 Audit outdated architecture documentation

@@ -21,6 +21,26 @@ Next cycle turns the functional MVP into a differentiated, portfolio-first, mobi
 - **Private workspace** (`app.usemirae.com`) — requests inbox, commission queue (board/list/calendar), quotes + manual payment status, deliveries, client management, ⌘K search, notifications.
 - **Client portal / delivery** (token-addressed, no account) — status timeline, quote, feedback, downloadable files from R2.
 
+## Screenshots
+
+Current build (light theme; dark tokens dormant).
+
+### Marketing + public
+
+| Landing                                  | Public studio (`/@handle`)                           | Public request form                                         |
+| ---------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------- |
+| ![Landing page](screenshots/landing.png) | ![Public studio page](screenshots/public-studio.png) | ![Public request form](screenshots/public-request-form.png) |
+
+### Private workspace
+
+| Overview                                            | Commission queue (board)                               | Requests inbox                              |
+| --------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------- |
+| ![Dashboard overview](screenshots/app-overview.png) | ![Commission queue board](screenshots/queue-board.png) | ![Requests inbox](screenshots/requests.png) |
+
+| Clients                                  | Studio-page editor                                        |
+| ---------------------------------------- | --------------------------------------------------------- |
+| ![Clients list](screenshots/clients.png) | ![Studio-page editor](screenshots/studio-page-editor.png) |
+
 ## Stack
 
 - **Monorepo:** pnpm workspaces + Turborepo
