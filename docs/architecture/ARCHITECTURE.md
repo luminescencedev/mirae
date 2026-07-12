@@ -76,7 +76,7 @@ src/
 ├─ routes/                  # one flat Hono module per area (see below)
 │  ├─ artists.ts   commission-types.ts   studio.ts   requests.ts
 │  └─ commissions.ts   portal.ts   delivery.ts
-└─ lib/                     # session.ts (getArtist/getUserId), og.ts, mail.ts (Resend)
+└─ lib/                     # session.ts (getArtist/getUserId), og.ts, mail.ts (Resend), log.ts (structured JSON)
 ```
 
 Route files are **flat Hono modules** — a module owns its handlers + Drizzle queries directly (owner-scoping via `getArtist`). There is intentionally no controller/service/repository layering and no `middleware/` or `env.ts`; env is the request-scoped `Bindings` type. Keep new modules in this same shape.
@@ -87,6 +87,7 @@ Route files are **flat Hono modules** — a module owns its handlers + Drizzle q
 GET  /health   GET /api/health
 ALL  /api/auth/*                          (Better Auth: sign-up, sign-in, session…)
 POST /api/waitlist
+POST /api/client-errors                   (SPA crash reports → structured log)
 GET  /api/artists/me   PATCH /api/artists/me   POST /api/artists
 GET  /api/commission-types   POST …   PATCH /:id   DELETE /:id
 GET  /api/studio/:handle                  POST /api/studio/:handle/requests
@@ -101,6 +102,8 @@ GET  /api/portal/:token                   POST /api/portal/:token/feedback
 GET  /api/delivery/:token                 GET /api/delivery/:token/files/:fileId
 GET  /:handle                             (bot → OG HTML; human → SPA)
 ```
+
+Unhandled throws are caught by a central `app.onError` that emits a structured single-line JSON log (via `lib/log.ts`, captured in Cloudflare Workers logs / `wrangler tail`) and returns a generic `500 { error }`; expected `HTTPException`s keep their intended response. Client render crashes are reported by the SPA to `POST /api/client-errors` and logged the same way.
 
 Payment status is manual (`PATCH /api/commissions/:id` sets `paidCents`); there is **no** Stripe webhook — billing is planned post-MVP (Sprint 25). Planned modules (portfolio, links, appearance, analytics, request uploads) are in the post-MVP section below.
 

@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 10.5 — Repository and production baseline (in progress). Done: META-001/002/003/004/005/006/007/008. Remaining: META-010 (prod error logging — code), META-011 + META-012 (pre-release + smoke-test checklists — docs). Full detail in docs/roadmap/POST_MVP_ROADMAP.md. **Next code ticket: META-009.**
+Sprint 10.5 — Repository and production baseline (in progress). Done: META-001/002/003/004/005/006/007/008. Remaining: META-011 + META-012 (pre-release + smoke-test checklists — docs). Full detail in docs/roadmap/POST_MVP_ROADMAP.md. **Next code ticket: META-009.**
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -260,11 +260,11 @@ _In progress._ Goal: make the repo, docs and production setup accurately represe
 - [x] META-007 Audit outdated architecture documentation
 - [x] META-008 Document all production environment variables
 - [x] META-009 Add client-side error boundary
-- [ ] META-010 Add structured production error logging
+- [x] META-010 Add structured production error logging
 - [ ] META-011 Create pre-release checklist
 - [ ] META-012 Create production smoke-test checklist
 
-Next code ticket: **META-010**.
+Next ticket: **META-011** (docs).
 
 ## Sprint 11 — Mirae identity foundation
 

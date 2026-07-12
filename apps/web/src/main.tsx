@@ -5,7 +5,13 @@ import { ErrorBoundary } from "@mirae/ui";
 import { routeTree } from "./routeTree.gen";
 import { AppErrorFallback } from "./components/AppErrorFallback.tsx";
 import { RouteErrorFallback } from "./components/RouteErrorFallback.tsx";
+import {
+  installGlobalErrorReporting,
+  reportError,
+} from "./lib/report-error.ts";
 import "./styles/globals.css";
+
+installGlobalErrorReporting();
 
 const router = createRouter({
   routeTree,
@@ -25,7 +31,10 @@ createRoot(rootEl).render(
   <StrictMode>
     <ErrorBoundary
       onError={(error, info) =>
-        console.error("[root] render error", error, info.componentStack)
+        reportError(error, {
+          scope: "root",
+          componentStack: info.componentStack ?? undefined,
+        })
       }
       fallback={(props) => <AppErrorFallback {...props} />}
     >

@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
 import { eq } from "drizzle-orm";
 import { artistProfiles, createDb, waitlist } from "@mirae/db";
 import { makeAuth, type AuthEnv } from "./auth.ts";
@@ -10,6 +11,7 @@ import { commissionsRoutes } from "./routes/commissions.ts";
 import { portalRoutes } from "./routes/portal.ts";
 import { deliveryRoutes } from "./routes/delivery.ts";
 import { isSocialBot, renderStudioOg } from "./lib/og.ts";
+import { log, serializeError } from "./lib/log.ts";
 
 type Bindings = AuthEnv & {
   ASSETS: Fetcher;
@@ -89,6 +91,27 @@ app.post("/api/waitlist", async (c) => {
   return c.json({ ok: true }, 201);
 });
 
+// Client crash reports from the SPA error boundary + global handlers. Logged
+// as structured JSON; the browser fires these via sendBeacon (no auth), so
+// treat the body as untrusted and clamp field sizes.
+app.post("/api/client-errors", async (c) => {
+  const body = (await c.req.json().catch(() => ({}))) as Record<
+    string,
+    unknown
+  >;
+  const str = (v: unknown, max: number) =>
+    typeof v === "string" ? v.slice(0, max) : undefined;
+  log("error", "client_error", {
+    scope: str(body.scope, 32) ?? "unknown",
+    message: str(body.message, 1000) ?? "",
+    stack: str(body.stack, 4000),
+    componentStack: str(body.componentStack, 4000),
+    url: str(body.url, 500),
+    userAgent: c.req.header("user-agent"),
+  });
+  return c.body(null, 204);
+});
+
 // Artist profile (onboarding + /me).
 app.route("/api/artists", artistsRoutes);
 // Commission types CRUD (the artist's public offerings).
@@ -126,5 +149,27 @@ app.get("/:handle", async (c) => {
 // SPA fallback: anything not handled above (and not an /api route) is served
 // from the static assets binding — the built Vite app in apps/web/dist.
 app.all("*", (c) => serveSpa(c));
+
+// Central error logging. Explicit handler errors are returned inline as
+// `{ error }` by the routes; this only fires on *unexpected* throws (DB
+// failures, bugs). Expected HTTPExceptions keep their intended response.
+app.onError((err, c) => {
+  const path = new URL(c.req.url).pathname;
+  if (err instanceof HTTPException) {
+    log("warn", "http_exception", {
+      method: c.req.method,
+      path,
+      status: err.status,
+      ...serializeError(err),
+    });
+    return err.getResponse();
+  }
+  log("error", "unhandled_error", {
+    method: c.req.method,
+    path,
+    ...serializeError(err),
+  });
+  return c.json({ error: "Internal server error" }, 500);
+});
 
 export default app;
