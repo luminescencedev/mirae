@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 10.5 — Repository and production baseline ✅ complete (all META-001…012 shipped). Full detail in docs/roadmap/POST_MVP_ROADMAP.md. **Next sprint: Sprint 11 — Mirae identity foundation (BRAND-001).**
+Sprint 11 — Mirae identity foundation (in progress). Done: BRAND-001 (brand attributes + personality locked in docs/product/BRAND.md). **Next ticket: BRAND-002 (design the Mirae geometric symbol).** Sprint 10.5 ✅ complete before it. Full detail in docs/roadmap/POST_MVP_ROADMAP.md.
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -268,9 +268,9 @@ Next sprint: **Sprint 11 — Mirae identity foundation** (BRAND-001).
 
 ## Sprint 11 — Mirae identity foundation
 
-Goal: a distinctive visual identity before redesigning public surfaces.
+_In progress._ Goal: a distinctive visual identity before redesigning public surfaces. Brand foundation locked in [`../product/BRAND.md`](../product/BRAND.md).
 
-- [ ] BRAND-001 Lock brand attributes and personality
+- [x] BRAND-001 Lock brand attributes and personality
 - [ ] BRAND-002 Design the Mirae geometric symbol
 - [ ] BRAND-003 Design the Mirae wordmark
 - [ ] BRAND-004 Create responsive logo lockups

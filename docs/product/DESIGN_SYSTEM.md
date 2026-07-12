@@ -1,6 +1,8 @@
 # Design System
 
-> Canonical source for visual direction, tokens, components, and UI rules.
+> Canonical source for visual direction, tokens, components, and UI rules. For
+> brand attributes, personality, voice, and the identity constraints, see
+> [`BRAND.md`](BRAND.md).
 
 ## Direction
 

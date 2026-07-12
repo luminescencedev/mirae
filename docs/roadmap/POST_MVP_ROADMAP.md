@@ -57,7 +57,7 @@ Create a distinctive visual identity before redesigning all public-facing surfac
 
 ## Tickets
 
-- [ ] BRAND-001 Lock brand attributes and personality
+- [x] BRAND-001 Lock brand attributes and personality
 - [ ] BRAND-002 Design the Mirae geometric symbol
 - [ ] BRAND-003 Design the Mirae wordmark
 - [ ] BRAND-004 Create responsive logo lockups
