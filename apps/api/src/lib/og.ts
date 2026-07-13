@@ -66,27 +66,49 @@ export function injectStudioMeta(
     },
   });
 
-  const head = [
-    `<meta name="description" content="${d}" />`,
+  // Tags with no base equivalent — injected before </head>.
+  const inject = [
     `<link rel="canonical" href="${u}" />`,
     `<meta name="robots" content="${closed ? "noindex, follow" : "index, follow"}" />`,
-    `<meta property="og:type" content="profile" />`,
-    `<meta property="og:site_name" content="Mirae" />`,
-    `<meta property="og:title" content="${t}" />`,
-    `<meta property="og:description" content="${d}" />`,
-    `<meta property="og:url" content="${u}" />`,
     `<meta property="og:image:alt" content="${escapeAttr(profile.displayName)}" />`,
-    `<meta name="twitter:title" content="${t}" />`,
-    `<meta name="twitter:description" content="${d}" />`,
     `<meta name="twitter:image" content="${img}" />`,
     `<script type="application/ld+json">${ld}</script>`,
   ].join("\n    ");
 
+  // Replace the landing defaults with studio-specific values (no duplicates).
   return html
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${t}</title>`)
+    .replace(
+      /<meta name="description"[^>]*>/,
+      `<meta name="description" content="${d}" />`,
+    )
+    .replace(
+      /<meta property="og:type"[^>]*>/,
+      `<meta property="og:type" content="profile" />`,
+    )
+    .replace(
+      /<meta property="og:title"[^>]*>/,
+      `<meta property="og:title" content="${t}" />`,
+    )
+    .replace(
+      /<meta property="og:description"[^>]*>/,
+      `<meta property="og:description" content="${d}" />`,
+    )
+    .replace(
+      /<meta property="og:url"[^>]*>/,
+      `<meta property="og:url" content="${u}" />`,
+    )
     .replace(
       /<meta property="og:image"[^>]*>/,
       `<meta property="og:image" content="${img}" />`,
     )
-    .replace("</head>", `    ${head}\n  </head>`);
+    .replace(
+      /<meta name="twitter:title"[^>]*>/,
+      `<meta name="twitter:title" content="${t}" />`,
+    )
+    .replace(
+      /<meta name="twitter:description"[^>]*>/,
+      `<meta name="twitter:description" content="${d}" />`,
+    )
+    .replace("</head>", `    ${inject}\n  </head>`);
 }
