@@ -2,8 +2,17 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
-import { Button, Dialog, DialogContent, Icon, Mark, cn } from "@mirae/ui";
+import {
+  Avatar,
+  Button,
+  Dialog,
+  DialogContent,
+  Icon,
+  Mark,
+  cn,
+} from "@mirae/ui";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import demoBg from "../../assets/studio-demo-bg.png";
 import {
   publicApi,
   trackLinkClick,
@@ -82,50 +91,53 @@ function StudioView({
   const status = STATUS[profile.status];
   const isClosed = profile.status === "closed";
 
-  // The atmospheric background art: cover, else avatar, else first artwork.
-  const art =
-    profile.coverUrl ??
-    profile.avatarUrl ??
-    projects.find((p) => p.assets.length)?.assets[0]?.url ??
-    null;
+  // Cover art → the fixed full-bleed background (falls back to the demo image
+  // so every page has atmosphere). Same technique as the reference portfolio:
+  // background-size:cover, centered, fixed.
+  const cover = profile.coverUrl ?? demoBg;
 
   const featured = links.filter((l) => l.featured || l.style !== "simple");
   const simple = links.filter((l) => !featured.includes(l));
 
   return (
     <div className="relative min-h-dvh bg-canvas">
-      {/* Dithered artist art — fixed atmosphere, bleeds from the left */}
-      {art && (
-        <div className="pointer-events-none fixed inset-0 z-0">
-          <div
-            className="studio-dither absolute inset-0 opacity-90"
-            style={{
-              backgroundImage: `url(${art})`,
-              backgroundSize: "min(74vh, 900px)",
-              backgroundPosition: "left 1% center",
-              backgroundRepeat: "no-repeat",
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-canvas/40 to-canvas" />
-        </div>
-      )}
+      {/* Fixed background art */}
+      <div
+        className="pointer-events-none fixed inset-0 z-0"
+        style={{
+          backgroundImage: `url(${cover})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
+      {/* Soft scrim keeps the column readable over any image */}
+      <div className="pointer-events-none fixed inset-0 z-0 bg-canvas/55" />
 
+      {/* Centered column between two spacers — like the portfolio */}
       <motion.main
-        className="relative z-10 flex min-h-dvh justify-center px-5 md:justify-end"
-        initial={rm ? false : { opacity: 0, y: 10 }}
+        className="relative z-10 flex w-full items-start px-4 py-12 sm:px-8 sm:py-24"
+        initial={rm ? false : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.32, ease: "easeOut" }}
       >
-        <div className="w-full max-w-[560px] py-[clamp(48px,9vh,110px)] md:mr-[clamp(0px,7vw,120px)]">
+        <div className="hidden flex-1 md:block" />
+        <div className="w-full max-w-[35rem] shrink-0">
           {/* Identity */}
-          <header>
+          <section className="mb-14">
+            <Avatar
+              src={profile.avatarUrl}
+              name={profile.displayName}
+              size={64}
+              className="mb-4 rounded-2xl shadow-soft"
+            />
             <h1 className="text-sm font-medium text-fg">
               {profile.displayName}
             </h1>
             {profile.tagline && (
               <p className="text-sm text-fg-subtle">{profile.tagline}</p>
             )}
-            <div className="mt-3.5 flex items-center gap-2 text-sm text-fg-subtle">
+            <div className="mt-3 flex items-center gap-2 text-sm text-fg-subtle">
               <span className={cn("size-1.5 rounded-full", status.dot)} />
               {status.label}
             </div>
@@ -142,40 +154,37 @@ function StudioView({
                 </Link>
               </Button>
             )}
-          </header>
+          </section>
 
           {/* Featured links */}
           {featured.length > 0 && (
-            <section className="mt-14">
-              <ul className="flex flex-col gap-2">
-                {featured.map((l) => (
-                  <li key={l.id}>
-                    <a
-                      href={l.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackLinkClick(l.id)}
-                      className="group flex items-center gap-3 rounded-xl border border-border/70 bg-surface/80 px-4 py-3.5 text-sm backdrop-blur-sm transition-colors hover:border-border-strong"
-                    >
-                      <span className="font-medium text-fg">{l.title}</span>
-                      {l.platform && l.platform !== "custom" && (
-                        <span className="font-mono text-xs text-fg-subtle">
-                          {l.platform}
-                        </span>
-                      )}
-                      <span className="ml-auto text-fg-subtle transition-transform group-hover:translate-x-0.5">
-                        ↗
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
+            <section className="mb-14 flex flex-col gap-2">
+              {featured.map((l) => (
+                <a
+                  key={l.id}
+                  href={l.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackLinkClick(l.id)}
+                  className="group flex items-center gap-3 rounded-xl border border-border/70 bg-surface/85 px-4 py-3.5 text-sm backdrop-blur-sm transition-colors hover:border-border-strong"
+                >
+                  <span className="font-medium text-fg">{l.title}</span>
+                  {l.platform && l.platform !== "custom" && (
+                    <span className="font-mono text-xs text-fg-subtle">
+                      {l.platform}
+                    </span>
+                  )}
+                  <span className="ml-auto text-fg-subtle transition-transform group-hover:translate-x-0.5">
+                    ↗
+                  </span>
+                </a>
+              ))}
             </section>
           )}
 
           {/* Selected work */}
           {projects.length > 0 && (
-            <section className="mt-14">
+            <section className="mb-14">
               <h2 className="mb-4 text-sm font-medium text-fg">
                 Selected work
               </h2>
@@ -226,9 +235,9 @@ function StudioView({
             </section>
           )}
 
-          {/* Commissions — a quiet menu, artist-fixed prices */}
+          {/* Commissions — quiet fixed-price menu */}
           {commissionTypes.length > 0 && (
-            <section className="mt-14">
+            <section className="mb-14">
               <h2 className="mb-2 text-sm font-medium text-fg">Commissions</h2>
               <ul className="border-t border-border/70">
                 {commissionTypes.map((c) => (
@@ -264,7 +273,7 @@ function StudioView({
 
           {/* Elsewhere */}
           {simple.length > 0 && (
-            <section className="mt-14">
+            <section className="mb-14">
               <h2 className="mb-3 text-sm font-medium text-fg">Elsewhere</h2>
               <ul className="flex flex-col">
                 {simple.map((l) => (
@@ -285,8 +294,7 @@ function StudioView({
             </section>
           )}
 
-          {/* Powered by */}
-          <div className="mt-16 flex items-center gap-1.5 text-xs text-fg-subtle">
+          <div className="flex items-center gap-1.5 text-xs text-fg-subtle">
             <Mark className="h-3 w-auto" />
             Powered by
             <Link to="/" className="font-medium text-fg-muted hover:text-fg">
@@ -294,6 +302,7 @@ function StudioView({
             </Link>
           </div>
         </div>
+        <div className="hidden flex-1 md:block" />
       </motion.main>
 
       {children}

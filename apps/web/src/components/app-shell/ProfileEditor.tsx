@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Input, Textarea, cn } from "@mirae/ui";
+import { Avatar, Button, Icon, Input, Textarea, cn } from "@mirae/ui";
+import { Image01Icon, Upload01Icon } from "@hugeicons/core-free-icons";
 import { artistApi, type StudioStatus } from "../../lib/api.ts";
 
 const KEY = ["artist", "me"];
@@ -46,6 +47,20 @@ export function ProfileEditor() {
     onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
   });
 
+  const avatarInput = useRef<HTMLInputElement>(null);
+  const coverInput = useRef<HTMLInputElement>(null);
+  const upload = useMutation({
+    mutationFn: ({ kind, file }: { kind: "avatar" | "cover"; file: File }) =>
+      artistApi.uploadMedia(kind, file),
+    onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
+    onError: (e: Error) => alert(e.message),
+  });
+  // Cache-bust the served media when it changes.
+  const mediaUrl = (kind: "avatar" | "cover") =>
+    profile
+      ? `/api/studio/${profile.handle}/${kind}?v=${profile.updatedAt ?? ""}`
+      : undefined;
+
   if (isLoading) {
     return (
       <div className="rounded-xl border border-border bg-surface p-8 text-center text-sm text-fg-subtle shadow-soft">
@@ -69,6 +84,72 @@ export function ProfileEditor() {
             usemirae.com/@{profile.handle}
           </span>
         )}
+      </div>
+
+      {/* Avatar + cover */}
+      <div className="mt-4 flex items-center gap-4">
+        <button
+          type="button"
+          onClick={() => avatarInput.current?.click()}
+          className="group relative rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+          aria-label="Change photo"
+        >
+          <Avatar
+            src={profile?.avatarR2Key ? mediaUrl("avatar") : null}
+            name={displayName}
+            size={64}
+            className="rounded-2xl"
+          />
+          <span className="absolute inset-0 grid place-items-center rounded-2xl bg-black/45 text-white opacity-0 transition-opacity group-hover:opacity-100">
+            <Icon icon={Upload01Icon} size={16} />
+          </span>
+        </button>
+        <div className="flex flex-col gap-1.5">
+          <Label>Photo &amp; cover</Label>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => avatarInput.current?.click()}
+              disabled={upload.isPending}
+            >
+              <Icon icon={Upload01Icon} size={15} /> Photo
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => coverInput.current?.click()}
+              disabled={upload.isPending}
+            >
+              <Icon icon={Image01Icon} size={15} />
+              {profile?.coverR2Key ? "Change cover" : "Add cover"}
+            </Button>
+          </div>
+        </div>
+        <input
+          ref={avatarInput}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/avif"
+          hidden
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) upload.mutate({ kind: "avatar", file: f });
+            e.target.value = "";
+          }}
+        />
+        <input
+          ref={coverInput}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/avif"
+          hidden
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) upload.mutate({ kind: "cover", file: f });
+            e.target.value = "";
+          }}
+        />
       </div>
 
       <div className="mt-4 flex flex-col gap-4">

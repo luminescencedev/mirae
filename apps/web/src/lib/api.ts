@@ -41,6 +41,9 @@ export type ArtistProfile = {
   tagline: string | null;
   bio: string | null;
   status: StudioStatus;
+  avatarR2Key: string | null;
+  coverR2Key: string | null;
+  updatedAt?: string;
 };
 
 export type ArtistProfileInput = {
@@ -61,6 +64,14 @@ export const artistApi = {
       headers: jsonHeaders,
       body: JSON.stringify(body),
     }).then(json<{ profile: ArtistProfile }>),
+  uploadMedia: (kind: "avatar" | "cover", file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return fetch(`/api/artists/me/${kind}`, {
+      method: "POST",
+      body: fd,
+    }).then(json<{ profile: ArtistProfile }>);
+  },
 };
 
 export type PublicProfile = {
