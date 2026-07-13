@@ -100,21 +100,21 @@ Build the backend foundation for real artist work, profile imagery and public me
 
 ## Tickets
 
-- [ ] PORTFOLIO-001 Add avatar and cover media fields
-- [ ] PORTFOLIO-002 Create `portfolio_projects` table
-- [ ] PORTFOLIO-003 Create `portfolio_assets` table
-- [ ] PORTFOLIO-004 Add project ordering
-- [ ] PORTFOLIO-005 Add asset ordering
-- [ ] PORTFOLIO-006 Add draft and published states
-- [ ] PORTFOLIO-007 Add featured project state
-- [ ] PORTFOLIO-008 Add portfolio CRUD API
-- [ ] PORTFOLIO-009 Add project asset upload API
-- [ ] PORTFOLIO-010 Add direct or controlled R2 upload flow
-- [ ] PORTFOLIO-011 Add MIME and size validation
+- [x] PORTFOLIO-001 Add avatar and cover media fields
+- [x] PORTFOLIO-002 Create `portfolio_projects` table
+- [x] PORTFOLIO-003 Create `portfolio_assets` table
+- [x] PORTFOLIO-004 Add project ordering
+- [x] PORTFOLIO-005 Add asset ordering
+- [x] PORTFOLIO-006 Add draft and published states
+- [x] PORTFOLIO-007 Add featured project state
+- [x] PORTFOLIO-008 Add portfolio CRUD API
+- [x] PORTFOLIO-009 Add project asset upload API
+- [x] PORTFOLIO-010 Add direct or controlled R2 upload flow
+- [x] PORTFOLIO-011 Add MIME and size validation
 - [ ] PORTFOLIO-012 Add image dimension metadata
-- [ ] PORTFOLIO-013 Add asset deletion
-- [ ] PORTFOLIO-014 Add orphan asset cleanup
-- [ ] PORTFOLIO-015 Extend public studio response
+- [x] PORTFOLIO-013 Add asset deletion
+- [x] PORTFOLIO-014 Add orphan asset cleanup
+- [x] PORTFOLIO-015 Extend public studio response
 - [ ] PORTFOLIO-016 Add migration and demo seed
 
 ## Suggested project fields
