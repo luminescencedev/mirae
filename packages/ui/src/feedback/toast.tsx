@@ -19,13 +19,12 @@ export function useToast() {
   return { toast };
 }
 
-// Mounts sonner's Toaster at the bottom-left (keeps clear of the right-side
-// Sheet / drawer so its actions stay clickable). Mirae radius + font.
+// Mounts sonner's Toaster — stock top-right, richColors, light theme.
 export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
-      <Toaster position="bottom-left" theme="light" richColors closeButton />
+      <Toaster richColors theme="light" />
     </>
   );
 }
