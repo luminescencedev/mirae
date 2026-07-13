@@ -26,6 +26,7 @@ import { requestsApi } from "../../lib/api.ts";
 import { CommandPalette } from "./CommandPalette.tsx";
 import { NotificationsMenu } from "./NotificationsMenu.tsx";
 import { BottomNav } from "./BottomNav.tsx";
+import { MobileMenu } from "./MobileMenu.tsx";
 
 const NAV_ROW = 36; // h-9
 const NAV_STEP = NAV_ROW + 2; // + gap-0.5
@@ -278,8 +279,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="hidden md:inline">Studio</span>
           <span className="hidden text-fg-subtle md:inline">/</span>
           <span className="hidden text-fg md:inline">{current}</span>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-1">
             <NotificationsMenu />
+            <MobileMenu
+              userName={userName}
+              userEmail={userEmail}
+              onSearch={() => setPaletteOpen(true)}
+              onSignOut={handleSignOut}
+            />
           </div>
         </header>
 
