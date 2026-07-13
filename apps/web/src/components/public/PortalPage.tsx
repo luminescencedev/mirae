@@ -13,7 +13,7 @@ import {
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-surface-sunken">
-      <div className="mx-auto max-w-lg px-6 py-12">{children}</div>
+      <div className="mx-auto max-w-lg px-5 py-12 sm:px-6">{children}</div>
       <div className="mx-auto mt-8 flex max-w-lg items-center justify-center gap-1.5 px-6 pb-12 text-xs text-fg-subtle">
         <Mark className="h-3 w-auto" />
         Powered by

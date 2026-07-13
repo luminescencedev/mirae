@@ -1,29 +1,10 @@
 import { useState } from "react";
-import { Button, Icon, cn } from "@mirae/ui";
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { motion } from "motion/react";
+import { Calendar, cn, dayKey } from "@mirae/ui";
 import { type QueueCommission } from "../../../lib/api.ts";
-import { STATUS_META } from "../../../lib/commissions.ts";
+import { STATUS_META, dueLabel, euro } from "../../../lib/commissions.ts";
 
-const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-// yyyy-mm-dd key in local time.
-function dayKey(d: Date): string {
-  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-}
+const EASE = [0.23, 1, 0.32, 1] as const;
 
 export function QueueCalendarView({
   commissions,
@@ -33,131 +14,127 @@ export function QueueCalendarView({
   onSelect?: (c: QueueCommission) => void;
 }) {
   const today = new Date();
-  const [month, setMonth] = useState(today.getMonth());
-  const [year, setYear] = useState(today.getFullYear());
+  const [selected, setSelected] = useState<Date>(today);
 
-  // Bucket commissions by deadline day.
+  // Deadlines bucketed by day + a marker map for the calendar dots.
   const byDay = new Map<string, QueueCommission[]>();
   for (const c of commissions) {
     if (!c.deadline) continue;
     const k = dayKey(new Date(c.deadline));
-    const arr = byDay.get(k) ?? [];
-    arr.push(c);
-    byDay.set(k, arr);
+    (byDay.get(k) ?? byDay.set(k, []).get(k)!).push(c);
   }
+  const markers = new Map<string, string[]>();
+  for (const [k, items] of byDay)
+    markers.set(
+      k,
+      items.map((c) => STATUS_META[c.status].dot),
+    );
 
-  const first = new Date(year, month, 1);
-  // Monday-first offset.
-  const lead = (first.getDay() + 6) % 7;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const cells: (number | null)[] = [
-    ...Array(lead).fill(null),
-    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
-  ];
-  while (cells.length % 7 !== 0) cells.push(null);
+  const selectedItems = byDay.get(dayKey(selected)) ?? [];
 
-  const shift = (delta: number) => {
-    const m = month + delta;
-    if (m < 0) {
-      setMonth(11);
-      setYear((y) => y - 1);
-    } else if (m > 11) {
-      setMonth(0);
-      setYear((y) => y + 1);
-    } else setMonth(m);
-  };
+  // Upcoming deadlines (from today) — fills the agenda when the selected day
+  // has none, so the panel is never empty.
+  const startToday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  ).getTime();
+  const upcoming = commissions
+    .filter((c) => c.deadline && new Date(c.deadline).getTime() >= startToday)
+    .sort((a, b) => (a.deadline! < b.deadline! ? -1 : 1))
+    .slice(0, 6);
 
-  const withDeadlines = commissions.filter((c) => c.deadline).length;
+  const AgendaRow = ({
+    c,
+    i,
+    showDate,
+  }: {
+    c: QueueCommission;
+    i: number;
+    showDate?: boolean;
+  }) => (
+    <motion.button
+      type="button"
+      onClick={() => onSelect?.(c)}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.22, delay: i * 0.04, ease: EASE }}
+      whileTap={{ scale: 0.98 }}
+      className="flex items-center gap-2.5 rounded-xl border border-border bg-surface-muted/40 px-3 py-2.5 text-left outline-none transition-colors hover:border-border-strong focus-visible:ring-2 focus-visible:ring-accent-500"
+    >
+      <span
+        className={cn("size-2 shrink-0 rounded-full", STATUS_META[c.status].dot)}
+      />
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-medium text-fg">
+          {c.title}
+        </span>
+        <span className="block truncate text-xs text-fg-subtle">
+          {c.clientName ?? "—"}
+          {showDate && c.deadline
+            ? ` · ${new Date(c.deadline).toLocaleDateString(undefined, {
+                day: "numeric",
+                month: "short",
+              })}`
+            : ` · ${dueLabel(c.deadline)}`}
+        </span>
+      </span>
+      <span className="shrink-0 text-sm font-semibold tabular-nums text-fg">
+        {euro(c.priceCents)}
+      </span>
+    </motion.button>
+  );
 
   return (
-    <div className="rounded-xl border border-border bg-surface p-4 shadow-soft">
-      <div className="mb-4 flex items-center gap-3">
-        <h3 className="text-sm font-semibold">
-          {MONTHS[month]} {year}
-        </h3>
-        <span className="text-xs text-fg-subtle">
-          {withDeadlines} with a deadline
-        </span>
-        <div className="ml-auto flex gap-1">
-          <Button
-            variant="outline"
-            size="icon"
-            className="size-8"
-            aria-label="Previous month"
-            onClick={() => shift(-1)}
-          >
-            <Icon icon={ArrowLeft01Icon} size={16} strokeWidth={1.8} />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="size-8"
-            aria-label="Next month"
-            onClick={() => shift(1)}
-          >
-            <Icon icon={ArrowRight01Icon} size={16} strokeWidth={1.8} />
-          </Button>
-        </div>
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 lg:flex-row lg:items-start">
+      {/* Calendar */}
+      <div className="min-w-0 flex-1 rounded-2xl border border-border bg-surface p-4 shadow-soft sm:p-6">
+        <Calendar
+          size="lg"
+          selected={selected}
+          onSelect={setSelected}
+          markers={markers}
+        />
       </div>
 
-      <div className="grid grid-cols-7 gap-1">
-        {WEEKDAYS.map((d) => (
-          <div
-            key={d}
-            className="px-1 pb-1 text-center text-xs font-medium text-fg-subtle"
-          >
-            {d}
+      {/* Agenda — selected day, or upcoming when the day is empty */}
+      <aside className="w-full shrink-0 rounded-2xl border border-border bg-surface p-4 shadow-soft lg:w-80">
+        <p className="text-sm font-semibold tracking-tight text-fg">
+          {selected.toLocaleDateString(undefined, {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          })}
+        </p>
+        <p className="mt-0.5 text-xs text-fg-subtle">
+          {selectedItems.length === 0
+            ? "No deadlines this day"
+            : `${selectedItems.length} deadline${selectedItems.length === 1 ? "" : "s"}`}
+        </p>
+
+        {selectedItems.length > 0 ? (
+          <div className="mt-3 flex flex-col gap-2">
+            {selectedItems.map((c, i) => (
+              <AgendaRow key={c.id} c={c} i={i} />
+            ))}
           </div>
-        ))}
-        {cells.map((day, i) => {
-          if (day == null)
-            return <div key={`e${i}`} className="min-h-20 rounded-lg" />;
-          const date = new Date(year, month, day);
-          const items = byDay.get(dayKey(date)) ?? [];
-          const isToday = dayKey(date) === dayKey(today);
-          return (
-            <div
-              key={day}
-              className={cn(
-                "min-h-20 rounded-lg border border-border p-1.5",
-                isToday ? "bg-accent-50" : "bg-surface-muted/40",
-              )}
-            >
-              <span
-                className={cn(
-                  "text-xs tabular-nums",
-                  isToday ? "font-semibold text-accent-700" : "text-fg-subtle",
-                )}
-              >
-                {day}
-              </span>
-              <div className="mt-1 flex flex-col gap-1">
-                {items.slice(0, 3).map((c) => (
-                  <button
-                    key={c.id}
-                    type="button"
-                    onClick={() => onSelect?.(c)}
-                    className="flex items-center gap-1 truncate rounded px-1 py-0.5 text-left text-[11px] text-fg outline-none transition-colors hover:bg-surface focus-visible:ring-2 focus-visible:ring-accent-500"
-                  >
-                    <span
-                      className={cn(
-                        "size-1.5 shrink-0 rounded-full",
-                        STATUS_META[c.status].dot,
-                      )}
-                    />
-                    <span className="truncate">{c.title}</span>
-                  </button>
-                ))}
-                {items.length > 3 && (
-                  <span className="px-1 text-[10px] text-fg-subtle">
-                    +{items.length - 3} more
-                  </span>
-                )}
-              </div>
+        ) : upcoming.length > 0 ? (
+          <div className="mt-4">
+            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-fg-subtle">
+              Upcoming
+            </p>
+            <div className="flex flex-col gap-2">
+              {upcoming.map((c, i) => (
+                <AgendaRow key={c.id} c={c} i={i} showDate />
+              ))}
             </div>
-          );
-        })}
-      </div>
+          </div>
+        ) : (
+          <p className="mt-4 rounded-lg border border-dashed border-border px-3 py-6 text-center text-xs text-fg-subtle">
+            No upcoming deadlines. Set one on a commission.
+          </p>
+        )}
+      </aside>
     </div>
   );
 }

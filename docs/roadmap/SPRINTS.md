@@ -347,7 +347,7 @@ Goal: an artist-specific link-in-bio hub that stays portfolio-first. **Data + AP
 - [ ] LINKS-014 Add featured link card
 - [ ] LINKS-015 Add media link card
 - [x] LINKS-016 Add click analytics
-- [ ] LINKS-017 Add mobile preview
+- [x] LINKS-017 Add mobile preview (Sprint 18 / MOBILE-022)
 
 ## Sprint 15 — Creative public studio
 
@@ -365,7 +365,7 @@ Goal: replace the functional profile card with a portfolio-first artist homepage
 - [x] STUDIO-010 Build project detail experience
 - [x] STUDIO-011 Redesign commission type cards
 - [ ] STUDIO-012 Add commission representative images
-- [ ] STUDIO-013 Add persistent mobile commission CTA
+- [x] STUDIO-013 Add persistent mobile commission CTA (Sprint 18 / MOBILE-023)
 - [ ] STUDIO-014 Add artist about section
 - [ ] STUDIO-015 Add optional FAQ section
 - [x] STUDIO-016 Add Mirae-branded footer
@@ -411,7 +411,7 @@ Goal: meaningful artist expression through curated customization.
 - [x] CUSTOM-007 Add section visibility controls
 - [ ] CUSTOM-008 Add section ordering (deferred)
 - [x] CUSTOM-009 Build desktop split preview
-- [ ] CUSTOM-010 Build mobile Edit and Preview tabs (→ Sprint 18)
+- [x] CUSTOM-010 Build mobile Edit and Preview tabs (Sprint 18 / MOBILE-022)
 - [ ] CUSTOM-011 Add unsaved-change detection (deferred)
 - [ ] CUSTOM-012 Add reset-to-published action (deferred)
 - [ ] CUSTOM-013 Add save-draft action (deferred)
@@ -491,44 +491,62 @@ Images), out of scope here. Migrations 0007 (about/faq), 0008 (commission image)
 
 Goal: make the private app and public experience genuinely mobile-first **and polished to a professional bar** (premium on a phone, not merely responsive).
 
-- [ ] MOBILE-001 Add bottom navigation
-- [ ] MOBILE-002 Add mobile header
-- [ ] MOBILE-003 Add safe-area support
-- [ ] MOBILE-004 Add mobile More menu
-- [ ] MOBILE-005 Adapt search and notifications
-- [ ] MOBILE-006 Handle virtual keyboard correctly
-- [ ] MOBILE-007 Remove hover-only interactions
-- [ ] MOBILE-008 Redesign Overview for mobile
-- [ ] MOBILE-009 Make Queue default to grouped list
-- [ ] MOBILE-010 Keep board as optional mobile view
-- [ ] MOBILE-011 Convert commission detail to full-screen mobile route or sheet
-- [ ] MOBILE-012 Add sticky detail actions
-- [ ] MOBILE-013 Redesign Requests list and detail
-- [ ] MOBILE-014 Add sticky Accept and Decline actions
-- [ ] MOBILE-015 Optimize Clients
-- [ ] MOBILE-016 Optimize Deliveries
-- [ ] MOBILE-017 Optimize quote builder
-- [ ] MOBILE-018 Optimize payment controls
-- [ ] MOBILE-019 Optimize portal and delivery pages
-- [ ] MOBILE-020 Add touch portfolio ordering
-- [ ] MOBILE-021 Add gallery and camera upload
-- [ ] MOBILE-022 Add Edit and Preview switch
-- [ ] MOBILE-023 Add public sticky CTA
-- [ ] MOBILE-024 Add swipe lightbox
-- [ ] MOBILE-025 Optimize multi-step request form
-- [ ] MOBILE-026 Add responsive R2 images
-- [ ] MOBILE-027 Add lazy loading
-- [ ] MOBILE-028 Prevent layout shifts
-- [ ] MOBILE-029 Test slow mobile connections
-- [ ] MOBILE-030 Audit thumb reachability
-- [ ] MOBILE-031 Audit iPhone Safari
-- [ ] MOBILE-032 Audit Android Chrome
-- [ ] MOBILE-033 Audit 320 px viewport
-- [ ] MOBILE-034 Audit landscape mode
-- [ ] MOBILE-035 Elevate Overview into a real mobile dashboard (KPI cards, trend, hierarchy)
-- [ ] MOBILE-036 Unify density, spacing scale and typography across mobile screens
-- [ ] MOBILE-037 Complete empty / loading (skeleton) / error states everywhere
-- [ ] MOBILE-038 Brand motion pass (press feedback, transitions, Loader; reduced-motion safe)
+- [x] MOBILE-001 Add bottom navigation
+- [x] MOBILE-002 Add mobile header
+- [x] MOBILE-003 Add safe-area support
+- [x] MOBILE-004 Add mobile More menu
+- [x] MOBILE-005 Adapt search and notifications
+- [x] MOBILE-006 Handle virtual keyboard correctly
+- [x] MOBILE-007 Remove hover-only interactions
+- [x] MOBILE-008 Redesign Overview for mobile
+- [x] MOBILE-009 Make Queue default to grouped list
+- [x] MOBILE-010 Keep board as optional mobile view
+- [x] MOBILE-011 Convert commission detail to full-screen mobile route or sheet
+- [x] MOBILE-012 Add sticky detail actions
+- [x] MOBILE-013 Redesign Requests list and detail
+- [x] MOBILE-014 Add sticky Accept and Decline actions
+- [x] MOBILE-015 Optimize Clients
+- [x] MOBILE-016 Optimize Deliveries
+- [x] MOBILE-017 Optimize quote builder
+- [x] MOBILE-018 Optimize payment controls
+- [x] MOBILE-019 Optimize portal and delivery pages
+- [x] MOBILE-020 Add touch portfolio ordering (motion Reorder — pointer/touch)
+- [x] MOBILE-021 Add gallery and camera upload (native file input, incl. PORTUI-017)
+- [x] MOBILE-022 Add Edit and Preview switch (folds CUSTOM-010, LINKS-017)
+- [x] MOBILE-023 Add public sticky CTA (folds STUDIO-013)
+- [x] MOBILE-024 Add swipe lightbox
+- [~] MOBILE-025 Optimize multi-step request form (mobile-optimized full-screen drawer; true multi-step → REQUESTUX)
+- [ ] MOBILE-026 Add responsive R2 images (deferred → media-pipeline, with DEBT-013/017)
+- [x] MOBILE-027 Add lazy loading (galleries + asset tiles use loading="lazy")
+- [x] MOBILE-028 Prevent layout shifts (fixed aspect-ratio containers + sized media)
+- [ ] MOBILE-029 Test slow mobile connections (manual device QA)
+- [ ] MOBILE-030 Audit thumb reachability (manual device QA)
+- [ ] MOBILE-031 Audit iPhone Safari (manual device QA)
+- [ ] MOBILE-032 Audit Android Chrome (manual device QA)
+- [ ] MOBILE-033 Audit 320 px viewport (manual device QA)
+- [ ] MOBILE-034 Audit landscape mode (manual device QA)
+- [x] MOBILE-035 Elevate Overview into a real mobile dashboard (KPI cards, trend, hierarchy)
+- [x] MOBILE-036 Unify density, spacing scale and typography across mobile screens
+- [x] MOBILE-037 Complete empty / loading (skeleton) / error states everywhere
+- [x] MOBILE-038 Brand motion pass (press feedback, transitions, Loader; reduced-motion safe)
+
+Completion notes (Sprint 18): mobile-first shell + premium on both platforms.
+Shipped — bottom nav, mobile header (mark + page), safe-area (viewport-fit=cover
++ insets), mobile overflow menu (search/sign-out), mobile-adapted dialogs,
+virtual-keyboard handling, removal of hover-only controls, tighter global mobile
+gutter (px-4→sm:px-6). Page work: Overview dashboard (KPI cards with real
+sublabels + highlighted actionable stat); Queue defaults to grouped list on
+phones (board optional); Requests/Clients/Deliveries responsive; commission +
+request detail as full-screen sheets with safe-area sticky actions; quote /
+payment / portal / delivery mobile-optimized. Touch drag reordering (motion
+Reorder), gallery/camera upload, studio-page Edit/Preview switch (folds
+CUSTOM-010 + LINKS-017), persistent public request CTA (folds STUDIO-013), swipe
+lightbox. Perf: lazy loading + CLS-safe aspect containers. Polish: global Button
+press feedback (reduced-motion safe), unified density via shared PageHeader /
+cards / gutters, error+loading+empty states across list screens and managers.
+Deferred → media-pipeline: MOBILE-026 responsive R2 images (with DEBT-013/017).
+Pending manual device QA: MOBILE-029..034 (slow connections, thumb reach, iPhone
+Safari, Android Chrome, 320px, landscape).
 
 ## Sprint 19 — Sharing, SEO & analytics
 

@@ -13,7 +13,7 @@ function Overview() {
         title={first ? `Hello, ${first}` : "Overview"}
         subtitle="Here's your studio today."
       />
-      <div className="px-6 py-6">
+      <div className="px-4 py-5 sm:px-6 sm:py-6">
         <OverviewView />
       </div>
     </>

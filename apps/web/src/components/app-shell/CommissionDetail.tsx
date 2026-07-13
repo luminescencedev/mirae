@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Badge,
   Button,
+  DatePicker,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -25,7 +26,6 @@ import {
 import {
   STATUS_META,
   STATUS_ORDER,
-  dueLabel,
   euro,
   milestones,
 } from "../../lib/commissions.ts";
@@ -83,6 +83,15 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
     },
   });
 
+  const setDeadline = useMutation({
+    mutationFn: (deadline: string | null) =>
+      commissionsApi.update(item.id, { deadline }),
+    onSuccess: async () => {
+      await invalidate();
+      toast({ title: "Deadline updated", variant: "success" });
+    },
+  });
+
   const genPortal = useMutation({
     mutationFn: () => commissionsApi.generatePortal(item.id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["commissions"] }),
@@ -119,7 +128,13 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
         <div className="grid grid-cols-2 gap-3">
           <Meta label="Price">{euro(item.priceCents)}</Meta>
           <Meta label="Paid">{euro(item.paidCents)}</Meta>
-          <Meta label="Deadline">{dueLabel(item.deadline)}</Meta>
+          <div className="rounded-lg border border-border bg-surface-muted p-3">
+            <p className="mb-1.5 text-xs text-fg-subtle">Deadline</p>
+            <DatePicker
+              value={item.deadline ? new Date(item.deadline) : null}
+              onChange={(d) => setDeadline.mutate(d ? d.toISOString() : null)}
+            />
+          </div>
           <Meta label="Client email">
             {item.clientEmail ? (
               <a

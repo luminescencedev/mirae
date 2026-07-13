@@ -14,6 +14,7 @@ import {
 import { DragDropVerticalIcon } from "@hugeicons/core-free-icons";
 import {
   DEFAULT_APPEARANCE,
+  normalizeAppearance,
   type AppearanceSection,
   type StudioAppearance,
 } from "@mirae/shared";
@@ -115,7 +116,7 @@ export function AppearanceEditor() {
   const [cfg, setCfg] = useState<StudioAppearance>(DEFAULT_APPEARANCE);
 
   useEffect(() => {
-    if (profile?.appearance) setCfg(profile.appearance);
+    if (profile?.appearance) setCfg(normalizeAppearance(profile.appearance));
   }, [profile]);
 
   const set = <K extends keyof StudioAppearance>(

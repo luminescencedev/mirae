@@ -177,6 +177,8 @@ export function RequestDrawer({
                   <span className="text-sm font-medium text-fg">Email</span>
                   <Input
                     type="email"
+                    inputMode="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />

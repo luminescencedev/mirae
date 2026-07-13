@@ -60,6 +60,13 @@ export {
   TabsTrigger,
   TabsContent,
 } from "./navigation/tabs.tsx";
+export {
+  Calendar,
+  DatePicker,
+  dayKey,
+  type CalendarProps,
+  type DatePickerProps,
+} from "./navigation/calendar.tsx";
 
 // Overlays
 export {
