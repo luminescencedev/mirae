@@ -1,6 +1,8 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 import {
   COMMISSION_STATUSES,
+  PROJECT_TYPES,
+  PROJECT_VISIBILITIES,
   REQUEST_STATUSES,
   STUDIO_STATUSES,
 } from "@mirae/shared";
@@ -12,3 +14,8 @@ export const commissionStatus = pgEnum(
 );
 export const requestStatus = pgEnum("request_status", REQUEST_STATUSES);
 export const studioStatus = pgEnum("studio_status", STUDIO_STATUSES);
+export const projectType = pgEnum("project_type", PROJECT_TYPES);
+export const projectVisibility = pgEnum(
+  "project_visibility",
+  PROJECT_VISIBILITIES,
+);

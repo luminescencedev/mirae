@@ -3,3 +3,4 @@ export * from "./enums.ts";
 export * from "./auth.ts";
 export * from "./studio.ts";
 export * from "./commissions.ts";
+export * from "./portfolio.ts";

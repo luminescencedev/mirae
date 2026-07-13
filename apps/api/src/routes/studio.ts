@@ -1,16 +1,18 @@
 import { Hono } from "hono";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import {
   artistProfiles,
   commissionRequests,
   commissionTypes,
   createDb,
+  portfolioAssets,
+  portfolioProjects,
   users,
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 import { mailLayout, sendEmail } from "../lib/mail.ts";
 
-type Bindings = AuthEnv & { ASSETS: Fetcher };
+type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
 export const studioRoutes = new Hono<{ Bindings: Bindings }>();
 
@@ -42,6 +44,48 @@ studioRoutes.get("/:handle", async (c) => {
     )
     .orderBy(asc(commissionTypes.sortOrder));
 
+  // Published portfolio projects (+ their assets), portfolio-first ordering.
+  const projects = await db
+    .select()
+    .from(portfolioProjects)
+    .where(
+      and(
+        eq(portfolioProjects.artistId, profile.id),
+        eq(portfolioProjects.visibility, "published"),
+      ),
+    )
+    .orderBy(asc(portfolioProjects.position));
+  const projectIds = projects.map((p) => p.id);
+  const assets = projectIds.length
+    ? await db
+        .select()
+        .from(portfolioAssets)
+        .where(inArray(portfolioAssets.projectId, projectIds))
+        .orderBy(asc(portfolioAssets.position))
+    : [];
+  const assetsByProject = new Map<string, typeof assets>();
+  for (const a of assets) {
+    const list = assetsByProject.get(a.projectId) ?? [];
+    list.push(a);
+    assetsByProject.set(a.projectId, list);
+  }
+  const publicProjects = projects.map((p) => ({
+    id: p.id,
+    title: p.title,
+    slug: p.slug,
+    description: p.description,
+    projectType: p.projectType,
+    featured: p.featured,
+    assets: (assetsByProject.get(p.id) ?? []).map((a) => ({
+      id: a.id,
+      altText: a.altText,
+      width: a.width,
+      height: a.height,
+      blurData: a.blurData,
+      url: `/api/portfolio/assets/${a.id}/raw`,
+    })),
+  }));
+
   return c.json({
     profile: {
       handle: profile.handle,
@@ -49,8 +93,41 @@ studioRoutes.get("/:handle", async (c) => {
       tagline: profile.tagline,
       bio: profile.bio,
       status: profile.status,
+      avatarUrl: profile.avatarR2Key
+        ? `/api/studio/${profile.handle}/avatar`
+        : null,
+      coverUrl: profile.coverR2Key
+        ? `/api/studio/${profile.handle}/cover`
+        : null,
     },
     commissionTypes: types,
+    projects: publicProjects,
+    featuredProjectId: publicProjects.find((p) => p.featured)?.id ?? null,
+  });
+});
+
+// GET /api/studio/:handle/avatar|cover — public profile media stream.
+studioRoutes.get("/:handle/:kind{avatar|cover}", async (c) => {
+  const handle = c.req.param("handle").replace(/^@/, "").trim().toLowerCase();
+  const kind = c.req.param("kind");
+  const db = createDb(c.env.DATABASE_URL);
+  const [profile] = await db
+    .select({
+      avatarR2Key: artistProfiles.avatarR2Key,
+      coverR2Key: artistProfiles.coverR2Key,
+    })
+    .from(artistProfiles)
+    .where(eq(artistProfiles.handle, handle))
+    .limit(1);
+  const key = kind === "avatar" ? profile?.avatarR2Key : profile?.coverR2Key;
+  if (!key) return c.json({ error: "not found" }, 404);
+  const obj = await c.env.FILES.get(key);
+  if (!obj) return c.json({ error: "not found" }, 404);
+  return new Response(obj.body, {
+    headers: {
+      "content-type": obj.httpMetadata?.contentType ?? "image/jpeg",
+      "cache-control": "public, max-age=3600",
+    },
   });
 });
 

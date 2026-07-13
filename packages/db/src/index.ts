@@ -20,6 +20,8 @@ import type {
   files,
   deliveries,
   activityLogs,
+  portfolioProjects,
+  portfolioAssets,
 } from "./schema/index.ts";
 
 export type User = typeof users.$inferSelect;
@@ -48,3 +50,7 @@ export type Delivery = typeof deliveries.$inferSelect;
 export type NewDelivery = typeof deliveries.$inferInsert;
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
+export type PortfolioProject = typeof portfolioProjects.$inferSelect;
+export type NewPortfolioProject = typeof portfolioProjects.$inferInsert;
+export type PortfolioAsset = typeof portfolioAssets.$inferSelect;
+export type NewPortfolioAsset = typeof portfolioAssets.$inferInsert;
