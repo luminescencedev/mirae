@@ -53,6 +53,7 @@ ESLint/Prettier ecosystem (resolved during REPO-005, exact-pinned in `@mirae/con
 | @tanstack/react-table    | 8.21.3   |                                                                     |
 | tailwindcss              | 4.3.2    |                                                                     |
 | motion                   | 12.42.2  | Springs/gestures (HoverBarList). Installed in @mirae/ui.            |
+| sonner                   | 2.0.7    | Toasts (bottom-left). Wrapped by @mirae/ui ToastProvider/useToast.  |
 | react-hook-form          | 7.81.0   |                                                                     |
 | zod                      | 4.4.3    | Zod v4 — write validators against v4 docs, NOT v3 patterns.         |
 | class-variance-authority | 0.7.1    |                                                                     |
