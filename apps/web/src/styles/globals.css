@@ -218,6 +218,13 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+    /* Toasts (sonner) keep their transitions — the stack-expand and
+       swipe-to-dismiss are functional interactions, not decoration. */
+    [data-sonner-toaster],
+    [data-sonner-toaster] * {
+      animation-duration: revert !important;
+      transition-duration: revert !important;
+    }
   }
 }
 
