@@ -13,10 +13,10 @@ import {
   InboxIcon,
   Package01Icon,
   PaintBrush01Icon,
-  PanelLeftIcon,
-  PanelRightIcon,
   Logout01Icon,
   Search01Icon,
+  SidebarLeft01Icon,
+  SidebarRight01Icon,
   Store01Icon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
@@ -257,7 +257,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             aria-label={open ? "Collapse sidebar" : "Expand sidebar"}
           >
             <Icon
-              icon={open ? PanelLeftIcon : PanelRightIcon}
+              icon={open ? SidebarLeft01Icon : SidebarRight01Icon}
               size={18}
               strokeWidth={1.7}
             />
