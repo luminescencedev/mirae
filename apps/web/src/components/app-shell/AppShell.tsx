@@ -25,6 +25,7 @@ import { signOut, useSession } from "../../lib/auth-client.ts";
 import { requestsApi } from "../../lib/api.ts";
 import { CommandPalette } from "./CommandPalette.tsx";
 import { NotificationsMenu } from "./NotificationsMenu.tsx";
+import { BottomNav } from "./BottomNav.tsx";
 
 const NAV_ROW = 36; // h-9
 const NAV_STEP = NAV_ROW + 2; // + gap-0.5
@@ -179,7 +180,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </a>
       <aside
         className={cn(
-          "flex shrink-0 flex-col overflow-hidden border-r border-border transition-[width] duration-200 ease-out",
+          "hidden shrink-0 flex-col overflow-hidden border-r border-border transition-[width] duration-200 ease-out md:flex",
           collapsed ? "w-[68px]" : "w-64",
         )}
       >
@@ -252,7 +253,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Button
             variant="ghost"
             size="icon"
-            className="size-8"
+            className="hidden size-8 md:inline-flex"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Collapse sidebar" : "Expand sidebar"}
           >
@@ -262,9 +263,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               strokeWidth={1.7}
             />
           </Button>
-          <span>Studio</span>
-          <span className="text-fg-subtle">/</span>
-          <span className="text-fg">{current}</span>
+          {/* Mobile: mark + current page */}
+          <div className="flex items-center gap-2 md:hidden">
+            <Link to="/app/overview" aria-label="Mirae">
+              <Mark className="h-4 w-auto text-fg" />
+            </Link>
+            <span className="text-fg-subtle">/</span>
+            <span className="font-medium text-fg">{current}</span>
+          </div>
+          {/* Desktop: breadcrumb */}
+          <span className="hidden md:inline">Studio</span>
+          <span className="hidden text-fg-subtle md:inline">/</span>
+          <span className="hidden text-fg md:inline">{current}</span>
           <div className="ml-auto">
             <NotificationsMenu />
           </div>
@@ -273,11 +283,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div
           id="main-content"
           data-lenis-prevent
-          className="flex-1 overflow-auto"
+          className="flex-1 overflow-auto pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0"
         >
           {children}
         </div>
       </main>
+
+      <BottomNav
+        items={NAV}
+        activeIndex={activeIndex}
+        newRequests={newRequests}
+      />
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </div>

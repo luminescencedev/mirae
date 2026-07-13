@@ -491,8 +491,8 @@ Images), out of scope here. Migrations 0007 (about/faq), 0008 (commission image)
 
 Goal: make the private app and public experience genuinely mobile-first **and polished to a professional bar** (premium on a phone, not merely responsive).
 
-- [ ] MOBILE-001 Add bottom navigation
-- [ ] MOBILE-002 Add mobile header
+- [x] MOBILE-001 Add bottom navigation
+- [x] MOBILE-002 Add mobile header
 - [ ] MOBILE-003 Add safe-area support
 - [ ] MOBILE-004 Add mobile More menu
 - [ ] MOBILE-005 Adapt search and notifications
