@@ -71,6 +71,13 @@
       "when": 1783972236694,
       "tag": "0009_ambiguous_living_tribunal",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1783981908798,
+      "tag": "0010_bent_ultimo",
+      "breakpoints": true
     }
   ]
 }

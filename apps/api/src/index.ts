@@ -12,6 +12,7 @@ import { portalRoutes } from "./routes/portal.ts";
 import { deliveryRoutes } from "./routes/delivery.ts";
 import { portfolioRoutes } from "./routes/portfolio.ts";
 import { linksRoutes } from "./routes/links.ts";
+import { analyticsRoutes } from "./routes/analytics.ts";
 import { injectStudioMeta } from "./lib/og.ts";
 import { log, serializeError } from "./lib/log.ts";
 
@@ -181,6 +182,8 @@ app.route("/api/delivery", deliveryRoutes);
 app.route("/api/portfolio", portfolioRoutes);
 // Artist links (link-in-bio) — owner-scoped CRUD + public click counter.
 app.route("/api/artist-links", linksRoutes);
+// Studio insights (owner-scoped, privacy-friendly analytics).
+app.route("/api/analytics", analyticsRoutes);
 
 // Public studio pages (/@handle): serve the real SPA index.html with per-studio
 // SEO + Open Graph metadata injected, so humans boot the app and crawlers /

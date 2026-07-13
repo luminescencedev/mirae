@@ -15,7 +15,11 @@ import {
   cn,
 } from "@mirae/ui";
 import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
-import { publicApi, type CommissionType } from "../../lib/api.ts";
+import {
+  publicApi,
+  trackStudioEvent,
+  type CommissionType,
+} from "../../lib/api.ts";
 
 const euro = (cents: number | null) =>
   cents == null ? "—" : `€${(cents / 100).toLocaleString()}`;
@@ -51,12 +55,14 @@ export function RequestDrawer({
         commissionTypeId: typeId,
         message: brief.trim(),
       }),
+    onSuccess: () => trackStudioEvent(handle, "request_submit"),
   });
 
   // Preselect on open (the clicked type, or the only type); reset on close.
   useEffect(() => {
     if (open) {
       setTypeId(initialTypeId ?? (types.length === 1 ? types[0].id : null));
+      trackStudioEvent(handle, "request_start");
     } else {
       setName("");
       setEmail("");

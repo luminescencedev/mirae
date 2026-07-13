@@ -14,6 +14,7 @@ import { LinkSquare02Icon, RefreshIcon } from "@hugeicons/core-free-icons";
 import { PageHeader } from "../../components/app-shell/PageHeader.tsx";
 import { ProfileEditor } from "../../components/app-shell/ProfileEditor.tsx";
 import { AboutEditor } from "../../components/app-shell/AboutEditor.tsx";
+import { InsightsPanel } from "../../components/app-shell/InsightsPanel.tsx";
 import { AppearanceEditor } from "../../components/app-shell/AppearanceEditor.tsx";
 import { PortfolioManager } from "../../components/app-shell/PortfolioManager.tsx";
 import { LinkManager } from "../../components/app-shell/LinkManager.tsx";
@@ -27,6 +28,7 @@ const TABS = [
   { value: "commissions", label: "Commissions" },
   { value: "about", label: "About & FAQ" },
   { value: "appearance", label: "Appearance" },
+  { value: "insights", label: "Insights" },
 ] as const;
 
 function StudioPage() {
@@ -162,6 +164,9 @@ function StudioPage() {
             </TabsContent>
             <TabsContent value="appearance">
               <AppearanceEditor />
+            </TabsContent>
+            <TabsContent value="insights">
+              <InsightsPanel />
             </TabsContent>
           </div>
 

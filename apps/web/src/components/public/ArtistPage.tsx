@@ -24,6 +24,7 @@ import demoBg from "../../assets/studio-demo-bg.png";
 import {
   publicApi,
   trackLinkClick,
+  trackStudioEvent,
   type PublicAsset,
   type PublicLink,
   type PublicStudio,
@@ -218,14 +219,17 @@ function StudioSkeleton() {
 
 // A link rendered as a card. `featured` gets accent emphasis; `card`/`media`
 // share the quieter neutral treatment. All carry a platform icon.
-function LinkCard({ link }: { link: PublicLink }) {
+function LinkCard({ link, handle }: { link: PublicLink; handle: string }) {
   const isFeatured = link.featured || link.style === "featured";
   return (
     <a
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => trackLinkClick(link.id)}
+      onClick={() => {
+        trackLinkClick(link.id);
+        trackStudioEvent(handle, "link_click", { linkId: link.id });
+      }}
       className={cn(
         "group flex items-center gap-3 rounded-xl border px-4 py-3.5 text-sm backdrop-blur-sm transition-colors",
         isFeatured
@@ -259,13 +263,16 @@ function LinkCard({ link }: { link: PublicLink }) {
 }
 
 // A link rendered as a quiet text row (the "simple" style).
-function LinkRow({ link }: { link: PublicLink }) {
+function LinkRow({ link, handle }: { link: PublicLink; handle: string }) {
   return (
     <a
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => trackLinkClick(link.id)}
+      onClick={() => {
+        trackLinkClick(link.id);
+        trackStudioEvent(handle, "link_click", { linkId: link.id });
+      }}
       className="group -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm text-fg-muted transition-colors hover:bg-fg/5 hover:text-fg"
     >
       <Icon
@@ -291,6 +298,10 @@ function StudioView({
   children: React.ReactNode;
 }) {
   const rm = useReducedMotion();
+  // Record a privacy-friendly page view once per mount.
+  useEffect(() => {
+    trackStudioEvent(handle, "view", { ref: document.referrer || undefined });
+  }, [handle]);
   const { profile, commissionTypes, projects, links, featuredProjectId } = data;
   const ap = data.appearance;
   const radiusClass =
@@ -344,10 +355,10 @@ function StudioView({
       ap.showSocials && (heroLinks.length > 0 || cardLinks.length > 0) ? (
         <section className="mb-14 flex flex-col gap-2">
           {heroLinks.map((l) => (
-            <LinkCard key={l.id} link={l} />
+            <LinkCard key={l.id} link={l} handle={handle} />
           ))}
           {cardLinks.map((l) => (
-            <LinkCard key={l.id} link={l} />
+            <LinkCard key={l.id} link={l} handle={handle} />
           ))}
         </section>
       ) : null,
@@ -507,7 +518,7 @@ function StudioView({
           <ul className="flex flex-col">
             {simpleLinks.map((l) => (
               <li key={l.id}>
-                <LinkRow link={l} />
+                <LinkRow link={l} handle={handle} />
               </li>
             ))}
           </ul>
