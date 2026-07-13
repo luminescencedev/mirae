@@ -443,7 +443,7 @@ Portfolio manager
 
 - [ ] DEBT-001 (PORTUI-008) Add project cover selection
 - [x] DEBT-002 (PORTUI-010) Add alt-text editing
-- [ ] DEBT-003 (PORTUI-014) Add upload retry and failure states
+- [x] DEBT-003 (PORTUI-014) Add upload retry and failure states
 
 Ordering (drag-and-drop family)
 

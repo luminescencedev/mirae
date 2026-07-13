@@ -192,6 +192,7 @@ function ProjectCard({
   const [uploading, setUploading] = useState(false);
   const [uploadPct, setUploadPct] = useState(0);
   const [dragOver, setDragOver] = useState(false);
+  const [failed, setFailed] = useState<File[]>([]);
 
   const patch = useMutation({
     mutationFn: (body: Parameters<typeof portfolioApi.update>[1]) =>
@@ -219,23 +220,25 @@ function ProjectCard({
     reorderAssets.mutate(ids),
   );
 
-  const upload = async (files: FileList | null) => {
-    if (!files?.length) return;
-    const list = Array.from(files);
+  const upload = async (list: File[]) => {
+    if (!list.length) return;
     setUploading(true);
     setUploadPct(0);
-    try {
-      let done = 0;
-      for (const file of list) {
+    const errs: File[] = [];
+    let done = 0;
+    for (const file of list) {
+      try {
         await portfolioApi.uploadAsset(project.id, file);
-        done++;
-        setUploadPct(Math.round((done / list.length) * 100));
+      } catch {
+        errs.push(file);
       }
-      onChanged();
-    } finally {
-      setUploading(false);
-      setUploadPct(0);
+      done++;
+      setUploadPct(Math.round((done / list.length) * 100));
     }
+    setUploading(false);
+    setUploadPct(0);
+    setFailed(errs);
+    onChanged();
   };
 
   const published = project.visibility === "published";
@@ -382,6 +385,35 @@ function ProjectCard({
         </div>
       )}
 
+      {/* Failed uploads — retry */}
+      {!uploading && failed.length > 0 && (
+        <div className="mx-3 mt-3 flex flex-wrap items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          <span>
+            {failed.length} image{failed.length === 1 ? "" : "s"} failed to
+            upload.
+          </span>
+          <Button
+            size="sm"
+            variant="outline"
+            className="ml-auto"
+            onClick={() => {
+              const retry = failed;
+              setFailed([]);
+              void upload(retry);
+            }}
+          >
+            Retry
+          </Button>
+          <button
+            type="button"
+            className="text-red-600/70 hover:text-red-700"
+            onClick={() => setFailed([])}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Assets */}
       <div className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-4">
         {project.assets.map((asset) => (
@@ -407,7 +439,7 @@ function ProjectCard({
           onDrop={(e) => {
             e.preventDefault();
             setDragOver(false);
-            void upload(e.dataTransfer.files);
+            void upload(Array.from(e.dataTransfer.files));
           }}
           className={cn(
             "grid aspect-square place-items-center gap-1 rounded-lg border border-dashed text-center text-xs transition-colors",
@@ -426,7 +458,7 @@ function ProjectCard({
           multiple
           hidden
           onChange={(e) => {
-            void upload(e.target.files);
+            void upload(Array.from(e.target.files ?? []));
             e.target.value = "";
           }}
         />
