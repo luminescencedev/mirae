@@ -32,6 +32,42 @@ const STATUS = {
   closed: { label: "Commissions closed", dot: "bg-fg-subtle" },
 } as const;
 
+// Accent presets → override the accent CSS vars the public page reads
+// (button, focus ring, featured badge). `blue` is the default theme, no override.
+const ACCENT_VARS: Record<string, Record<string, string>> = {
+  blue: {},
+  lavender: {
+    "--color-accent-50": "#f5f3ff",
+    "--color-accent-500": "#8b7cf0",
+    "--color-accent-600": "#7c5fe0",
+    "--color-accent-700": "#6248c0",
+  },
+  rose: {
+    "--color-accent-50": "#fff1f5",
+    "--color-accent-500": "#f2789a",
+    "--color-accent-600": "#e0526f",
+    "--color-accent-700": "#bd3f5c",
+  },
+  mint: {
+    "--color-accent-50": "#f0fdf9",
+    "--color-accent-500": "#3fbf97",
+    "--color-accent-600": "#2fa681",
+    "--color-accent-700": "#268567",
+  },
+  amber: {
+    "--color-accent-50": "#fff9f0",
+    "--color-accent-500": "#e79a3c",
+    "--color-accent-600": "#d17f26",
+    "--color-accent-700": "#a9631d",
+  },
+  mono: {
+    "--color-accent-50": "#f4f4f5",
+    "--color-accent-500": "#52525b",
+    "--color-accent-600": "#3f3f46",
+    "--color-accent-700": "#27272a",
+  },
+};
+
 export function ArtistPage({ handle }: { handle: string }) {
   const display = handle.replace(/^@/, "");
   const { data, isLoading, isError } = useQuery({
@@ -205,24 +241,32 @@ function StudioView({
   // so every page has atmosphere). Same technique as the reference portfolio:
   // background-size:cover, centered, fixed.
   const cover = profile.coverUrl ?? demoBg;
+  const heroMode = ap.heroLayout; // "cover" | "split" | "minimal"
 
   const featured = links.filter((l) => l.featured || l.style !== "simple");
   const simple = links.filter((l) => !featured.includes(l));
 
   return (
-    <div className="relative min-h-dvh bg-canvas">
-      {/* Fixed background art */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0"
-        style={{
-          backgroundImage: `url(${cover})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
-      {/* Soft scrim keeps the column readable over any image */}
-      <div className="pointer-events-none fixed inset-0 z-0 bg-canvas/55" />
+    <div
+      className="relative min-h-dvh bg-canvas"
+      style={ACCENT_VARS[ap.accent] as React.CSSProperties}
+    >
+      {/* Fixed background art — only in the full-bleed "cover" hero */}
+      {heroMode === "cover" && (
+        <>
+          <div
+            className="pointer-events-none fixed inset-0 z-0"
+            style={{
+              backgroundImage: `url(${cover})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }}
+          />
+          {/* Soft scrim keeps the column readable over any image */}
+          <div className="pointer-events-none fixed inset-0 z-0 bg-canvas/55" />
+        </>
+      )}
 
       {/* Centered column between two spacers — like the portfolio */}
       <motion.main
@@ -232,14 +276,25 @@ function StudioView({
         transition={{ duration: 0.32, ease: "easeOut" }}
       >
         <div className="hidden flex-1 md:block" />
-        <div className="w-full max-w-[35rem] shrink-0">
+        <div
+          className="w-full max-w-[35rem] shrink-0"
+          data-studio-typo={ap.typography}
+        >
+          {/* Split hero — cover art as a contained banner above the identity */}
+          {heroMode === "split" && (
+            <img
+              src={cover}
+              alt=""
+              className="mb-8 h-44 w-full rounded-xl border border-border/70 object-cover shadow-soft"
+            />
+          )}
           {/* Identity */}
           <section className="mb-14">
             <Avatar
               src={profile.avatarUrl}
               name={profile.displayName}
               size={64}
-              className="mb-4 rounded-2xl shadow-soft"
+              className="mb-4 rounded-2xl shadow-soft ring-2 ring-accent-500/35"
             />
             <h1 className="text-sm font-medium text-fg">
               {profile.displayName}
@@ -274,7 +329,7 @@ function StudioView({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackLinkClick(l.id)}
-                  className="group flex items-center gap-3 rounded-xl border border-border/70 bg-surface/85 px-4 py-3.5 text-sm backdrop-blur-sm transition-colors hover:border-border-strong"
+                  className="group flex items-center gap-3 rounded-xl border border-border/70 bg-surface/85 px-4 py-3.5 text-sm backdrop-blur-sm transition-colors hover:border-accent-500"
                 >
                   <span className="font-medium text-fg">{l.title}</span>
                   {l.platform && l.platform !== "custom" && (
@@ -282,7 +337,7 @@ function StudioView({
                       {l.platform}
                     </span>
                   )}
-                  <span className="ml-auto text-fg-subtle transition-transform group-hover:translate-x-0.5">
+                  <span className="ml-auto text-fg-subtle transition-all group-hover:translate-x-0.5 group-hover:text-accent-600">
                     ↗
                   </span>
                 </a>
@@ -293,7 +348,8 @@ function StudioView({
           {/* Selected work */}
           {projects.length > 0 && (
             <section className="mb-14">
-              <h2 className="mb-4 text-sm font-medium text-fg">
+              <h2 className="mb-4 flex items-center gap-2 text-sm font-medium text-fg">
+                <span className="size-1.5 rounded-full bg-accent-500" />
                 Selected work
               </h2>
               <div className="flex flex-col gap-8">
@@ -357,7 +413,10 @@ function StudioView({
           {/* Commissions — quiet fixed-price menu */}
           {commissionTypes.length > 0 && (
             <section className="mb-14">
-              <h2 className="mb-2 text-sm font-medium text-fg">Commissions</h2>
+              <h2 className="mb-2 flex items-center gap-2 text-sm font-medium text-fg">
+                <span className="size-1.5 rounded-full bg-accent-500" />
+                Commissions
+              </h2>
               <ul className="border-t border-border/70">
                 {commissionTypes.map((c) => (
                   <li
@@ -391,7 +450,10 @@ function StudioView({
           {/* Elsewhere */}
           {ap.showSocials && simple.length > 0 && (
             <section className="mb-14">
-              <h2 className="mb-3 text-sm font-medium text-fg">Elsewhere</h2>
+              <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-fg">
+                <span className="size-1.5 rounded-full bg-accent-500" />
+                Elsewhere
+              </h2>
               <ul className="flex flex-col">
                 {simple.map((l) => (
                   <li key={l.id}>

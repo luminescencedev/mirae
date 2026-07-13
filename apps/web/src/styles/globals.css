@@ -263,6 +263,21 @@
   mask-repeat: repeat;
 }
 
+/* Public studio typography presets (appearance.typography). `clean` is default.
+   editorial → serif display headings; soft → relaxed, airier reading. */
+[data-studio-typo="editorial"] h1,
+[data-studio-typo="editorial"] h2,
+[data-studio-typo="editorial"] h3 {
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  letter-spacing: -0.01em;
+}
+[data-studio-typo="soft"] {
+  letter-spacing: 0.005em;
+}
+[data-studio-typo="soft"] p {
+  line-height: 1.75;
+}
+
 /* Keep sonner toasts interactive + swipeable over an open Radix modal.
    Radix modals set body { pointer-events: none } and Radix's RemoveScroll can
    clobber touch-action on reopen, which froze hover-expand + swipe-to-dismiss.

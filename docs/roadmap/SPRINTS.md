@@ -403,9 +403,9 @@ Goal: let visitors start a request without breaking the public-studio experience
 Goal: meaningful artist expression through curated customization.
 
 - [x] CUSTOM-001 Create studio appearance model
-- [~] CUSTOM-002 Add accent presets — persisted + editor; visual wiring deferred
-- [~] CUSTOM-003 Add typography presets — persisted + editor; visual wiring deferred
-- [~] CUSTOM-004 Add hero layout options — persisted + editor; visual wiring deferred
+- [x] CUSTOM-002 Add accent presets (wired in Sprint 17.5 / DEBT-014)
+- [x] CUSTOM-003 Add typography presets (wired in Sprint 17.5 / DEBT-015)
+- [x] CUSTOM-004 Add hero layout options (wired in Sprint 17.5 / DEBT-016)
 - [x] CUSTOM-005 Add portfolio layout options
 - [x] CUSTOM-006 Add image-radius presets
 - [x] CUSTOM-007 Add section visibility controls
@@ -430,6 +430,50 @@ portfolio layout, image radius, section visibility, featured-first ordering.
 Deferred: visual wiring of accent/typography/hero, manual section ordering,
 mobile edit/preview tabs (→ S18), unsaved-change/reset/save-draft/publish flow
 (save is live), contrast validation.
+
+## Sprint 17.5 — Deferred polish (debt burn-down)
+
+Goal: burn down genuine polish debt that improves already-shipped pages and has
+no themed sprint to fold into. Themed deferrals stay with their sprint (mobile →
+18, security/a11y → 22, SEO/analytics → 19). Large feature-shaped deferrals are
+**not** here: request-flow v2 (`REQUESTUX-001..009/012/013`) and the
+draft/publish state machine (`CUSTOM-011..014`) keep their own future sprints.
+
+Portfolio manager
+
+- [ ] DEBT-001 (PORTUI-008) Add project cover selection
+- [ ] DEBT-002 (PORTUI-010) Add alt-text editing
+- [ ] DEBT-003 (PORTUI-014) Add upload retry and failure states
+
+Ordering (drag-and-drop family)
+
+- [ ] DEBT-004 (PORTUI-005) Add project drag-and-drop ordering
+- [ ] DEBT-005 (PORTUI-007) Add asset ordering
+- [ ] DEBT-006 (LINKS-010) Add link drag-and-drop ordering
+- [ ] DEBT-007 (CUSTOM-008) Add section ordering
+
+Links polish
+
+- [ ] DEBT-008 (LINKS-012) Add platform icon mapping
+- [ ] DEBT-009 (LINKS-013/014/015) Add link card variants (simple / featured / media)
+
+Public studio polish
+
+- [ ] DEBT-010 (STUDIO-012) Add commission representative images
+- [ ] DEBT-011 (STUDIO-014) Add artist about section
+- [ ] DEBT-012 (STUDIO-015) Add optional FAQ section
+- [ ] DEBT-013 (STUDIO-019) Add responsive image sizes
+
+Appearance visual wiring
+
+- [x] DEBT-014 (CUSTOM-002) Apply accent preset to public page
+- [x] DEBT-015 (CUSTOM-003) Apply typography preset to public page
+- [x] DEBT-016 (CUSTOM-004) Apply hero layout to public page
+
+Data
+
+- [ ] DEBT-017 (PORTFOLIO-012) Add image dimension metadata
+- [ ] DEBT-018 (PORTFOLIO-016) Add migration and demo seed
 
 ## Sprint 18 — Mobile product experience
 

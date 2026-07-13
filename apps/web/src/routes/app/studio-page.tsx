@@ -27,12 +27,15 @@ const TABS = [
 ] as const;
 
 function StudioPage() {
-  const { data: profile } = useQuery({
+  const { data: profile, dataUpdatedAt } = useQuery({
     queryKey: ["artist", "me"],
     queryFn: artistApi.me,
   });
   const handle = profile?.handle;
   const [previewKey, setPreviewKey] = useState(0);
+  // Reload the preview whenever the profile/appearance query refreshes (e.g.
+  // after a save) or the user hits refresh manually.
+  const iframeKey = `${dataUpdatedAt}_${previewKey}`;
 
   return (
     <div className="flex h-full flex-col">
@@ -100,7 +103,7 @@ function StudioPage() {
             </div>
             {handle ? (
               <iframe
-                key={previewKey}
+                key={iframeKey}
                 title="Public page preview"
                 src={`/@${handle}`}
                 className="size-full flex-1 border-0 bg-canvas"
