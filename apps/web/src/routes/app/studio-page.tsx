@@ -68,7 +68,7 @@ function StudioPage() {
 
         <div className="mt-6 flex min-h-0 flex-1 flex-col gap-6 lg:flex-row lg:items-stretch">
           {/* Left half — the active editor (scrolls on its own) */}
-          <div className="min-w-0 flex-1 lg:overflow-y-auto lg:pr-1">
+          <div className="min-w-0 flex-1 lg:overflow-y-auto lg:px-1 lg:py-1">
             <TabsContent value="profile">
               <ProfileEditor />
             </TabsContent>

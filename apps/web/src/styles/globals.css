@@ -263,6 +263,13 @@
   mask-repeat: repeat;
 }
 
+/* Lift shadow for drag-and-drop rows. Applied via a plain class (not a motion
+   style value) so it clears cleanly when the drag ends — motion retains
+   box-shadow set through style/animate, leaving a stuck shadow. */
+.drag-lift {
+  box-shadow: 0 14px 16px -12px rgba(20, 20, 30, 0.3);
+}
+
 /* Public studio typography presets (appearance.typography). `clean` is default.
    editorial → serif display headings; soft → relaxed, airier reading. */
 [data-studio-typo="editorial"] h1,

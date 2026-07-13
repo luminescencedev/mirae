@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Reorder, useDragControls } from "motion/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertDialog,
@@ -87,16 +88,23 @@ export function PortfolioManager() {
     onSuccess: invalidate,
   });
 
+  // Local ordering so motion's Reorder can animate live; persisted on release.
+  const [order, setOrder] = useState<PortfolioProject[]>([]);
+  useEffect(() => {
+    if (projects) setOrder(projects);
+  }, [projects]);
+  const orderRef = useRef(order);
+  orderRef.current = order;
+  const commit = () => reorder.mutate(orderRef.current.map((p) => p.id));
+
   const move = (index: number, dir: -1 | 1) => {
-    if (!projects) return;
-    const next = [...projects];
+    const next = [...order];
     const target = index + dir;
     if (target < 0 || target >= next.length) return;
     [next[index], next[target]] = [next[target], next[index]];
+    setOrder(next);
     reorder.mutate(next.map((p) => p.id));
   };
-
-  const drag = useDragOrder(projects ?? [], (ids) => reorder.mutate(ids));
 
   return (
     <section className="flex flex-col gap-4">
@@ -151,21 +159,24 @@ export function PortfolioManager() {
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
-          {projects.map((project, i) => (
+        <Reorder.Group
+          as="div"
+          axis="y"
+          values={order}
+          onReorder={setOrder}
+          className="flex flex-col gap-4"
+        >
+          {order.map((project, i) => (
             <ProjectCard
               key={project.id}
               project={project}
               onChanged={invalidate}
+              onCommit={commit}
               onMoveUp={i > 0 ? () => move(i, -1) : undefined}
-              onMoveDown={
-                i < projects.length - 1 ? () => move(i, 1) : undefined
-              }
-              handleProps={drag.handleProps(project.id)}
-              rowProps={drag.rowProps(project.id)}
+              onMoveDown={i < order.length - 1 ? () => move(i, 1) : undefined}
             />
           ))}
-        </div>
+        </Reorder.Group>
       )}
     </section>
   );
@@ -174,18 +185,29 @@ export function PortfolioManager() {
 function ProjectCard({
   project,
   onChanged,
+  onCommit,
   onMoveUp,
   onMoveDown,
-  handleProps,
-  rowProps,
 }: {
   project: PortfolioProject;
   onChanged: () => void;
+  onCommit: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
-  handleProps: DragHandleProps;
-  rowProps: DragRowProps;
 }) {
+  const dragControls = useDragControls();
+  const [dragging, setDragging] = useState(false);
+  // Motion's onDragEnd is unreliable with dragControls; end the lift + persist
+  // on the global pointerup instead.
+  useEffect(() => {
+    if (!dragging) return;
+    const up = () => {
+      setDragging(false);
+      onCommit();
+    };
+    window.addEventListener("pointerup", up);
+    return () => window.removeEventListener("pointerup", up);
+  }, [dragging, onCommit]);
   const [title, setTitle] = useState(project.title);
   const [description, setDescription] = useState(project.description ?? "");
   const fileInput = useRef<HTMLInputElement>(null);
@@ -244,9 +266,14 @@ function ProjectCard({
   const published = project.visibility === "published";
 
   return (
-    <div
-      {...rowProps}
-      className="rounded-xl border border-border bg-surface transition-shadow data-[dragging]:opacity-50 data-[drop-target]:ring-2 data-[drop-target]:ring-accent-500"
+    <Reorder.Item
+      value={project}
+      dragListener={false}
+      dragControls={dragControls}
+      className={cn(
+        "relative overflow-hidden rounded-xl border border-border bg-surface transition-shadow",
+        dragging && "z-20 cursor-grabbing drag-lift",
+      )}
     >
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2 border-b border-border p-3">
@@ -254,8 +281,11 @@ function ProjectCard({
           type="button"
           aria-label="Drag to reorder"
           title="Drag to reorder"
-          {...handleProps}
-          className="grid size-8 shrink-0 cursor-grab place-items-center rounded-md text-fg-subtle hover:bg-surface-muted hover:text-fg active:cursor-grabbing"
+          onPointerDown={(e) => {
+            setDragging(true);
+            dragControls.start(e);
+          }}
+          className="grid size-8 shrink-0 cursor-grab touch-none place-items-center rounded-md text-fg-subtle hover:bg-surface-muted hover:text-fg active:cursor-grabbing"
         >
           <Icon icon={DragDropVerticalIcon} size={16} />
         </button>
@@ -463,7 +493,7 @@ function ProjectCard({
           }}
         />
       </div>
-    </div>
+    </Reorder.Item>
   );
 }
 
