@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { and, asc, eq, inArray } from "drizzle-orm";
 import {
+  artistLinks,
   artistProfiles,
   commissionRequests,
   commissionTypes,
@@ -86,6 +87,23 @@ studioRoutes.get("/:handle", async (c) => {
     })),
   }));
 
+  // Enabled links (link-in-bio), ordered.
+  const links = await db
+    .select({
+      id: artistLinks.id,
+      title: artistLinks.title,
+      url: artistLinks.url,
+      platform: artistLinks.platform,
+      type: artistLinks.type,
+      style: artistLinks.style,
+      featured: artistLinks.featured,
+    })
+    .from(artistLinks)
+    .where(
+      and(eq(artistLinks.artistId, profile.id), eq(artistLinks.enabled, true)),
+    )
+    .orderBy(asc(artistLinks.position));
+
   return c.json({
     profile: {
       handle: profile.handle,
@@ -103,6 +121,7 @@ studioRoutes.get("/:handle", async (c) => {
     commissionTypes: types,
     projects: publicProjects,
     featuredProjectId: publicProjects.find((p) => p.featured)?.id ?? null,
+    links,
   });
 });
 

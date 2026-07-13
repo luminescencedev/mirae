@@ -22,6 +22,7 @@ import type {
   activityLogs,
   portfolioProjects,
   portfolioAssets,
+  artistLinks,
 } from "./schema/index.ts";
 
 export type User = typeof users.$inferSelect;
@@ -54,3 +55,5 @@ export type PortfolioProject = typeof portfolioProjects.$inferSelect;
 export type NewPortfolioProject = typeof portfolioProjects.$inferInsert;
 export type PortfolioAsset = typeof portfolioAssets.$inferSelect;
 export type NewPortfolioAsset = typeof portfolioAssets.$inferInsert;
+export type ArtistLink = typeof artistLinks.$inferSelect;
+export type NewArtistLink = typeof artistLinks.$inferInsert;
