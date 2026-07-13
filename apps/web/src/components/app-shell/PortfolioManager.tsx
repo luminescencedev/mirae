@@ -14,11 +14,14 @@ import {
   Button,
   Icon,
   Input,
+  Progress,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Skeleton,
+  Textarea,
   cn,
 } from "@mirae/ui";
 import {
@@ -120,7 +123,22 @@ export function PortfolioManager() {
       </form>
 
       {isLoading ? (
-        <p className="py-8 text-center text-sm text-fg-subtle">Loading…</p>
+        <div className="flex flex-col gap-4">
+          {[0, 1].map((i) => (
+            <div key={i} className="rounded-xl border border-border bg-surface">
+              <div className="flex items-center gap-2 border-b border-border p-3">
+                <Skeleton className="h-9 flex-1" />
+                <Skeleton className="h-9 w-44" />
+                <Skeleton className="h-9 w-32" />
+              </div>
+              <div className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-4">
+                {[0, 1, 2, 3].map((j) => (
+                  <Skeleton key={j} className="aspect-square" />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       ) : !projects?.length ? (
         <div className="grid place-items-center gap-2 rounded-xl border border-dashed border-border px-6 py-12 text-center">
           <div className="text-fg-subtle [&_svg]:size-6">
@@ -162,8 +180,10 @@ function ProjectCard({
   onMoveDown?: () => void;
 }) {
   const [title, setTitle] = useState(project.title);
+  const [description, setDescription] = useState(project.description ?? "");
   const fileInput = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadPct, setUploadPct] = useState(0);
   const [dragOver, setDragOver] = useState(false);
 
   const patch = useMutation({
@@ -182,14 +202,20 @@ function ProjectCard({
 
   const upload = async (files: FileList | null) => {
     if (!files?.length) return;
+    const list = Array.from(files);
     setUploading(true);
+    setUploadPct(0);
     try {
-      for (const file of Array.from(files)) {
+      let done = 0;
+      for (const file of list) {
         await portfolioApi.uploadAsset(project.id, file);
+        done++;
+        setUploadPct(Math.round((done / list.length) * 100));
       }
       onChanged();
     } finally {
       setUploading(false);
+      setUploadPct(0);
     }
   };
 
@@ -301,6 +327,29 @@ function ProjectCard({
           </AlertDialog>
         </div>
       </div>
+
+      {/* Description */}
+      <div className="px-3 pt-3">
+        <Textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          onBlur={() => {
+            if (description !== (project.description ?? ""))
+              patch.mutate({ description: description || null });
+          }}
+          placeholder="Description (optional) — what is this piece?"
+          rows={2}
+          className="resize-none"
+        />
+      </div>
+
+      {/* Upload progress */}
+      {uploading && (
+        <div className="flex items-center gap-3 px-3 pt-3 text-xs text-fg-subtle">
+          <Progress value={uploadPct} className="flex-1" />
+          <span className="tabular-nums">{uploadPct}%</span>
+        </div>
+      )}
 
       {/* Assets */}
       <div className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-4">
