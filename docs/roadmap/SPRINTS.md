@@ -459,7 +459,7 @@ Links polish
 
 Public studio polish
 
-- [ ] DEBT-010 (STUDIO-012) Add commission representative images
+- [x] DEBT-010 (STUDIO-012) Add commission representative images
 - [x] DEBT-011 (STUDIO-014) Add artist about section
 - [x] DEBT-012 (STUDIO-015) Add optional FAQ section
 - [ ] DEBT-013 (STUDIO-019) Add responsive image sizes

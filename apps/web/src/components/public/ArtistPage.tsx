@@ -497,6 +497,17 @@ function StudioView({
                     key={c.id}
                     className="flex items-center gap-4 border-b border-border/70 py-3.5"
                   >
+                    {c.imageUrl && (
+                      <img
+                        src={c.imageUrl}
+                        alt=""
+                        className={cn(
+                          "size-11 shrink-0 border border-border/70 object-cover",
+                          radiusClass,
+                        )}
+                        loading="lazy"
+                      />
+                    )}
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-fg">{c.name}</p>
                       <p className="truncate text-xs text-fg-subtle">

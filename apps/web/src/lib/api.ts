@@ -11,6 +11,7 @@ export type CommissionType = {
   priceFromCents: number | null;
   turnaround: string | null;
   slots: number | null;
+  imageUrl: string | null;
   active: boolean;
   sortOrder: number;
   createdAt: string;
@@ -602,5 +603,17 @@ export const commissionTypesApi = {
   remove: (id: string) =>
     fetch(`/api/commission-types/${id}`, { method: "DELETE" }).then(
       json<{ ok: true }>,
+    ),
+  uploadImage: (id: string, file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return fetch(`/api/commission-types/${id}/image`, {
+      method: "POST",
+      body: fd,
+    }).then(json<{ commissionType: CommissionType }>);
+  },
+  removeImage: (id: string) =>
+    fetch(`/api/commission-types/${id}/image`, { method: "DELETE" }).then(
+      json<{ commissionType: CommissionType }>,
     ),
 };

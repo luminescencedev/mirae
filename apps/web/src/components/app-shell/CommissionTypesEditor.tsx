@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Badge,
@@ -16,6 +16,7 @@ import {
   Add01Icon,
   Delete02Icon,
   Edit02Icon,
+  Image01Icon,
 } from "@hugeicons/core-free-icons";
 import { commissionTypesApi, type CommissionType } from "../../lib/api.ts";
 
@@ -85,6 +86,23 @@ export function CommissionTypesEditor() {
     onSuccess: invalidate,
   });
 
+  const imgInput = useRef<HTMLInputElement>(null);
+  const uploadImg = useMutation({
+    mutationFn: (file: File) =>
+      commissionTypesApi.uploadImage(editing!.id, file),
+    onSuccess: (d) => {
+      setEditing(d.commissionType);
+      invalidate();
+    },
+  });
+  const removeImg = useMutation({
+    mutationFn: () => commissionTypesApi.removeImage(editing!.id),
+    onSuccess: (d) => {
+      setEditing(d.commissionType);
+      invalidate();
+    },
+  });
+
   function openAdd() {
     setEditing(null);
     setForm(EMPTY);
@@ -135,6 +153,17 @@ export function CommissionTypesEditor() {
         <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
           {types.map((t) => (
             <div key={t.id} className="flex items-center gap-3 p-4">
+              {t.imageUrl ? (
+                <img
+                  src={t.imageUrl}
+                  alt=""
+                  className="size-10 shrink-0 rounded-md border border-border object-cover"
+                />
+              ) : (
+                <div className="grid size-10 shrink-0 place-items-center rounded-md border border-dashed border-border text-fg-subtle">
+                  <Icon icon={Image01Icon} size={16} />
+                </div>
+              )}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate text-sm font-medium text-fg">
@@ -237,6 +266,64 @@ export function CommissionTypesEditor() {
                 placeholder="Full-body or half-body, rendered."
               />
             </label>
+
+            {editing ? (
+              <div className="flex flex-col gap-1.5">
+                <Label>Image</Label>
+                <div className="flex items-center gap-3">
+                  {editing.imageUrl ? (
+                    <img
+                      src={editing.imageUrl}
+                      alt=""
+                      className="size-16 rounded-lg border border-border object-cover"
+                    />
+                  ) : (
+                    <div className="grid size-16 place-items-center rounded-lg border border-dashed border-border text-fg-subtle">
+                      <Icon icon={Image01Icon} size={18} />
+                    </div>
+                  )}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => imgInput.current?.click()}
+                    disabled={uploadImg.isPending}
+                  >
+                    {uploadImg.isPending
+                      ? "Uploading…"
+                      : editing.imageUrl
+                        ? "Replace"
+                        : "Upload"}
+                  </Button>
+                  {editing.imageUrl && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeImg.mutate()}
+                      disabled={removeImg.isPending}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                  <input
+                    ref={imgInput}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/avif"
+                    hidden
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) uploadImg.mutate(f);
+                      e.target.value = "";
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-fg-subtle">
+                Save first, then reopen to add a representative image.
+              </p>
+            )}
             {save.error && (
               <p className="text-sm text-red-600">
                 {(save.error as Error).message}

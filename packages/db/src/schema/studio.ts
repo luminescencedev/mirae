@@ -76,6 +76,8 @@ export const commissionTypes = pgTable("commission_types", {
   priceFromCents: integer("price_from_cents"),
   turnaround: text("turnaround"),
   slots: integer("slots"),
+  // Optional representative image (R2 object key; served publicly by id).
+  imageR2Key: text("image_r2_key"),
   active: boolean("active").notNull().default(true),
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true })

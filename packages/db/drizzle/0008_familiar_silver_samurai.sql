@@ -1,0 +1,1 @@
+ALTER TABLE "commission_types" ADD COLUMN "image_r2_key" text;

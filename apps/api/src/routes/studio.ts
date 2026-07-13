@@ -121,7 +121,15 @@ studioRoutes.get("/:handle", async (c) => {
         ? `/api/studio/${profile.handle}/cover`
         : null,
     },
-    commissionTypes: types,
+    commissionTypes: types.map((t) => ({
+      id: t.id,
+      name: t.name,
+      blurb: t.blurb,
+      priceFromCents: t.priceFromCents,
+      turnaround: t.turnaround,
+      slots: t.slots,
+      imageUrl: t.imageR2Key ? `/api/commission-types/${t.id}/image` : null,
+    })),
     projects: publicProjects,
     featuredProjectId: publicProjects.find((p) => p.featured)?.id ?? null,
     links,
