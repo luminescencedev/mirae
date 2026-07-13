@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -42,6 +42,23 @@ function StudioPage() {
   // Mobile has no room for the side-by-side split — toggle editor vs preview.
   const [mobileView, setMobileView] = useState<"edit" | "preview">("edit");
 
+  // Horizontal-scroll affordance for the tab strip (edge fades when scrollable).
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [tabScroll, setTabScroll] = useState({ left: false, right: false });
+  const updateTabScroll = () => {
+    const el = tabsRef.current;
+    if (!el) return;
+    setTabScroll({
+      left: el.scrollLeft > 2,
+      right: el.scrollLeft + el.clientWidth < el.scrollWidth - 2,
+    });
+  };
+  useEffect(() => {
+    updateTabScroll();
+    window.addEventListener("resize", updateTabScroll);
+    return () => window.removeEventListener("resize", updateTabScroll);
+  }, []);
+
   return (
     <div className="flex h-full flex-col">
       <PageHeader
@@ -82,18 +99,43 @@ function StudioPage() {
           ))}
         </div>
 
-        <TabsList
+        <div
           className={cn(
-            "shrink-0 self-start",
-            mobileView === "preview" && "hidden lg:flex",
+            "relative min-w-0 max-w-full self-start",
+            mobileView === "preview" && "hidden lg:block",
           )}
         >
-          {TABS.map((t) => (
-            <TabsTrigger key={t.value} value={t.value}>
-              {t.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+          <TabsList
+            ref={tabsRef}
+            onScroll={updateTabScroll}
+            className="max-w-full overflow-x-auto"
+          >
+            {TABS.map((t) => (
+              <TabsTrigger
+                key={t.value}
+                value={t.value}
+                className="shrink-0 whitespace-nowrap"
+              >
+                {t.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {/* Edge fades — hint that the strip scrolls */}
+          <div
+            aria-hidden
+            className={cn(
+              "pointer-events-none absolute inset-y-1 left-0 w-8 rounded-l-lg bg-gradient-to-r from-canvas to-transparent transition-opacity lg:hidden",
+              tabScroll.left ? "opacity-100" : "opacity-0",
+            )}
+          />
+          <div
+            aria-hidden
+            className={cn(
+              "pointer-events-none absolute inset-y-1 right-0 w-8 rounded-r-lg bg-gradient-to-l from-canvas to-transparent transition-opacity lg:hidden",
+              tabScroll.right ? "opacity-100" : "opacity-0",
+            )}
+          />
+        </div>
 
         <div className="mt-6 flex min-h-0 flex-1 flex-col gap-6 lg:flex-row lg:items-stretch">
           {/* Left half — the active editor (scrolls on its own) */}
