@@ -503,10 +503,10 @@ Goal: make the private app and public experience genuinely mobile-first **and po
 - [x] MOBILE-010 Keep board as optional mobile view
 - [x] MOBILE-011 Convert commission detail to full-screen mobile route or sheet
 - [x] MOBILE-012 Add sticky detail actions
-- [ ] MOBILE-013 Redesign Requests list and detail
-- [ ] MOBILE-014 Add sticky Accept and Decline actions
-- [ ] MOBILE-015 Optimize Clients
-- [ ] MOBILE-016 Optimize Deliveries
+- [x] MOBILE-013 Redesign Requests list and detail
+- [x] MOBILE-014 Add sticky Accept and Decline actions
+- [x] MOBILE-015 Optimize Clients
+- [x] MOBILE-016 Optimize Deliveries
 - [ ] MOBILE-017 Optimize quote builder
 - [ ] MOBILE-018 Optimize payment controls
 - [ ] MOBILE-019 Optimize portal and delivery pages

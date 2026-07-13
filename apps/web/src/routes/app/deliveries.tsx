@@ -70,7 +70,7 @@ function Deliveries() {
   return (
     <>
       <PageHeader title="Deliveries" subtitle="Commissions you've delivered." />
-      <div className="px-6 py-6">
+      <div className="px-4 py-5 sm:px-6 sm:py-6">
         <DeliveriesView />
       </div>
     </>
