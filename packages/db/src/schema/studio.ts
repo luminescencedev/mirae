@@ -25,6 +25,9 @@ export const artistProfiles = pgTable("artist_profiles", {
   // Optional longer-form public sections.
   about: text("about"),
   faq: jsonb("faq").$type<FaqItem[]>(),
+  // Optional custom social/SEO title + description (override the defaults).
+  metaTitle: text("meta_title"),
+  metaDescription: text("meta_description"),
   // Profile media (R2 object keys; served via the API). Nullable until set.
   avatarR2Key: text("avatar_r2_key"),
   coverR2Key: text("cover_r2_key"),
