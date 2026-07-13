@@ -347,7 +347,7 @@ Goal: an artist-specific link-in-bio hub that stays portfolio-first. **Data + AP
 - [ ] LINKS-014 Add featured link card
 - [ ] LINKS-015 Add media link card
 - [x] LINKS-016 Add click analytics
-- [ ] LINKS-017 Add mobile preview
+- [x] LINKS-017 Add mobile preview (Sprint 18 / MOBILE-022)
 
 ## Sprint 15 — Creative public studio
 
@@ -365,7 +365,7 @@ Goal: replace the functional profile card with a portfolio-first artist homepage
 - [x] STUDIO-010 Build project detail experience
 - [x] STUDIO-011 Redesign commission type cards
 - [ ] STUDIO-012 Add commission representative images
-- [ ] STUDIO-013 Add persistent mobile commission CTA
+- [x] STUDIO-013 Add persistent mobile commission CTA (Sprint 18 / MOBILE-023)
 - [ ] STUDIO-014 Add artist about section
 - [ ] STUDIO-015 Add optional FAQ section
 - [x] STUDIO-016 Add Mirae-branded footer
@@ -411,7 +411,7 @@ Goal: meaningful artist expression through curated customization.
 - [x] CUSTOM-007 Add section visibility controls
 - [ ] CUSTOM-008 Add section ordering (deferred)
 - [x] CUSTOM-009 Build desktop split preview
-- [ ] CUSTOM-010 Build mobile Edit and Preview tabs (→ Sprint 18)
+- [x] CUSTOM-010 Build mobile Edit and Preview tabs (Sprint 18 / MOBILE-022)
 - [ ] CUSTOM-011 Add unsaved-change detection (deferred)
 - [ ] CUSTOM-012 Add reset-to-published action (deferred)
 - [ ] CUSTOM-013 Add save-draft action (deferred)
@@ -510,12 +510,12 @@ Goal: make the private app and public experience genuinely mobile-first **and po
 - [x] MOBILE-017 Optimize quote builder
 - [x] MOBILE-018 Optimize payment controls
 - [x] MOBILE-019 Optimize portal and delivery pages
-- [ ] MOBILE-020 Add touch portfolio ordering
-- [ ] MOBILE-021 Add gallery and camera upload
-- [ ] MOBILE-022 Add Edit and Preview switch
-- [ ] MOBILE-023 Add public sticky CTA
-- [ ] MOBILE-024 Add swipe lightbox
-- [ ] MOBILE-025 Optimize multi-step request form
+- [x] MOBILE-020 Add touch portfolio ordering (motion Reorder — pointer/touch)
+- [x] MOBILE-021 Add gallery and camera upload (native file input, incl. PORTUI-017)
+- [x] MOBILE-022 Add Edit and Preview switch (folds CUSTOM-010, LINKS-017)
+- [x] MOBILE-023 Add public sticky CTA (folds STUDIO-013)
+- [x] MOBILE-024 Add swipe lightbox
+- [~] MOBILE-025 Optimize multi-step request form (mobile-optimized full-screen drawer; true multi-step → REQUESTUX)
 - [ ] MOBILE-026 Add responsive R2 images
 - [ ] MOBILE-027 Add lazy loading
 - [ ] MOBILE-028 Prevent layout shifts

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
@@ -100,6 +100,18 @@ export function ArtistPage({ handle }: { handle: string }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [lb]);
 
+  // Swipe left/right to navigate the lightbox on touch.
+  const touchX = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchX.current = e.touches[0]?.clientX ?? null;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX.current == null) return;
+    const dx = (e.changedTouches[0]?.clientX ?? 0) - touchX.current;
+    if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
+    touchX.current = null;
+  };
+
   if (isLoading) return <StudioSkeleton />;
   if (isError || !data)
     return (
@@ -127,7 +139,11 @@ export function ArtistPage({ handle }: { handle: string }) {
         <DialogContent className="max-w-4xl overflow-hidden border-0 bg-transparent p-0 shadow-none">
           <DialogTitle className="sr-only">Artwork</DialogTitle>
           {current && (
-            <div className="relative">
+            <div
+              className="relative"
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+            >
               <img
                 src={current.url}
                 alt={current.altText ?? ""}
@@ -530,7 +546,11 @@ function StudioView({
       >
         <div className="hidden flex-1 md:block" />
         <div
-          className="w-full max-w-[35rem] shrink-0"
+          className={cn(
+            "w-full max-w-[35rem] shrink-0",
+            // Room for the mobile sticky CTA so it never covers the footer.
+            !isClosed && commissionTypes.length > 0 && "pb-24 md:pb-0",
+          )}
           data-studio-typo={ap.typography}
         >
           {/* Split hero — cover art as a contained banner above the identity */}
@@ -589,6 +609,19 @@ function StudioView({
         </div>
         <div className="hidden flex-1 md:block" />
       </motion.main>
+
+      {/* Persistent mobile request CTA */}
+      {!isClosed && commissionTypes.length > 0 && (
+        <div
+          className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface/95 px-4 pt-3 backdrop-blur-md md:hidden"
+          style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+        >
+          <Button className="w-full" onClick={() => openReq()}>
+            Request a commission
+            <Icon icon={ArrowRight01Icon} strokeWidth={1.8} />
+          </Button>
+        </div>
+      )}
 
       <RequestDrawer
         handle={handle}

@@ -8,6 +8,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  cn,
 } from "@mirae/ui";
 import { LinkSquare02Icon, RefreshIcon } from "@hugeicons/core-free-icons";
 import { PageHeader } from "../../components/app-shell/PageHeader.tsx";
@@ -38,6 +39,8 @@ function StudioPage() {
   // Reload the preview whenever the profile/appearance query refreshes (e.g.
   // after a save) or the user hits refresh manually.
   const iframeKey = `${dataUpdatedAt}_${previewKey}`;
+  // Mobile has no room for the side-by-side split — toggle editor vs preview.
+  const [mobileView, setMobileView] = useState<"edit" | "preview">("edit");
 
   return (
     <div className="flex h-full flex-col">
@@ -58,9 +61,33 @@ function StudioPage() {
 
       <Tabs
         defaultValue="profile"
-        className="flex min-h-0 flex-1 flex-col px-6 py-6"
+        className="flex min-h-0 flex-1 flex-col px-4 py-5 sm:px-6 sm:py-6"
       >
-        <TabsList className="shrink-0 self-start">
+        {/* Mobile: toggle between editing and the live preview */}
+        <div className="mb-4 flex rounded-lg bg-surface-muted p-1 lg:hidden">
+          {(["edit", "preview"] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setMobileView(v)}
+              className={cn(
+                "flex-1 rounded-md py-1.5 text-sm font-medium capitalize outline-none transition-colors",
+                mobileView === v
+                  ? "bg-surface text-fg shadow-soft"
+                  : "text-fg-muted",
+              )}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+
+        <TabsList
+          className={cn(
+            "shrink-0 self-start",
+            mobileView === "preview" && "hidden lg:flex",
+          )}
+        >
           {TABS.map((t) => (
             <TabsTrigger key={t.value} value={t.value}>
               {t.label}
@@ -70,7 +97,12 @@ function StudioPage() {
 
         <div className="mt-6 flex min-h-0 flex-1 flex-col gap-6 lg:flex-row lg:items-stretch">
           {/* Left half — the active editor (scrolls on its own) */}
-          <div className="min-w-0 flex-1 lg:overflow-y-auto lg:px-1 lg:py-1">
+          <div
+            className={cn(
+              "min-w-0 flex-1 lg:overflow-y-auto lg:px-1 lg:py-1",
+              mobileView === "preview" && "hidden lg:block",
+            )}
+          >
             <TabsContent value="profile">
               <ProfileEditor />
             </TabsContent>
@@ -92,7 +124,12 @@ function StudioPage() {
           </div>
 
           {/* Right half — live preview of the public page */}
-          <aside className="hidden h-full flex-1 flex-col overflow-hidden rounded-xl border border-border bg-surface-sunken shadow-soft lg:flex">
+          <aside
+            className={cn(
+              "h-full flex-1 flex-col overflow-hidden rounded-xl border border-border bg-surface-sunken shadow-soft lg:flex",
+              mobileView === "preview" ? "flex" : "hidden",
+            )}
+          >
             <div className="flex items-center justify-between border-b border-border bg-surface px-3 py-2">
               <span className="truncate font-mono text-xs text-fg-subtle">
                 {handle ? `usemirae.com/@${handle}` : "preview"}
