@@ -212,22 +212,22 @@ Turn Mirae into an artist-specific link-in-bio hub without reducing the page to 
 
 ## Tickets
 
-- [ ] LINKS-001 Create `artist_links` table
-- [ ] LINKS-002 Add links CRUD API
-- [ ] LINKS-003 Add predefined platform types
-- [ ] LINKS-004 Add custom links
-- [ ] LINKS-005 Add link ordering
-- [ ] LINKS-006 Add enabled and disabled state
-- [ ] LINKS-007 Add featured state
-- [ ] LINKS-008 Add display style field
-- [ ] LINKS-009 Build link manager
+- [x] LINKS-001 Create `artist_links` table
+- [x] LINKS-002 Add links CRUD API
+- [x] LINKS-003 Add predefined platform types
+- [x] LINKS-004 Add custom links
+- [x] LINKS-005 Add link ordering
+- [x] LINKS-006 Add enabled and disabled state
+- [x] LINKS-007 Add featured state
+- [x] LINKS-008 Add display style field
+- [x] LINKS-009 Build link manager
 - [ ] LINKS-010 Add drag-and-drop ordering
-- [ ] LINKS-011 Add URL validation and normalization
+- [x] LINKS-011 Add URL validation and normalization
 - [ ] LINKS-012 Add platform icon mapping
 - [ ] LINKS-013 Add simple link card
 - [ ] LINKS-014 Add featured link card
 - [ ] LINKS-015 Add media link card
-- [ ] LINKS-016 Add click analytics
+- [x] LINKS-016 Add click analytics
 - [ ] LINKS-017 Add mobile preview
 
 ## Suggested fields

@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprints 11 (identity), 12 (portfolio backend) and 13 (portfolio manager UI) ✅ shipped. `@mirae/ui` expanded with Select/Switch/Avatar/Skeleton/Progress/Separator/Accordion/AlertDialog. **Next sprint: Sprint 14 — Artist links & public hub (LINKS-001).** Adopting the new shared components across all existing screens is folded into Sprint 24 (OPS-014). Full detail in docs/roadmap/POST_MVP_ROADMAP.md.
+Sprints 11 (identity), 12 (portfolio backend), 13 (portfolio manager UI) and 14 (artist links: data + API + manager) ✅ shipped. `@mirae/ui` expanded with Select/Switch/Avatar/Skeleton/Progress/Separator/Accordion/AlertDialog. **Next sprint: Sprint 15 — Creative public studio (the flagship `/@handle` redesign)**, which also lands the deferred link render pieces (cards/icons/mobile preview) + the Fiverr-like request drawer. Component adoption across existing screens folded into Sprint 24 (OPS-014). Full detail in docs/roadmap/POST_MVP_ROADMAP.md.
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -329,24 +329,24 @@ Goal: a visual, fast, touch-friendly portfolio management experience. **Core shi
 
 ## Sprint 14 — Artist links & public hub
 
-Goal: an artist-specific link-in-bio hub that stays portfolio-first.
+Goal: an artist-specific link-in-bio hub that stays portfolio-first. **Data + API + manager shipped** (artist_links, `/api/artist-links` CRUD/reorder/URL-normalize/click counter, LinkManager in Studio, links in the public payload). The public-facing render pieces belong to the Sprint 15 public-studio redesign and are deferred there: LINKS-012 platform brand icons, 013 simple / 014 featured / 015 media link cards, 017 mobile preview. LINKS-010 true drag-and-drop (up/down works) → Sprint 18 polish.
 
-- [ ] LINKS-001 Create `artist_links` table
-- [ ] LINKS-002 Add links CRUD API
-- [ ] LINKS-003 Add predefined platform types
-- [ ] LINKS-004 Add custom links
-- [ ] LINKS-005 Add link ordering
-- [ ] LINKS-006 Add enabled and disabled state
-- [ ] LINKS-007 Add featured state
-- [ ] LINKS-008 Add display style field
-- [ ] LINKS-009 Build link manager
+- [x] LINKS-001 Create `artist_links` table
+- [x] LINKS-002 Add links CRUD API
+- [x] LINKS-003 Add predefined platform types
+- [x] LINKS-004 Add custom links
+- [x] LINKS-005 Add link ordering
+- [x] LINKS-006 Add enabled and disabled state
+- [x] LINKS-007 Add featured state
+- [x] LINKS-008 Add display style field
+- [x] LINKS-009 Build link manager
 - [ ] LINKS-010 Add drag-and-drop ordering
-- [ ] LINKS-011 Add URL validation and normalization
+- [x] LINKS-011 Add URL validation and normalization
 - [ ] LINKS-012 Add platform icon mapping
 - [ ] LINKS-013 Add simple link card
 - [ ] LINKS-014 Add featured link card
 - [ ] LINKS-015 Add media link card
-- [ ] LINKS-016 Add click analytics
+- [x] LINKS-016 Add click analytics
 - [ ] LINKS-017 Add mobile preview
 
 ## Sprint 15 — Creative public studio
