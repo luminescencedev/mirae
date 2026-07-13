@@ -351,29 +351,29 @@ Goal: an artist-specific link-in-bio hub that stays portfolio-first. **Data + AP
 
 ## Sprint 15 — Creative public studio
 
-Goal: replace the functional profile card with a portfolio-first artist homepage.
+Goal: replace the functional profile card with a portfolio-first artist homepage. **Core shipped** (STUDIO-001…006, 008, 009, 011, 016, 018, 021): the `/@handle` page reworked in the reference-portfolio aesthetic — fixed dithered cover-art background (falls back to a demo image), centered refined column, avatar, status, featured links, portfolio galleries + lightbox, fixed-price commission menu, Elsewhere links, Mirae footer, fade-up motion (reduced-motion safe). Profile avatar/cover upload added to the Studio. Remaining: STUDIO-007 featured-project block, 010 project detail, 012 commission images, 013 sticky mobile CTA (→ Sprint 18), 014 about, 015 FAQ, 017 skeleton, 019 responsive image sizes, 020 a11y audit, lightbox ←/→ nav. Real per-artist dither-on-upload + neutral default cover before deploy. Request drawer = Sprint 16.
 
-- [ ] STUDIO-001 Build new public studio shell
-- [ ] STUDIO-002 Build responsive artist hero
-- [ ] STUDIO-003 Add avatar and cover rendering
-- [ ] STUDIO-004 Add status and availability presentation
-- [ ] STUDIO-005 Add featured links section
-- [ ] STUDIO-006 Add social links row
+- [x] STUDIO-001 Build new public studio shell
+- [x] STUDIO-002 Build responsive artist hero
+- [x] STUDIO-003 Add avatar and cover rendering
+- [x] STUDIO-004 Add status and availability presentation
+- [x] STUDIO-005 Add featured links section
+- [x] STUDIO-006 Add social links row
 - [ ] STUDIO-007 Build featured project section
-- [ ] STUDIO-008 Build responsive portfolio grid
-- [ ] STUDIO-009 Build artwork lightbox
+- [x] STUDIO-008 Build responsive portfolio grid
+- [x] STUDIO-009 Build artwork lightbox
 - [ ] STUDIO-010 Build project detail experience
-- [ ] STUDIO-011 Redesign commission type cards
+- [x] STUDIO-011 Redesign commission type cards
 - [ ] STUDIO-012 Add commission representative images
 - [ ] STUDIO-013 Add persistent mobile commission CTA
 - [ ] STUDIO-014 Add artist about section
 - [ ] STUDIO-015 Add optional FAQ section
-- [ ] STUDIO-016 Add Mirae-branded footer
+- [x] STUDIO-016 Add Mirae-branded footer
 - [ ] STUDIO-017 Add loading skeleton
-- [ ] STUDIO-018 Add not-found and empty states
+- [x] STUDIO-018 Add not-found and empty states
 - [ ] STUDIO-019 Add responsive image sizes
 - [ ] STUDIO-020 Add accessibility audit
-- [ ] STUDIO-021 Add reduced-motion behavior
+- [x] STUDIO-021 Add reduced-motion behavior
 
 ## Sprint 16 — Integrated commission request flow
 
