@@ -49,7 +49,7 @@ Make the repository, documentation and production setup accurately represent the
 
 ---
 
-# Sprint 11 — Mirae identity foundation
+# Sprint 11 — Mirae identity foundation ✅ complete
 
 ## Goal
 
@@ -58,18 +58,18 @@ Create a distinctive visual identity before redesigning all public-facing surfac
 ## Tickets
 
 - [x] BRAND-001 Lock brand attributes and personality
-- [ ] BRAND-002 Design the Mirae geometric symbol
-- [ ] BRAND-003 Design the Mirae wordmark
-- [ ] BRAND-004 Create responsive logo lockups
-- [ ] BRAND-005 Create monochrome variants
-- [ ] BRAND-006 Create favicon set
-- [ ] BRAND-007 Create application icon
-- [ ] BRAND-008 Create social avatar
-- [ ] BRAND-009 Define brand motion principles
-- [ ] BRAND-010 Create loading mark animation
-- [ ] BRAND-011 Create Open Graph composition system
-- [ ] BRAND-012 Create email branding assets
-- [ ] BRAND-013 Document logo and identity usage
+- [x] BRAND-002 Design the Mirae geometric symbol
+- [x] BRAND-003 Design the Mirae wordmark
+- [x] BRAND-004 Create responsive logo lockups
+- [x] BRAND-005 Create monochrome variants
+- [x] BRAND-006 Create favicon set
+- [x] BRAND-007 Create application icon
+- [x] BRAND-008 Create social avatar
+- [x] BRAND-009 Define brand motion principles
+- [x] BRAND-010 Create loading mark animation
+- [x] BRAND-011 Create Open Graph composition system
+- [x] BRAND-012 Create email branding assets
+- [x] BRAND-013 Document logo and identity usage
 
 ## Identity requirements
 

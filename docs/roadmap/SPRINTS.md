@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 11 — Mirae identity foundation (in progress). Done: BRAND-001 (brand attributes + personality locked in docs/product/BRAND.md). **Next ticket: BRAND-002 (design the Mirae geometric symbol).** Sprint 10.5 ✅ complete before it. Full detail in docs/roadmap/POST_MVP_ROADMAP.md.
+Sprint 11 — Mirae identity foundation ✅ complete (all BRAND-001…013 shipped; wordmark provisional per BRAND-003). Identity system in docs/product/BRAND.md + packages/ui/src/brand + apps/web/public. **Next sprint: Sprint 12 — Portfolio data & media infrastructure (PORTFOLIO-001).** Full detail in docs/roadmap/POST_MVP_ROADMAP.md.
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -266,23 +266,23 @@ _Complete._ Goal: make the repo, docs and production setup accurately represent 
 
 Next sprint: **Sprint 11 — Mirae identity foundation** (BRAND-001).
 
-## Sprint 11 — Mirae identity foundation
+## Sprint 11 — Mirae identity foundation ✅ complete
 
-_In progress._ Goal: a distinctive visual identity before redesigning public surfaces. Brand foundation locked in [`../product/BRAND.md`](../product/BRAND.md).
+_Complete._ Goal: a distinctive visual identity before redesigning public surfaces. The mark (rounded zigzag M) is locked; wordmark is provisional Inter (BRAND-003). Full system — vectors, `@mirae/ui` `<Mark/>`/`<Logo/>`/`<Loader/>`, favicon/app-icon/OG/email/avatar rasters — in [`../product/BRAND.md`](../product/BRAND.md), `packages/ui/src/brand/`, `apps/web/public/`. Rasters regenerate from vectors via `scripts/generate-brand-assets.mjs`.
 
 - [x] BRAND-001 Lock brand attributes and personality
-- [ ] BRAND-002 Design the Mirae geometric symbol
-- [ ] BRAND-003 Design the Mirae wordmark
-- [ ] BRAND-004 Create responsive logo lockups
-- [ ] BRAND-005 Create monochrome variants
-- [ ] BRAND-006 Create favicon set
-- [ ] BRAND-007 Create application icon
-- [ ] BRAND-008 Create social avatar
-- [ ] BRAND-009 Define brand motion principles
-- [ ] BRAND-010 Create loading mark animation
-- [ ] BRAND-011 Create Open Graph composition system
-- [ ] BRAND-012 Create email branding assets
-- [ ] BRAND-013 Document logo and identity usage
+- [x] BRAND-002 Design the Mirae geometric symbol
+- [x] BRAND-003 Design the Mirae wordmark
+- [x] BRAND-004 Create responsive logo lockups
+- [x] BRAND-005 Create monochrome variants
+- [x] BRAND-006 Create favicon set
+- [x] BRAND-007 Create application icon
+- [x] BRAND-008 Create social avatar
+- [x] BRAND-009 Define brand motion principles
+- [x] BRAND-010 Create loading mark animation
+- [x] BRAND-011 Create Open Graph composition system
+- [x] BRAND-012 Create email branding assets
+- [x] BRAND-013 Document logo and identity usage
 
 ## Sprint 12 — Portfolio data & media infrastructure
 

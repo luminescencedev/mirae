@@ -85,3 +85,8 @@ export {
 // Icons — Hugeicons wrapper (house family) + bespoke crafted marks
 export { Icon, type IconProps } from "./icons/icon.tsx";
 export { BranchReturnIcon, EnterKeyIcon } from "./icons/index.tsx";
+
+// Brand — mark, logo lockups, loader (see docs/product/BRAND.md)
+export { Mark } from "./brand/Mark.tsx";
+export { Logo } from "./brand/Logo.tsx";
+export { Loader } from "./brand/Loader.tsx";
