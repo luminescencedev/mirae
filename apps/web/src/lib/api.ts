@@ -143,6 +143,44 @@ export const trackLinkClick = (id: string) => {
   }
 };
 
+export type StudioEventType =
+  | "view"
+  | "link_click"
+  | "request_start"
+  | "request_submit";
+
+// Fire-and-forget privacy-friendly studio event (no cookies, no PII).
+export const trackStudioEvent = (
+  handle: string,
+  type: StudioEventType,
+  extra?: { linkId?: string; ref?: string },
+) => {
+  const h = handle.replace(/^@/, "");
+  try {
+    const body = new Blob([JSON.stringify({ type, ...extra })], {
+      type: "application/json",
+    });
+    navigator.sendBeacon?.(`/api/studio/${h}/events`, body);
+  } catch {
+    // analytics must never break the page
+  }
+};
+
+export type StudioAnalytics = {
+  views: number;
+  uniqueViews: number;
+  linkClicks: number;
+  requestStarts: number;
+  requestSubmits: number;
+  conversion: number;
+  byDay: { day: string; count: number }[];
+  topReferrers: { host: string; count: number }[];
+};
+
+export const analyticsApi = {
+  get: () => fetch("/api/analytics").then(json<StudioAnalytics>),
+};
+
 export type RequestInput = {
   clientName: string;
   clientEmail: string;

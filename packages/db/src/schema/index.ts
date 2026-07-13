@@ -5,3 +5,4 @@ export * from "./studio.ts";
 export * from "./commissions.ts";
 export * from "./portfolio.ts";
 export * from "./links.ts";
+export * from "./analytics.ts";

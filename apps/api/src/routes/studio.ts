@@ -8,6 +8,7 @@ import {
   createDb,
   portfolioAssets,
   portfolioProjects,
+  studioEvents,
   users,
 } from "@mirae/db";
 import { normalizeAppearance, normalizeFaq } from "@mirae/shared";
@@ -19,6 +20,25 @@ type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 export const studioRoutes = new Hono<{ Bindings: Bindings }>();
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const EVENT_TYPES = new Set([
+  "view",
+  "link_click",
+  "request_start",
+  "request_submit",
+]);
+
+// Daily-rotating visitor hash (privacy-friendly unique-view estimate). The IP
+// and UA are hashed with the day + a salt and never stored raw.
+async function sessionHashFor(ip: string, ua: string): Promise<string> {
+  const day = new Date().toISOString().slice(0, 10);
+  const data = new TextEncoder().encode(`${ip}|${ua}|${day}|mirae-analytics`);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(digest)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+    .slice(0, 32);
+}
 
 // GET /api/studio/:handle — the PUBLIC studio page payload (no auth).
 // Returns the artist profile + their active commission types, or 404.
@@ -264,4 +284,51 @@ studioRoutes.post("/:handle/requests", async (c) => {
   }
 
   return c.json({ ok: true, id: row.id }, 201);
+});
+
+// POST /api/studio/:handle/events — record a privacy-friendly public event
+// (view, link_click, request_start, request_submit). No auth, no cookies.
+studioRoutes.post("/:handle/events", async (c) => {
+  const handle = c.req.param("handle").replace(/^@/, "").trim().toLowerCase();
+  const body = (await c.req.json().catch(() => ({}))) as {
+    type?: unknown;
+    linkId?: unknown;
+    ref?: unknown;
+  };
+  const type = String(body.type ?? "");
+  if (!EVENT_TYPES.has(type)) return c.json({ error: "bad type" }, 400);
+
+  const db = createDb(c.env.DATABASE_URL);
+  const [profile] = await db
+    .select({ id: artistProfiles.id })
+    .from(artistProfiles)
+    .where(eq(artistProfiles.handle, handle))
+    .limit(1);
+  if (!profile) return c.json({ error: "not found" }, 404);
+
+  let sessionHash: string | null = null;
+  if (type === "view") {
+    sessionHash = await sessionHashFor(
+      c.req.header("cf-connecting-ip") ?? "",
+      c.req.header("user-agent") ?? "",
+    );
+  }
+  let refHost: string | null = null;
+  if (typeof body.ref === "string" && body.ref) {
+    try {
+      refHost = new URL(body.ref).hostname || null;
+    } catch {
+      refHost = null;
+    }
+  }
+  const linkId = typeof body.linkId === "string" ? body.linkId : null;
+
+  await db.insert(studioEvents).values({
+    artistId: profile.id,
+    type,
+    linkId,
+    sessionHash,
+    refHost,
+  });
+  return c.body(null, 204);
 });

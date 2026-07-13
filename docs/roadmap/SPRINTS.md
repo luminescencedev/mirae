@@ -560,13 +560,13 @@ Goal: make each public studio attractive to share and measurable without invasiv
 - [x] SHARE-006 Add robots controls
 - [x] SHARE-007 Add indexing toggle for closed studios
 - [ ] SHARE-008 Add social preview in Studio editor
-- [ ] SHARE-009 Add studio-view analytics
-- [ ] SHARE-010 Add unique-session estimate
-- [ ] SHARE-011 Add link-click analytics
-- [ ] SHARE-012 Add request-start analytics
-- [ ] SHARE-013 Add request-conversion analytics
-- [ ] SHARE-014 Add most-viewed projects
-- [ ] SHARE-015 Add privacy-friendly referrer reporting
+- [x] SHARE-009 Add studio-view analytics
+- [x] SHARE-010 Add unique-session estimate
+- [x] SHARE-011 Add link-click analytics
+- [x] SHARE-012 Add request-start analytics
+- [x] SHARE-013 Add request-conversion analytics
+- [ ] SHARE-014 Add most-viewed projects (deferred — needs per-project view events)
+- [x] SHARE-015 Add privacy-friendly referrer reporting
 - [ ] SHARE-016 Add custom social title and description
 
 ## Sprint 20 — Onboarding & guided launch
