@@ -1,5 +1,13 @@
 import { type ReactNode } from "react";
 import { Toaster, toast as sonnerToast } from "sonner";
+import {
+  Alert02Icon,
+  AlertCircleIcon,
+  CheckmarkCircle02Icon,
+  InformationCircleIcon,
+  Loading03Icon,
+} from "@hugeicons/core-free-icons";
+import { Icon } from "../icons/icon.tsx";
 
 type ToastVariant = "default" | "success" | "error";
 type ToastInput = {
@@ -19,12 +27,29 @@ export function useToast() {
   return { toast };
 }
 
-// Mounts sonner's Toaster — stock top-right, richColors, light theme.
+// Mounts sonner's Toaster: top-right, richColors, light theme, Hugeicons for
+// each type, and its native interactions — hover to expand a stack, swipe a
+// toast to the side to dismiss.
 export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
-      <Toaster richColors theme="light" />
+      <Toaster
+        position="top-right"
+        theme="light"
+        richColors
+        icons={{
+          success: <Icon icon={CheckmarkCircle02Icon} size={18} />,
+          error: <Icon icon={AlertCircleIcon} size={18} />,
+          warning: <Icon icon={Alert02Icon} size={18} />,
+          info: <Icon icon={InformationCircleIcon} size={18} />,
+          loading: (
+            <span className="inline-flex animate-spin motion-reduce:animate-none">
+              <Icon icon={Loading03Icon} size={18} />
+            </span>
+          ),
+        }}
+      />
     </>
   );
 }
