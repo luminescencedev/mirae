@@ -300,7 +300,9 @@ portfolioRoutes.delete("/assets/:id", async (c) => {
   return c.json({ ok: true });
 });
 
-// GET /api/portfolio/assets/:id/raw — public image stream (published only).
+// GET /api/portfolio/assets/:id/raw — image stream. Public for published
+// projects; the owner can also stream their own drafts (cookie session) so
+// the portfolio manager can preview unpublished work.
 portfolioRoutes.get("/assets/:id/raw", async (c) => {
   const db = createDb(c.env.DATABASE_URL);
   const [row] = await db
@@ -308,6 +310,7 @@ portfolioRoutes.get("/assets/:id/raw", async (c) => {
       r2Key: portfolioAssets.r2Key,
       mimeType: portfolioAssets.mimeType,
       visibility: portfolioProjects.visibility,
+      artistId: portfolioProjects.artistId,
     })
     .from(portfolioAssets)
     .innerJoin(
@@ -315,8 +318,11 @@ portfolioRoutes.get("/assets/:id/raw", async (c) => {
       eq(portfolioAssets.projectId, portfolioProjects.id),
     )
     .where(eq(portfolioAssets.id, c.req.param("id")));
-  if (!row || row.visibility !== "published")
-    return c.json({ error: "not found" }, 404);
+  if (!row) return c.json({ error: "not found" }, 404);
+  if (row.visibility !== "published") {
+    const artist = await getArtist(c);
+    if (artist?.id !== row.artistId) return c.json({ error: "not found" }, 404);
+  }
   const obj = await c.env.FILES.get(row.r2Key);
   if (!obj) return c.json({ error: "not found" }, 404);
   return new Response(obj.body, {

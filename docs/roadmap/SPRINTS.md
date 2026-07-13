@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 11 — Mirae identity foundation ✅ complete (all BRAND-001…013 shipped; wordmark provisional per BRAND-003). Identity system in docs/product/BRAND.md + packages/ui/src/brand + apps/web/public. **Next sprint: Sprint 12 — Portfolio data & media infrastructure (PORTFOLIO-001).** Full detail in docs/roadmap/POST_MVP_ROADMAP.md.
+Sprints 11 (identity), 12 (portfolio backend) and 13 (portfolio manager UI) ✅ shipped. `@mirae/ui` expanded with Select/Switch/Avatar/Skeleton/Progress/Separator/Accordion/AlertDialog. **Next sprint: Sprint 14 — Artist links & public hub (LINKS-001).** Adopting the new shared components across all existing screens is folded into Sprint 24 (OPS-014). Full detail in docs/roadmap/POST_MVP_ROADMAP.md.
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -307,25 +307,25 @@ Goal: backend foundation for real artist work, profile imagery and public media.
 
 ## Sprint 13 — Portfolio manager
 
-Goal: a visual, fast, touch-friendly portfolio management experience.
+Goal: a visual, fast, touch-friendly portfolio management experience. **Core shipped** (Portfolio section in Studio: create, edit title/description/type, draft/publish/archived, featured, up/down reorder, multi-upload dropzone + Progress, Skeleton loading, AlertDialog delete). Also expanded `@mirae/ui` (Select, Switch, Avatar, Skeleton, Progress, Separator, Accordion, AlertDialog). Deferred to the polish/mobile pass (Sprint 18): PORTUI-005 true drag-and-drop, 007 asset ordering, 008 cover selection, 010 alt-text, 014 explicit upload retry.
 
-- [ ] PORTUI-001 Add Portfolio section to Studio
-- [ ] PORTUI-002 Build upload dropzone
-- [ ] PORTUI-003 Build multi-image project creation
-- [ ] PORTUI-004 Build project editor
+- [x] PORTUI-001 Add Portfolio section to Studio
+- [x] PORTUI-002 Build upload dropzone
+- [x] PORTUI-003 Build multi-image project creation
+- [x] PORTUI-004 Build project editor
 - [ ] PORTUI-005 Add drag-and-drop project ordering
-- [ ] PORTUI-006 Add touch-friendly reordering
+- [x] PORTUI-006 Add touch-friendly reordering
 - [ ] PORTUI-007 Add asset ordering
 - [ ] PORTUI-008 Add project cover selection
-- [ ] PORTUI-009 Add title and description fields
+- [x] PORTUI-009 Add title and description fields
 - [ ] PORTUI-010 Add alt-text editing
-- [ ] PORTUI-011 Add draft and publish controls
-- [ ] PORTUI-012 Add featured project control
-- [ ] PORTUI-013 Add upload progress
+- [x] PORTUI-011 Add draft and publish controls
+- [x] PORTUI-012 Add featured project control
+- [x] PORTUI-013 Add upload progress
 - [ ] PORTUI-014 Add retry and failure states
-- [ ] PORTUI-015 Add destructive confirmation
-- [ ] PORTUI-016 Add polished empty states
-- [ ] PORTUI-017 Add mobile upload from gallery or camera
+- [x] PORTUI-015 Add destructive confirmation
+- [x] PORTUI-016 Add polished empty states
+- [x] PORTUI-017 Add mobile upload from gallery or camera
 
 ## Sprint 14 — Artist links & public hub
 
@@ -583,7 +583,7 @@ Goal: improve the private workflow from validated beta feedback **and take the w
 - [ ] OPS-011 Add client history
 - [ ] OPS-012 Add justified bulk actions
 - [ ] OPS-013 Redesign Overview into a real dashboard (KPI cards, trends, needs-attention, activity)
-- [ ] OPS-014 Unify density, spacing, typography and component usage across the dashboard
+- [ ] OPS-014 Unify density, spacing, typography + adopt the shared @mirae/ui components (Select, Switch, Avatar, Skeleton, Progress, AlertDialog) across every screen
 - [ ] OPS-015 Complete empty / loading / error / success states everywhere
 - [ ] OPS-016 Brand motion & press-feedback pass (shared easing; reduced-motion safe)
 - [ ] OPS-017 Full accessibility + keyboard-navigation pass

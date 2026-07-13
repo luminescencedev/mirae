@@ -18,6 +18,14 @@ It must combine:
 
 It should feel closer to a curated artist homepage than to a profile card or a generic link-in-bio list.
 
+### Vision (locked direction)
+
+- **A real, unique portfolio the artist is proud to put in their bio** — a genuine personal artwork page, never a templated profile. The artwork carries the page; Mirae chrome stays minimal.
+- **Several layout variants** (e.g. `editorial` / `grid` / `compact`) so different artists' pages don't look identical — the artist picks one; each must look intentional and distinct.
+- **Desktop** = a rich, expressive portfolio. **Mobile** collapses to a **compact link-in-bio feel** (linktree-like density) without losing the artwork-first hierarchy.
+- **One destination**: this is the single link an artist shares everywhere. It must stand on its own as their web presence.
+- **Integrated request**: a prominent `Request a commission` opens an in-page drawer/modal (see §9) — the visitor **must pick a commission type** (each with an **artist-fixed price**), then send. Simple and decisive, Fiverr-like, not an open-ended negotiation.
+
 ## 2. Visitor goals
 
 A visitor should be able to answer these questions quickly:
@@ -210,13 +218,13 @@ Each commission type should support:
 - title;
 - representative artwork;
 - short description;
-- price from;
+- **price (fixed by the artist)** — shown as a definite price, not a vague "from"; this is what the client commits to;
 - turnaround;
 - slot count;
 - availability;
 - request CTA.
 
-Selecting a commission type should open the request flow with that type preselected.
+**The price is set by the artist and fixed per type** (Fiverr-style packages). Selecting a commission type opens the request flow with that type — and its price — preselected. Choosing a type is **required** to send a request.
 
 ## 8. About and FAQ
 
@@ -244,9 +252,20 @@ FAQ should remain optional.
 
 ## 9. Request flow integration
 
+### Default (Fiverr-like, simple)
+
+The primary flow is deliberately short and decisive:
+
+1. **Pick a commission type** — required; its artist-fixed price is shown and locked in.
+2. **Brief** — what the client wants (+ optional reference links/uploads).
+3. **Contact** — name + email (no account needed).
+4. **Send.**
+
+No open-ended price negotiation on the public page — the client commits to the type's fixed price. Budget is not asked when a typed package is chosen. Keep it to one focused drawer/modal, not a long wizard, unless the artist opts into a richer flow.
+
 ### Desktop
 
-Open a large dialog, side panel or contained multi-step overlay.
+Open a contained drawer / dialog over the portfolio (the page stays visible behind it).
 
 ### Mobile
 
@@ -280,7 +299,7 @@ Review and submit
 
 ## 10. Mobile behavior
 
-The public studio must be designed from mobile constraints first.
+The public studio must be designed from mobile constraints first. On mobile the page should read like a **compact, premium link-in-bio** — dense and tappable — while keeping the artwork-first hierarchy (a hero piece / small gallery stays above the fold, links and commission types collapse into compact tappable rows).
 
 ### Required behavior
 

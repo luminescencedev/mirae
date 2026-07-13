@@ -10,6 +10,17 @@ export {
 } from "./primitives/button.tsx";
 export { Input } from "./primitives/input.tsx";
 export { Textarea } from "./primitives/textarea.tsx";
+export { Switch } from "./primitives/switch.tsx";
+export { Avatar } from "./primitives/avatar.tsx";
+export { Separator } from "./primitives/separator.tsx";
+export {
+  Select,
+  SelectValue,
+  SelectGroup,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "./primitives/select.tsx";
 
 // Feedback
 export { Badge, badgeVariants, type BadgeProps } from "./feedback/badge.tsx";
@@ -19,6 +30,8 @@ export {
   EmptyState,
   ErrorState,
 } from "./feedback/states.tsx";
+export { Skeleton } from "./feedback/skeleton.tsx";
+export { Progress } from "./feedback/progress.tsx";
 export { ToastProvider, useToast } from "./feedback/toast.tsx";
 export { ErrorBoundary } from "./feedback/error-boundary.tsx";
 
@@ -35,6 +48,12 @@ export { Panel } from "./layout/panel.tsx";
 
 // Navigation
 export { HoverBarList } from "./navigation/hover-bar-list.tsx";
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "./navigation/accordion.tsx";
 export {
   Tabs,
   TabsList,
@@ -70,6 +89,17 @@ export {
   TooltipTrigger,
   TooltipContent,
 } from "./overlays/tooltip.tsx";
+export {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "./overlays/alert-dialog.tsx";
 export {
   Sheet,
   SheetTrigger,

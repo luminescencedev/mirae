@@ -342,6 +342,105 @@ export const quotesApi = {
     }).then(json<{ quote: Quote }>),
 };
 
+// ---- Portfolio --------------------------------------------------------------
+
+export type ProjectType =
+  | "illustration"
+  | "character_design"
+  | "vtuber"
+  | "emote"
+  | "concept_art"
+  | "animation"
+  | "other";
+
+export type ProjectVisibility = "draft" | "published" | "archived";
+
+export type PortfolioAsset = {
+  id: string;
+  projectId: string;
+  mimeType: string;
+  width: number | null;
+  height: number | null;
+  altText: string | null;
+  position: number;
+  createdAt: string;
+};
+
+export type PortfolioProject = {
+  id: string;
+  artistId: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  projectType: ProjectType;
+  visibility: ProjectVisibility;
+  position: number;
+  featured: boolean;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string | null;
+  assets: PortfolioAsset[];
+};
+
+export type PortfolioProjectPatch = {
+  title?: string;
+  description?: string | null;
+  projectType?: ProjectType;
+  visibility?: ProjectVisibility;
+  featured?: boolean;
+};
+
+// The owner-or-published image stream for an asset.
+export const assetUrl = (assetId: string) =>
+  `/api/portfolio/assets/${assetId}/raw`;
+
+export const portfolioApi = {
+  list: () =>
+    fetch("/api/portfolio/projects")
+      .then(json<{ projects: PortfolioProject[] }>)
+      .then((d) => d.projects),
+  create: (title: string) =>
+    fetch("/api/portfolio/projects", {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ title }),
+    }).then(json<{ project: PortfolioProject }>),
+  update: (id: string, body: PortfolioProjectPatch) =>
+    fetch(`/api/portfolio/projects/${id}`, {
+      method: "PATCH",
+      headers: jsonHeaders,
+      body: JSON.stringify(body),
+    }).then(json<{ project: PortfolioProject }>),
+  reorder: (ids: string[]) =>
+    fetch("/api/portfolio/projects/reorder", {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ ids }),
+    }).then(json<{ ok: true }>),
+  remove: (id: string) =>
+    fetch(`/api/portfolio/projects/${id}`, { method: "DELETE" }).then(
+      json<{ ok: true }>,
+    ),
+  uploadAsset: (projectId: string, file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return fetch(`/api/portfolio/projects/${projectId}/assets`, {
+      method: "POST",
+      body: fd,
+    }).then(json<{ asset: PortfolioAsset }>);
+  },
+  setAlt: (assetId: string, altText: string) =>
+    fetch(`/api/portfolio/assets/${assetId}`, {
+      method: "PATCH",
+      headers: jsonHeaders,
+      body: JSON.stringify({ altText }),
+    }).then(json<{ asset: PortfolioAsset }>),
+  removeAsset: (assetId: string) =>
+    fetch(`/api/portfolio/assets/${assetId}`, { method: "DELETE" }).then(
+      json<{ ok: true }>,
+    ),
+};
+
 export const commissionTypesApi = {
   list: () =>
     fetch("/api/commission-types")

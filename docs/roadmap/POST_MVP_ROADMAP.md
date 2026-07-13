@@ -177,23 +177,23 @@ Create a visual, fast and touch-friendly portfolio management experience.
 
 ## Tickets
 
-- [ ] PORTUI-001 Add Portfolio section to Studio
-- [ ] PORTUI-002 Build upload dropzone
-- [ ] PORTUI-003 Build multi-image project creation
-- [ ] PORTUI-004 Build project editor
+- [x] PORTUI-001 Add Portfolio section to Studio
+- [x] PORTUI-002 Build upload dropzone
+- [x] PORTUI-003 Build multi-image project creation
+- [x] PORTUI-004 Build project editor
 - [ ] PORTUI-005 Add drag-and-drop project ordering
-- [ ] PORTUI-006 Add touch-friendly reordering
+- [x] PORTUI-006 Add touch-friendly reordering
 - [ ] PORTUI-007 Add asset ordering
 - [ ] PORTUI-008 Add project cover selection
-- [ ] PORTUI-009 Add title and description fields
+- [x] PORTUI-009 Add title and description fields
 - [ ] PORTUI-010 Add alt-text editing
-- [ ] PORTUI-011 Add draft and publish controls
-- [ ] PORTUI-012 Add featured project control
-- [ ] PORTUI-013 Add upload progress
+- [x] PORTUI-011 Add draft and publish controls
+- [x] PORTUI-012 Add featured project control
+- [x] PORTUI-013 Add upload progress
 - [ ] PORTUI-014 Add retry and failure states
-- [ ] PORTUI-015 Add destructive confirmation
-- [ ] PORTUI-016 Add polished empty states
-- [ ] PORTUI-017 Add mobile upload from gallery or camera
+- [x] PORTUI-015 Add destructive confirmation
+- [x] PORTUI-016 Add polished empty states
+- [x] PORTUI-017 Add mobile upload from gallery or camera
 
 ## Acceptance
 
@@ -283,7 +283,7 @@ featured
 
 ## Goal
 
-Replace the current functional profile card with a portfolio-first artist homepage.
+Replace the current functional profile card with a **real, unique, creative portfolio homepage** an artist is proud to put in their bio — never a templated profile. Artwork-first, expressive, with **multiple layout variants** (editorial / grid / compact) so pages don't look identical. On mobile it collapses to a **compact link-in-bio feel** without losing the artwork-first hierarchy. This is the single link an artist shares everywhere. See the locked vision in [`../product/PUBLIC_STUDIO_SPEC.md`](../product/PUBLIC_STUDIO_SPEC.md) §1.
 
 ## Tickets
 
@@ -338,7 +338,7 @@ Powered by Mirae
 
 ## Goal
 
-Allow visitors to begin a commission request without breaking the public-studio experience.
+Allow visitors to request a commission without breaking the public-studio experience. **Fiverr-like and decisive**: an in-page drawer/modal where the visitor **must pick a commission type** (each with an **artist-fixed price**, shown and locked — no open budget negotiation), then brief + contact + send. Simple, not a long wizard. See [`../product/PUBLIC_STUDIO_SPEC.md`](../product/PUBLIC_STUDIO_SPEC.md) §7 + §9.
 
 ## Tickets
 

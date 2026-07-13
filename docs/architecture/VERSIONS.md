@@ -84,6 +84,11 @@ Radix UI primitives (pin each individually, same release wave):
 | @radix-ui/react-switch        | 1.3.3   |
 | @radix-ui/react-checkbox      | 1.3.7   |
 | @radix-ui/react-toast         | 1.2.19  |
+| @radix-ui/react-accordion     | 1.2.16  |
+| @radix-ui/react-alert-dialog  | 1.1.19  |
+| @radix-ui/react-avatar        | 1.2.2   |
+| @radix-ui/react-progress      | 1.1.12  |
+| @radix-ui/react-separator     | 1.1.11  |
 
 ## Backend / API (`apps/api` — the Cloudflare Worker)
 
