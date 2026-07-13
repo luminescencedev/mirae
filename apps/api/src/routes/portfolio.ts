@@ -212,6 +212,46 @@ portfolioRoutes.post("/projects/reorder", async (c) => {
   return c.json({ ok: true });
 });
 
+// POST /api/portfolio/assets/reorder — bulk-set asset positions within their
+// project. Only assets the artist owns are touched.
+portfolioRoutes.post("/assets/reorder", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const body = (await c.req.json().catch(() => ({}))) as { ids?: unknown };
+  if (!Array.isArray(body.ids))
+    return c.json({ error: "ids array required." }, 400);
+  const db = createDb(c.env.DATABASE_URL);
+  const ids = body.ids.map(String);
+  if (ids.length === 0) return c.json({ ok: true });
+  // Owned assets = assets whose project belongs to this artist.
+  const owned = new Set(
+    (
+      await db
+        .select({ id: portfolioAssets.id })
+        .from(portfolioAssets)
+        .innerJoin(
+          portfolioProjects,
+          eq(portfolioAssets.projectId, portfolioProjects.id),
+        )
+        .where(
+          and(
+            eq(portfolioProjects.artistId, artist.id),
+            inArray(portfolioAssets.id, ids),
+          ),
+        )
+    ).map((r) => r.id),
+  );
+  let pos = 0;
+  for (const id of ids) {
+    if (!owned.has(id)) continue;
+    await db
+      .update(portfolioAssets)
+      .set({ position: pos++ })
+      .where(eq(portfolioAssets.id, id));
+  }
+  return c.json({ ok: true });
+});
+
 // DELETE /api/portfolio/projects/:id — delete project, its assets + R2 objects.
 portfolioRoutes.delete("/projects/:id", async (c) => {
   const artist = await getArtist(c);

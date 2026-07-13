@@ -477,6 +477,12 @@ export const portfolioApi = {
       headers: jsonHeaders,
       body: JSON.stringify({ ids }),
     }).then(json<{ ok: true }>),
+  reorderAssets: (ids: string[]) =>
+    fetch("/api/portfolio/assets/reorder", {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ ids }),
+    }).then(json<{ ok: true }>),
   remove: (id: string) =>
     fetch(`/api/portfolio/projects/${id}`, { method: "DELETE" }).then(
       json<{ ok: true }>,

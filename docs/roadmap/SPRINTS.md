@@ -447,10 +447,10 @@ Portfolio manager
 
 Ordering (drag-and-drop family)
 
-- [ ] DEBT-004 (PORTUI-005) Add project drag-and-drop ordering
-- [ ] DEBT-005 (PORTUI-007) Add asset ordering
-- [ ] DEBT-006 (LINKS-010) Add link drag-and-drop ordering
-- [ ] DEBT-007 (CUSTOM-008) Add section ordering
+- [x] DEBT-004 (PORTUI-005) Add project drag-and-drop ordering
+- [x] DEBT-005 (PORTUI-007) Add asset ordering
+- [x] DEBT-006 (LINKS-010) Add link drag-and-drop ordering
+- [ ] DEBT-007 (CUSTOM-008) Add section ordering (page-block order — needs appearance.sectionOrder)
 
 Links polish
 

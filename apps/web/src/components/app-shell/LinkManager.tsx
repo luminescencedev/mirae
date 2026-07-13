@@ -27,6 +27,7 @@ import {
   ArrowDown01Icon,
   ArrowUp01Icon,
   Delete02Icon,
+  DragDropVerticalIcon,
   Link01Icon,
   StarIcon,
 } from "@hugeicons/core-free-icons";
@@ -37,6 +38,11 @@ import {
   type LinkType,
 } from "../../lib/api.ts";
 import { linkIcon } from "../../lib/platform-icons.ts";
+import {
+  useDragOrder,
+  type DragHandleProps,
+  type DragRowProps,
+} from "../../lib/use-drag-order.ts";
 
 const KEY = ["artist-links"];
 
@@ -107,6 +113,8 @@ export function LinkManager() {
     reorder.mutate(next.map((l) => l.id));
   };
 
+  const drag = useDragOrder(links ?? [], (ids) => reorder.mutate(ids));
+
   return (
     <section className="flex flex-col gap-4">
       <p className="text-sm text-fg-subtle">
@@ -166,6 +174,8 @@ export function LinkManager() {
               onChanged={invalidate}
               onMoveUp={i > 0 ? () => move(i, -1) : undefined}
               onMoveDown={i < links.length - 1 ? () => move(i, 1) : undefined}
+              handleProps={drag.handleProps(link.id)}
+              rowProps={drag.rowProps(link.id)}
             />
           ))}
         </div>
@@ -179,11 +189,15 @@ function LinkRow({
   onChanged,
   onMoveUp,
   onMoveDown,
+  handleProps,
+  rowProps,
 }: {
   link: ArtistLink;
   onChanged: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
+  handleProps: DragHandleProps;
+  rowProps: DragRowProps;
 }) {
   const [title, setTitle] = useState(link.title);
   const [url, setUrl] = useState(link.url);
@@ -199,7 +213,19 @@ function LinkRow({
   });
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-2.5">
+    <div
+      {...rowProps}
+      className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-2.5 transition-shadow data-[dragging]:opacity-50 data-[drop-target]:ring-2 data-[drop-target]:ring-accent-500"
+    >
+      <button
+        type="button"
+        aria-label="Drag to reorder"
+        title="Drag to reorder"
+        {...handleProps}
+        className="grid size-8 shrink-0 cursor-grab place-items-center rounded-md text-fg-subtle hover:bg-surface-muted hover:text-fg active:cursor-grabbing"
+      >
+        <Icon icon={DragDropVerticalIcon} size={15} />
+      </button>
       <span className="grid size-8 shrink-0 place-items-center rounded-md bg-surface-muted text-fg-subtle">
         <Icon icon={linkIcon(link.platform, link.type)} size={15} />
       </span>

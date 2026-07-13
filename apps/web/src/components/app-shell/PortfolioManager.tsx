@@ -29,6 +29,7 @@ import {
   ArrowDown01Icon,
   ArrowUp01Icon,
   Delete02Icon,
+  DragDropVerticalIcon,
   Image01Icon,
   StarIcon,
   Upload01Icon,
@@ -40,6 +41,11 @@ import {
   type ProjectType,
   type ProjectVisibility,
 } from "../../lib/api.ts";
+import {
+  useDragOrder,
+  type DragHandleProps,
+  type DragRowProps,
+} from "../../lib/use-drag-order.ts";
 
 const KEY = ["portfolio"];
 
@@ -89,6 +95,8 @@ export function PortfolioManager() {
     [next[index], next[target]] = [next[target], next[index]];
     reorder.mutate(next.map((p) => p.id));
   };
+
+  const drag = useDragOrder(projects ?? [], (ids) => reorder.mutate(ids));
 
   return (
     <section className="flex flex-col gap-4">
@@ -153,6 +161,8 @@ export function PortfolioManager() {
               onMoveDown={
                 i < projects.length - 1 ? () => move(i, 1) : undefined
               }
+              handleProps={drag.handleProps(project.id)}
+              rowProps={drag.rowProps(project.id)}
             />
           ))}
         </div>
@@ -166,11 +176,15 @@ function ProjectCard({
   onChanged,
   onMoveUp,
   onMoveDown,
+  handleProps,
+  rowProps,
 }: {
   project: PortfolioProject;
   onChanged: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
+  handleProps: DragHandleProps;
+  rowProps: DragRowProps;
 }) {
   const [title, setTitle] = useState(project.title);
   const [description, setDescription] = useState(project.description ?? "");
@@ -197,6 +211,13 @@ function ProjectCard({
       portfolioApi.setAlt(v.id, v.altText),
     onSuccess: onChanged,
   });
+  const reorderAssets = useMutation({
+    mutationFn: portfolioApi.reorderAssets,
+    onSuccess: onChanged,
+  });
+  const assetDrag = useDragOrder(project.assets, (ids) =>
+    reorderAssets.mutate(ids),
+  );
 
   const upload = async (files: FileList | null) => {
     if (!files?.length) return;
@@ -220,9 +241,21 @@ function ProjectCard({
   const published = project.visibility === "published";
 
   return (
-    <div className="rounded-xl border border-border bg-surface">
+    <div
+      {...rowProps}
+      className="rounded-xl border border-border bg-surface transition-shadow data-[dragging]:opacity-50 data-[drop-target]:ring-2 data-[drop-target]:ring-accent-500"
+    >
       {/* Header */}
       <div className="flex flex-wrap items-center gap-2 border-b border-border p-3">
+        <button
+          type="button"
+          aria-label="Drag to reorder"
+          title="Drag to reorder"
+          {...handleProps}
+          className="grid size-8 shrink-0 cursor-grab place-items-center rounded-md text-fg-subtle hover:bg-surface-muted hover:text-fg active:cursor-grabbing"
+        >
+          <Icon icon={DragDropVerticalIcon} size={16} />
+        </button>
         <Input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -357,6 +390,8 @@ function ProjectCard({
             asset={asset}
             onRemove={() => removeAsset.mutate(asset.id)}
             onSetAlt={(altText) => setAlt.mutate({ id: asset.id, altText })}
+            handleProps={assetDrag.handleProps(asset.id)}
+            rowProps={assetDrag.rowProps(asset.id)}
           />
         ))}
 
@@ -404,21 +439,37 @@ function AssetTile({
   asset,
   onRemove,
   onSetAlt,
+  handleProps,
+  rowProps,
 }: {
   asset: PortfolioProject["assets"][number];
   onRemove: () => void;
   onSetAlt: (altText: string) => void;
+  handleProps: DragHandleProps;
+  rowProps: DragRowProps;
 }) {
   const [alt, setAlt] = useState(asset.altText ?? "");
   return (
     <div className="group flex flex-col gap-1.5">
-      <div className="relative aspect-square overflow-hidden rounded-lg border border-border bg-surface-muted">
+      <div
+        {...rowProps}
+        className="relative aspect-square overflow-hidden rounded-lg border border-border bg-surface-muted transition-shadow data-[dragging]:opacity-50 data-[drop-target]:ring-2 data-[drop-target]:ring-accent-500"
+      >
         <img
           src={assetUrl(asset.id)}
           alt={asset.altText ?? ""}
           className="size-full object-cover"
           loading="lazy"
         />
+        <button
+          type="button"
+          aria-label="Drag to reorder"
+          title="Drag to reorder"
+          {...handleProps}
+          className="absolute left-1.5 top-1.5 grid size-7 cursor-grab place-items-center rounded-md bg-black/55 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 active:cursor-grabbing"
+        >
+          <Icon icon={DragDropVerticalIcon} size={14} />
+        </button>
         <button
           type="button"
           aria-label="Remove image"
