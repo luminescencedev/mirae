@@ -379,24 +379,34 @@ Goal: replace the functional profile card with a portfolio-first artist homepage
 
 Goal: let visitors start a request without breaking the public-studio experience.
 
-- [ ] REQUESTUX-001 Refactor request form into reusable flow
-- [ ] REQUESTUX-002 Keep standalone `/@handle/request` route
-- [ ] REQUESTUX-003 Add desktop dialog or side panel flow
-- [ ] REQUESTUX-004 Add mobile full-screen or bottom-sheet flow
-- [ ] REQUESTUX-005 Prefill selected commission type
-- [ ] REQUESTUX-006 Add multi-step structure
-- [ ] REQUESTUX-007 Add inline validation
-- [ ] REQUESTUX-008 Add session draft persistence
-- [ ] REQUESTUX-009 Add request reference uploads
-- [ ] REQUESTUX-010 Add temporary upload token
-- [ ] REQUESTUX-011 Add abandoned upload cleanup
-- [ ] REQUESTUX-012 Add summary step
-- [ ] REQUESTUX-013 Add polished confirmation
-- [ ] REQUESTUX-014 Add rate limiting
-- [ ] REQUESTUX-015 Add honeypot
-- [ ] REQUESTUX-016 Add Cloudflare Turnstile option
-- [ ] REQUESTUX-017 Add duplicate-submission prevention
-- [ ] REQUESTUX-018 Add form-start and completion analytics
+- [x] REQUESTUX-001 Refactor request form into reusable flow
+- [x] REQUESTUX-002 Keep standalone `/@handle/request` route
+- [x] REQUESTUX-003 Add desktop dialog or side panel flow
+- [x] REQUESTUX-004 Add mobile full-screen or bottom-sheet flow
+- [x] REQUESTUX-005 Prefill selected commission type
+- [x] REQUESTUX-006 Add multi-step structure
+- [x] REQUESTUX-007 Add inline validation
+- [x] REQUESTUX-008 Add session draft persistence
+- [ ] REQUESTUX-009 Add request reference uploads (deferred → Sprint 22, needs the temp upload token)
+- [ ] REQUESTUX-010 Add temporary upload token (→ Sprint 22 security)
+- [ ] REQUESTUX-011 Add abandoned upload cleanup (→ Sprint 22 security)
+- [x] REQUESTUX-012 Add summary step
+- [x] REQUESTUX-013 Add polished confirmation
+- [ ] REQUESTUX-014 Add rate limiting (→ Sprint 22 security)
+- [ ] REQUESTUX-015 Add honeypot (→ Sprint 22 security)
+- [ ] REQUESTUX-016 Add Cloudflare Turnstile option (→ Sprint 22 security)
+- [ ] REQUESTUX-017 Add duplicate-submission prevention (→ Sprint 22 security)
+- [x] REQUESTUX-018 Add form-start and completion analytics (request_start / request_submit events, Sprint 19)
+
+Completion notes (Sprint 16): reusable `RequestFlow` — a 4-step flow (Type →
+Brief → You → Review) + polished confirmation, shared by the slide-over
+`RequestDrawer` (full-screen on mobile) and the standalone `/@handle/request`
+page. Fiverr-like: a commission type is required (artist-fixed price). Inline
+per-step validation, session draft persistence (localStorage, cleared on
+success), commission-type prefill, direction-aware step transitions
+(reduced-motion safe), request_start/submit analytics. Deferred → Sprint 22
+(security): reference uploads + temp upload token + cleanup, rate limiting,
+honeypot, Turnstile, duplicate prevention.
 
 ## Sprint 17 — Appearance editor & live preview
 
