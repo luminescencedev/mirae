@@ -27,6 +27,8 @@ export function ProfileEditor() {
   const [tagline, setTagline] = useState("");
   const [bio, setBio] = useState("");
   const [status, setStatus] = useState<StudioStatus>("open");
+  const [metaTitle, setMetaTitle] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
 
   useEffect(() => {
     if (!profile) return;
@@ -34,6 +36,8 @@ export function ProfileEditor() {
     setTagline(profile.tagline ?? "");
     setBio(profile.bio ?? "");
     setStatus(profile.status);
+    setMetaTitle(profile.metaTitle ?? "");
+    setMetaDescription(profile.metaDescription ?? "");
   }, [profile]);
 
   const save = useMutation({
@@ -43,9 +47,20 @@ export function ProfileEditor() {
         tagline: tagline.trim() || null,
         bio: bio.trim() || null,
         status,
+        metaTitle: metaTitle.trim() || null,
+        metaDescription: metaDescription.trim() || null,
       }),
     onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
   });
+
+  // Live social-share preview (mirrors the server's injectStudioMeta fallbacks).
+  const previewTitle =
+    metaTitle.trim() || `${displayName || "Your studio"} · Commissions · Mirae`;
+  const previewDesc =
+    metaDescription.trim() ||
+    tagline.trim() ||
+    bio.trim() ||
+    `Request a commission from ${displayName || "this artist"} on Mirae.`;
 
   const avatarInput = useRef<HTMLInputElement>(null);
   const coverInput = useRef<HTMLInputElement>(null);
@@ -197,6 +212,66 @@ export function ProfileEditor() {
                 {s.label}
               </button>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Social sharing (SEO / link unfurl) */}
+      <div className="mt-6 flex flex-col gap-4 border-t border-border pt-6">
+        <div>
+          <Label>Social sharing</Label>
+          <p className="mt-0.5 text-xs text-fg-subtle">
+            How your link looks when shared. Leave blank to use your name +
+            tagline.
+          </p>
+        </div>
+        <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-fg-muted">Custom title</span>
+          <Input
+            value={metaTitle}
+            maxLength={70}
+            onChange={(e) => setMetaTitle(e.target.value)}
+            placeholder={`${displayName || "Your studio"} · Commissions · Mirae`}
+          />
+        </label>
+        <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-fg-muted">
+            Custom description
+          </span>
+          <Textarea
+            rows={2}
+            value={metaDescription}
+            maxLength={200}
+            onChange={(e) => setMetaDescription(e.target.value)}
+            placeholder="One line that makes people want to click."
+          />
+        </label>
+
+        {/* Live preview of the shared card */}
+        <div className="overflow-hidden rounded-xl border border-border bg-surface">
+          <div className="aspect-[1.91/1] bg-surface-muted">
+            <img
+              src={
+                profile?.coverR2Key
+                  ? mediaUrl("cover")
+                  : profile?.avatarR2Key
+                    ? mediaUrl("avatar")
+                    : "/og-default.png"
+              }
+              alt=""
+              className="size-full object-cover"
+            />
+          </div>
+          <div className="border-t border-border p-3">
+            <p className="text-[11px] uppercase tracking-wide text-fg-subtle">
+              usemirae.com
+            </p>
+            <p className="mt-0.5 line-clamp-1 text-sm font-semibold text-fg">
+              {previewTitle}
+            </p>
+            <p className="mt-0.5 line-clamp-2 text-xs text-fg-muted">
+              {previewDesc}
+            </p>
           </div>
         </div>
       </div>

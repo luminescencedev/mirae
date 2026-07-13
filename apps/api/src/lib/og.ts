@@ -23,6 +23,8 @@ export type StudioMeta = {
   status: string;
   avatarR2Key: string | null;
   coverR2Key: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
 };
 
 function studioImageUrl(profile: StudioMeta, origin: string): string {
@@ -38,8 +40,11 @@ export function injectStudioMeta(
   profile: StudioMeta,
   origin: string,
 ): string {
-  const title = `${profile.displayName} · Commissions · Mirae`;
+  const title =
+    profile.metaTitle?.trim() ||
+    `${profile.displayName} · Commissions · Mirae`;
   const rawDesc =
+    profile.metaDescription?.trim() ||
     profile.tagline ||
     profile.bio ||
     `Request a commission from ${profile.displayName} on Mirae.`;

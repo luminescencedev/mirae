@@ -46,6 +46,8 @@ export type ArtistProfile = {
   bio: string | null;
   about: string | null;
   faq: FaqItem[] | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
   status: StudioStatus;
   avatarR2Key: string | null;
   coverR2Key: string | null;
@@ -59,6 +61,8 @@ export type ArtistProfileInput = {
   bio?: string | null;
   about?: string | null;
   faq?: FaqItem[];
+  metaTitle?: string | null;
+  metaDescription?: string | null;
   status?: StudioStatus;
   appearance?: StudioAppearance;
 };
