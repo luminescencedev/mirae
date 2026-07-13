@@ -20,6 +20,9 @@ export const artistProfiles = pgTable("artist_profiles", {
   displayName: text("display_name").notNull(),
   tagline: text("tagline"),
   bio: text("bio"),
+  // Profile media (R2 object keys; served via the API). Nullable until set.
+  avatarR2Key: text("avatar_r2_key"),
+  coverR2Key: text("cover_r2_key"),
   status: studioStatus("status").notNull().default("open"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()

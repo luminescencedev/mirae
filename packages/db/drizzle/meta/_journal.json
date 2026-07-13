@@ -29,6 +29,13 @@
       "when": 1783786819569,
       "tag": "0003_long_lionheart",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783905869608,
+      "tag": "0004_first_talos",
+      "breakpoints": true
     }
   ]
 }
