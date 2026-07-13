@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
@@ -7,8 +7,10 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogTitle,
   Icon,
   Mark,
+  Skeleton,
   cn,
 } from "@mirae/ui";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
@@ -35,14 +37,27 @@ export function ArtistPage({ handle }: { handle: string }) {
     queryKey: ["studio", display.toLowerCase()],
     queryFn: () => publicApi.studio(handle),
   });
-  const [lightbox, setLightbox] = useState<PublicAsset | null>(null);
-
-  if (isLoading)
-    return (
-      <div className="grid min-h-dvh place-items-center bg-canvas text-sm text-fg-subtle">
-        Loading…
-      </div>
+  const [lb, setLb] = useState<{ assets: PublicAsset[]; index: number } | null>(
+    null,
+  );
+  const step = (d: 1 | -1) =>
+    setLb((v) =>
+      v
+        ? { ...v, index: (v.index + d + v.assets.length) % v.assets.length }
+        : v,
     );
+
+  useEffect(() => {
+    if (!lb) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") step(1);
+      else if (e.key === "ArrowLeft") step(-1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lb]);
+
+  if (isLoading) return <StudioSkeleton />;
   if (isError || !data)
     return (
       <div className="grid min-h-dvh place-items-center bg-canvas px-6">
@@ -58,20 +73,87 @@ export function ArtistPage({ handle }: { handle: string }) {
       </div>
     );
 
+  const current = lb?.assets[lb.index] ?? null;
   return (
-    <StudioView data={data} handle={handle} onOpen={setLightbox}>
-      <Dialog open={!!lightbox} onOpenChange={(o) => !o && setLightbox(null)}>
-        <DialogContent className="max-w-3xl overflow-hidden p-0">
-          {lightbox && (
-            <img
-              src={lightbox.url}
-              alt={lightbox.altText ?? ""}
-              className="max-h-[80vh] w-full object-contain"
-            />
+    <StudioView
+      data={data}
+      handle={handle}
+      onOpen={(assets, index) => setLb({ assets, index })}
+    >
+      <Dialog open={!!lb} onOpenChange={(o) => !o && setLb(null)}>
+        <DialogContent className="max-w-4xl overflow-hidden border-0 bg-transparent p-0 shadow-none">
+          <DialogTitle className="sr-only">Artwork</DialogTitle>
+          {current && (
+            <div className="relative">
+              <img
+                src={current.url}
+                alt={current.altText ?? ""}
+                className="max-h-[82vh] w-full rounded-xl object-contain"
+              />
+              {lb && lb.assets.length > 1 && (
+                <>
+                  <LbNav side="left" onClick={() => step(-1)} />
+                  <LbNav side="right" onClick={() => step(1)} />
+                  <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-2.5 py-1 font-mono text-xs text-white">
+                    {lb.index + 1} / {lb.assets.length}
+                  </span>
+                </>
+              )}
+            </div>
           )}
         </DialogContent>
       </Dialog>
     </StudioView>
+  );
+}
+
+function LbNav({
+  side,
+  onClick,
+}: {
+  side: "left" | "right";
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={side === "left" ? "Previous artwork" : "Next artwork"}
+      onClick={onClick}
+      className={cn(
+        "absolute top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-black/55 text-white outline-none transition-colors hover:bg-black/75 focus-visible:ring-2 focus-visible:ring-white",
+        side === "left" ? "left-3" : "right-3",
+      )}
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className="size-5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d={side === "left" ? "m15 18-6-6 6-6" : "m9 18 6-6-6-6"} />
+      </svg>
+    </button>
+  );
+}
+
+function StudioSkeleton() {
+  return (
+    <div className="min-h-dvh bg-canvas">
+      <div className="mx-auto flex w-full max-w-[35rem] flex-col gap-4 px-4 py-24 sm:px-8">
+        <Skeleton className="size-16 rounded-2xl" />
+        <Skeleton className="h-4 w-40" />
+        <Skeleton className="h-4 w-56" />
+        <Skeleton className="mt-4 h-10 w-44 rounded-md" />
+        <div className="mt-8 grid grid-cols-3 gap-2">
+          <Skeleton className="aspect-[4/3]" />
+          <Skeleton className="aspect-[4/3]" />
+          <Skeleton className="aspect-[4/3]" />
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -83,13 +165,21 @@ function StudioView({
 }: {
   data: PublicStudio;
   handle: string;
-  onOpen: (a: PublicAsset) => void;
+  onOpen: (assets: PublicAsset[], index: number) => void;
   children: React.ReactNode;
 }) {
   const rm = useReducedMotion();
-  const { profile, commissionTypes, projects, links } = data;
+  const { profile, commissionTypes, projects, links, featuredProjectId } = data;
   const status = STATUS[profile.status];
   const isClosed = profile.status === "closed";
+  // Featured project leads the Work section.
+  const orderedProjects = featuredProjectId
+    ? [...projects].sort(
+        (a, b) =>
+          (b.id === featuredProjectId ? 1 : 0) -
+          (a.id === featuredProjectId ? 1 : 0),
+      )
+    : projects;
 
   // Cover art → the fixed full-bleed background (falls back to the demo image
   // so every page has atmosphere). Same technique as the reference portfolio:
@@ -189,10 +279,17 @@ function StudioView({
                 Selected work
               </h2>
               <div className="flex flex-col gap-8">
-                {projects.map((p) => (
+                {orderedProjects.map((p) => (
                   <article key={p.id}>
                     <div className="mb-2 flex items-baseline justify-between gap-3">
-                      <h3 className="text-sm font-medium text-fg">{p.title}</h3>
+                      <h3 className="flex items-center gap-2 text-sm font-medium text-fg">
+                        {p.title}
+                        {p.id === featuredProjectId && (
+                          <span className="rounded-full bg-accent-50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-accent-700">
+                            Featured
+                          </span>
+                        )}
+                      </h3>
                       <span className="font-mono text-xs text-fg-subtle">
                         {p.projectType.replace(/_/g, " ")}
                       </span>
@@ -211,11 +308,11 @@ function StudioView({
                             : "grid-cols-2 sm:grid-cols-3",
                         )}
                       >
-                        {p.assets.map((a) => (
+                        {p.assets.map((a, ai) => (
                           <button
                             key={a.id}
                             type="button"
-                            onClick={() => onOpen(a)}
+                            onClick={() => onOpen(p.assets, ai)}
                             className="group relative overflow-hidden rounded-lg border border-border/70 bg-surface-muted outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
                             style={{ aspectRatio: "4 / 3" }}
                           >

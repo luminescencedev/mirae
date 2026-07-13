@@ -359,17 +359,17 @@ Goal: replace the functional profile card with a portfolio-first artist homepage
 - [x] STUDIO-004 Add status and availability presentation
 - [x] STUDIO-005 Add featured links section
 - [x] STUDIO-006 Add social links row
-- [ ] STUDIO-007 Build featured project section
+- [x] STUDIO-007 Build featured project section
 - [x] STUDIO-008 Build responsive portfolio grid
 - [x] STUDIO-009 Build artwork lightbox
-- [ ] STUDIO-010 Build project detail experience
+- [x] STUDIO-010 Build project detail experience
 - [x] STUDIO-011 Redesign commission type cards
 - [ ] STUDIO-012 Add commission representative images
 - [ ] STUDIO-013 Add persistent mobile commission CTA
 - [ ] STUDIO-014 Add artist about section
 - [ ] STUDIO-015 Add optional FAQ section
 - [x] STUDIO-016 Add Mirae-branded footer
-- [ ] STUDIO-017 Add loading skeleton
+- [x] STUDIO-017 Add loading skeleton
 - [x] STUDIO-018 Add not-found and empty states
 - [ ] STUDIO-019 Add responsive image sizes
 - [ ] STUDIO-020 Add accessibility audit
