@@ -220,3 +220,25 @@
     }
   }
 }
+
+/* Accordion (Radix) height animation — uses the measured content height var. */
+@keyframes mirae-acc-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+@keyframes mirae-acc-up {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}

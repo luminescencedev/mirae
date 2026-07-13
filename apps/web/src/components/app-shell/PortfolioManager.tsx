@@ -1,6 +1,26 @@
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Badge, Button, Icon, Input, cn } from "@mirae/ui";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  Badge,
+  Button,
+  Icon,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  cn,
+} from "@mirae/ui";
 import {
   Add01Icon,
   ArrowDown01Icon,
@@ -189,33 +209,39 @@ function ProjectCard({
           className="h-9 min-w-40 flex-1"
         />
 
-        <select
+        <Select
           value={project.projectType}
-          onChange={(e) =>
-            patch.mutate({ projectType: e.target.value as ProjectType })
-          }
-          className="h-9 rounded-md border border-border bg-surface px-2 text-sm text-fg outline-none focus-visible:border-accent-500"
+          onValueChange={(v) => patch.mutate({ projectType: v as ProjectType })}
         >
-          {Object.entries(TYPE_LABELS).map(([v, label]) => (
-            <option key={v} value={v}>
-              {label}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-44">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(TYPE_LABELS).map(([v, label]) => (
+              <SelectItem key={v} value={v}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        <select
+        <Select
           value={project.visibility}
-          onChange={(e) =>
-            patch.mutate({ visibility: e.target.value as ProjectVisibility })
+          onValueChange={(v) =>
+            patch.mutate({ visibility: v as ProjectVisibility })
           }
-          className="h-9 rounded-md border border-border bg-surface px-2 text-sm text-fg outline-none focus-visible:border-accent-500"
         >
-          {Object.entries(VISIBILITY_LABELS).map(([v, label]) => (
-            <option key={v} value={v}>
-              {label}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-32">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(VISIBILITY_LABELS).map(([v, label]) => (
+              <SelectItem key={v} value={v}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         {published && (
           <Badge variant={project.featured ? "accent" : "outline"}>
@@ -242,15 +268,37 @@ function ProjectCard({
             disabled={!onMoveDown}
             icon={ArrowDown01Icon}
           />
-          <IconButton
-            label="Delete project"
-            onClick={() => {
-              if (confirm(`Delete "${project.title}" and its images?`))
-                remove.mutate();
-            }}
-            danger
-            icon={Delete02Icon}
-          />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button
+                type="button"
+                aria-label="Delete project"
+                title="Delete project"
+                className="grid size-8 place-items-center rounded-md text-fg-subtle outline-none transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:ring-2 focus-visible:ring-accent-500"
+              >
+                <Icon icon={Delete02Icon} size={16} />
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete “{project.title}”?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This removes the project and its {project.assets.length} image
+                  {project.assets.length === 1 ? "" : "s"}. This can’t be
+                  undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-red-600 text-white hover:bg-red-600/90"
+                  onClick={() => remove.mutate()}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
@@ -323,14 +371,12 @@ function IconButton({
   onClick,
   icon,
   disabled,
-  danger,
   active,
 }: {
   label: string;
   onClick?: () => void;
   icon: Parameters<typeof Icon>[0]["icon"];
   disabled?: boolean;
-  danger?: boolean;
   active?: boolean;
 }) {
   return (
@@ -344,9 +390,7 @@ function IconButton({
         "grid size-8 place-items-center rounded-md outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-30",
         active
           ? "text-accent-600"
-          : danger
-            ? "text-fg-subtle hover:bg-red-50 hover:text-red-600"
-            : "text-fg-subtle hover:bg-surface-muted hover:text-fg",
+          : "text-fg-subtle hover:bg-surface-muted hover:text-fg",
       )}
     >
       <Icon icon={icon} size={16} />
