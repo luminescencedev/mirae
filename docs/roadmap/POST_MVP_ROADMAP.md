@@ -287,27 +287,27 @@ Replace the current functional profile card with a **real, unique, creative port
 
 ## Tickets
 
-- [ ] STUDIO-001 Build new public studio shell
-- [ ] STUDIO-002 Build responsive artist hero
-- [ ] STUDIO-003 Add avatar and cover rendering
-- [ ] STUDIO-004 Add status and availability presentation
-- [ ] STUDIO-005 Add featured links section
-- [ ] STUDIO-006 Add social links row
+- [x] STUDIO-001 Build new public studio shell
+- [x] STUDIO-002 Build responsive artist hero
+- [x] STUDIO-003 Add avatar and cover rendering
+- [x] STUDIO-004 Add status and availability presentation
+- [x] STUDIO-005 Add featured links section
+- [x] STUDIO-006 Add social links row
 - [ ] STUDIO-007 Build featured project section
-- [ ] STUDIO-008 Build responsive portfolio grid
-- [ ] STUDIO-009 Build artwork lightbox
+- [x] STUDIO-008 Build responsive portfolio grid
+- [x] STUDIO-009 Build artwork lightbox
 - [ ] STUDIO-010 Build project detail experience
-- [ ] STUDIO-011 Redesign commission type cards
+- [x] STUDIO-011 Redesign commission type cards
 - [ ] STUDIO-012 Add commission representative images
 - [ ] STUDIO-013 Add persistent mobile commission CTA
 - [ ] STUDIO-014 Add artist about section
 - [ ] STUDIO-015 Add optional FAQ section
-- [ ] STUDIO-016 Add Mirae-branded footer
+- [x] STUDIO-016 Add Mirae-branded footer
 - [ ] STUDIO-017 Add loading skeleton
-- [ ] STUDIO-018 Add not-found and empty states
+- [x] STUDIO-018 Add not-found and empty states
 - [ ] STUDIO-019 Add responsive image sizes
 - [ ] STUDIO-020 Add accessibility audit
-- [ ] STUDIO-021 Add reduced-motion behavior
+- [x] STUDIO-021 Add reduced-motion behavior
 
 ## Recommended hierarchy
 

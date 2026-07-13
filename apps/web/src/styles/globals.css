@@ -242,3 +242,23 @@
     opacity: 0;
   }
 }
+
+/* Public studio — halftone/dither treatment for the artist's key art shown as
+   the page's atmospheric background (any image → grid of dots). */
+.studio-dither {
+  filter: grayscale(1) contrast(1.15);
+  -webkit-mask-image: radial-gradient(
+    circle at center,
+    #000 0.62px,
+    transparent 0.72px
+  );
+  mask-image: radial-gradient(
+    circle at center,
+    #000 0.62px,
+    transparent 0.72px
+  );
+  -webkit-mask-size: 3px 3px;
+  mask-size: 3px 3px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+}
