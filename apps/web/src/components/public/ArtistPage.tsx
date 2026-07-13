@@ -3,6 +3,10 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
   Avatar,
   Button,
   Dialog,
@@ -402,6 +406,19 @@ function StudioView({
             </section>
           )}
 
+          {/* About */}
+          {profile.about && (
+            <section className="mb-14">
+              <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-fg">
+                <span className="size-1.5 rounded-full bg-accent-500" />
+                About
+              </h2>
+              <p className="max-w-[46ch] whitespace-pre-line text-sm leading-relaxed text-fg-muted">
+                {profile.about}
+              </p>
+            </section>
+          )}
+
           {/* Selected work */}
           {projects.length > 0 && (
             <section className="mb-14">
@@ -501,6 +518,36 @@ function StudioView({
                   </li>
                 ))}
               </ul>
+            </section>
+          )}
+
+          {/* FAQ */}
+          {profile.faq.length > 0 && (
+            <section className="mb-14">
+              <h2 className="mb-2 flex items-center gap-2 text-sm font-medium text-fg">
+                <span className="size-1.5 rounded-full bg-accent-500" />
+                FAQ
+              </h2>
+              <Accordion
+                type="single"
+                collapsible
+                className="flex flex-col gap-2"
+              >
+                {profile.faq.map((f, i) => (
+                  <AccordionItem
+                    key={i}
+                    value={`faq-${i}`}
+                    className="border-border/70 bg-surface/85 backdrop-blur-sm"
+                  >
+                    <AccordionTrigger className="text-sm font-medium text-fg">
+                      {f.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="border-border/70 text-sm leading-relaxed text-fg-muted">
+                      <p className="max-w-[46ch] whitespace-pre-line">{f.a}</p>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </section>
           )}
 

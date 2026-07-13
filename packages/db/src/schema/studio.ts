@@ -7,7 +7,7 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import type { StudioAppearance } from "@mirae/shared";
+import type { FaqItem, StudioAppearance } from "@mirae/shared";
 import { studioStatus } from "./enums.ts";
 import { users } from "./auth.ts";
 
@@ -22,6 +22,9 @@ export const artistProfiles = pgTable("artist_profiles", {
   displayName: text("display_name").notNull(),
   tagline: text("tagline"),
   bio: text("bio"),
+  // Optional longer-form public sections.
+  about: text("about"),
+  faq: jsonb("faq").$type<FaqItem[]>(),
   // Profile media (R2 object keys; served via the API). Nullable until set.
   avatarR2Key: text("avatar_r2_key"),
   coverR2Key: text("cover_r2_key"),

@@ -10,7 +10,7 @@ import {
   portfolioProjects,
   users,
 } from "@mirae/db";
-import { normalizeAppearance } from "@mirae/shared";
+import { normalizeAppearance, normalizeFaq } from "@mirae/shared";
 import { type AuthEnv } from "../auth.ts";
 import { mailLayout, sendEmail } from "../lib/mail.ts";
 
@@ -111,6 +111,8 @@ studioRoutes.get("/:handle", async (c) => {
       displayName: profile.displayName,
       tagline: profile.tagline,
       bio: profile.bio,
+      about: profile.about,
+      faq: normalizeFaq(profile.faq),
       status: profile.status,
       avatarUrl: profile.avatarR2Key
         ? `/api/studio/${profile.handle}/avatar`

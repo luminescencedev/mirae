@@ -1,7 +1,7 @@
 // Typed fetch client for the Hono API. Same-origin (/api/*), cookie session.
-import type { StudioAppearance } from "@mirae/shared";
+import type { FaqItem, StudioAppearance } from "@mirae/shared";
 
-export type { StudioAppearance };
+export type { FaqItem, StudioAppearance };
 
 export type CommissionType = {
   id: string;
@@ -43,6 +43,8 @@ export type ArtistProfile = {
   displayName: string;
   tagline: string | null;
   bio: string | null;
+  about: string | null;
+  faq: FaqItem[] | null;
   status: StudioStatus;
   avatarR2Key: string | null;
   coverR2Key: string | null;
@@ -54,6 +56,8 @@ export type ArtistProfileInput = {
   displayName?: string;
   tagline?: string | null;
   bio?: string | null;
+  about?: string | null;
+  faq?: FaqItem[];
   status?: StudioStatus;
   appearance?: StudioAppearance;
 };
@@ -84,6 +88,8 @@ export type PublicProfile = {
   displayName: string;
   tagline: string | null;
   bio: string | null;
+  about: string | null;
+  faq: FaqItem[];
   status: StudioStatus;
   avatarUrl: string | null;
   coverUrl: string | null;
