@@ -516,15 +516,15 @@ Goal: make the private app and public experience genuinely mobile-first **and po
 - [x] MOBILE-023 Add public sticky CTA (folds STUDIO-013)
 - [x] MOBILE-024 Add swipe lightbox
 - [~] MOBILE-025 Optimize multi-step request form (mobile-optimized full-screen drawer; true multi-step → REQUESTUX)
-- [ ] MOBILE-026 Add responsive R2 images
-- [ ] MOBILE-027 Add lazy loading
-- [ ] MOBILE-028 Prevent layout shifts
-- [ ] MOBILE-029 Test slow mobile connections
-- [ ] MOBILE-030 Audit thumb reachability
-- [ ] MOBILE-031 Audit iPhone Safari
-- [ ] MOBILE-032 Audit Android Chrome
-- [ ] MOBILE-033 Audit 320 px viewport
-- [ ] MOBILE-034 Audit landscape mode
+- [ ] MOBILE-026 Add responsive R2 images (deferred → media-pipeline, with DEBT-013/017)
+- [x] MOBILE-027 Add lazy loading (galleries + asset tiles use loading="lazy")
+- [x] MOBILE-028 Prevent layout shifts (fixed aspect-ratio containers + sized media)
+- [ ] MOBILE-029 Test slow mobile connections (manual device QA)
+- [ ] MOBILE-030 Audit thumb reachability (manual device QA)
+- [ ] MOBILE-031 Audit iPhone Safari (manual device QA)
+- [ ] MOBILE-032 Audit Android Chrome (manual device QA)
+- [ ] MOBILE-033 Audit 320 px viewport (manual device QA)
+- [ ] MOBILE-034 Audit landscape mode (manual device QA)
 - [ ] MOBILE-035 Elevate Overview into a real mobile dashboard (KPI cards, trend, hierarchy)
 - [ ] MOBILE-036 Unify density, spacing scale and typography across mobile screens
 - [ ] MOBILE-037 Complete empty / loading (skeleton) / error states everywhere
