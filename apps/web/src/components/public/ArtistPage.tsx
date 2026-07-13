@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Badge, Button, Icon, cn } from "@mirae/ui";
-import { ArrowRight01Icon, CubeIcon } from "@hugeicons/core-free-icons";
+import { Badge, Button, Icon, Mark, cn } from "@mirae/ui";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { STUDIO_STATUS_META } from "../mockups/seed.ts";
 import { publicApi } from "../../lib/api.ts";
 
@@ -157,7 +157,7 @@ export function ArtistPage({ handle }: { handle: string }) {
 
       {/* Powered by */}
       <div className="mt-10 flex items-center justify-center gap-1.5 text-xs text-fg-subtle">
-        <Icon icon={CubeIcon} size={13} />
+        <Mark className="h-3 w-auto" />
         Powered by
         <Link to="/" className="font-medium text-fg-muted hover:text-fg">
           Mirae

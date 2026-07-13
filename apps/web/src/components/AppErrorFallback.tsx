@@ -1,5 +1,4 @@
-import { Button, Icon } from "@mirae/ui";
-import { CubeIcon } from "@hugeicons/core-free-icons";
+import { Button, Mark } from "@mirae/ui";
 
 // Full-screen, calm fallback for unrecoverable client crashes. Used by the
 // top-level ErrorBoundary in main.tsx. `reset` retries the render; a hard
@@ -14,9 +13,7 @@ export function AppErrorFallback({
   return (
     <div className="grid min-h-dvh place-items-center bg-surface px-6">
       <div className="flex w-full max-w-sm flex-col items-center gap-4 text-center">
-        <span className="flex size-9 items-center justify-center rounded-md bg-fg text-white">
-          <Icon icon={CubeIcon} size={20} />
-        </span>
+        <Mark className="h-7 w-auto text-fg" />
         <div className="space-y-1">
           <h1 className="text-base font-semibold tracking-tight text-fg">
             Something broke on our side

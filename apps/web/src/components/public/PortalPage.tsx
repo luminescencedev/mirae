@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Icon, Textarea, cn } from "@mirae/ui";
-import { CubeIcon } from "@hugeicons/core-free-icons";
+import { Button, Mark, Textarea, cn } from "@mirae/ui";
 import { Link } from "@tanstack/react-router";
 import { publicApi } from "../../lib/api.ts";
 import {
@@ -16,7 +15,7 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-surface-sunken">
       <div className="mx-auto max-w-lg px-6 py-12">{children}</div>
       <div className="mx-auto mt-8 flex max-w-lg items-center justify-center gap-1.5 px-6 pb-12 text-xs text-fg-subtle">
-        <Icon icon={CubeIcon} size={13} />
+        <Mark className="h-3 w-auto" />
         Powered by
         <Link to="/" className="font-medium text-fg-muted hover:text-fg">
           Mirae

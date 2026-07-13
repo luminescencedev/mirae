@@ -17,4 +17,11 @@ export default [
     files: ["apps/web/src/routes/**/*.{ts,tsx}"],
     rules: { "react-refresh/only-export-components": "off" },
   },
+  // Node build scripts (brand asset generation) run under Node, not the browser.
+  {
+    files: ["scripts/**/*.{mjs,js}"],
+    languageOptions: {
+      globals: { process: "readonly", console: "readonly" },
+    },
+  },
 ];

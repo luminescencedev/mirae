@@ -1,0 +1,44 @@
+.mirae-loader {
+  position: relative;
+  display: inline-block;
+  width: 3rem;
+  color: currentColor;
+  line-height: 0;
+}
+.mirae-loader svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: inherit;
+}
+.mirae-loader__track {
+  opacity: 0.12;
+}
+.mirae-loader__fill {
+  position: absolute;
+  inset: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mirae-loader__fill {
+    animation: mirae-loader-fill 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+  @keyframes mirae-loader-fill {
+    0% {
+      clip-path: inset(0 100% 0 0);
+    }
+    45% {
+      clip-path: inset(0 0 0 0);
+    }
+    60% {
+      clip-path: inset(0 0 0 0);
+    }
+    100% {
+      clip-path: inset(0 0 0 100%);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mirae-loader__fill {
+    clip-path: none;
+  }
+}

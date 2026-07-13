@@ -4,7 +4,7 @@
 
 ## Current sprint
 
-Sprint 10.5 — Repository and production baseline ✅ complete (all META-001…012 shipped). Full detail in docs/roadmap/POST_MVP_ROADMAP.md. **Next sprint: Sprint 11 — Mirae identity foundation (BRAND-001).**
+Sprint 11 — Mirae identity foundation ✅ complete (all BRAND-001…013 shipped; wordmark provisional per BRAND-003). Identity system in docs/product/BRAND.md + packages/ui/src/brand + apps/web/public. **Next sprint: Sprint 12 — Portfolio data & media infrastructure (PORTFOLIO-001).** Full detail in docs/roadmap/POST_MVP_ROADMAP.md.
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -266,23 +266,23 @@ _Complete._ Goal: make the repo, docs and production setup accurately represent 
 
 Next sprint: **Sprint 11 — Mirae identity foundation** (BRAND-001).
 
-## Sprint 11 — Mirae identity foundation
+## Sprint 11 — Mirae identity foundation ✅ complete
 
-Goal: a distinctive visual identity before redesigning public surfaces.
+_Complete._ Goal: a distinctive visual identity before redesigning public surfaces. The mark (rounded zigzag M) is locked; wordmark is provisional Inter (BRAND-003). Full system — vectors, `@mirae/ui` `<Mark/>`/`<Logo/>`/`<Loader/>`, favicon/app-icon/OG/email/avatar rasters — in [`../product/BRAND.md`](../product/BRAND.md), `packages/ui/src/brand/`, `apps/web/public/`. Rasters regenerate from vectors via `scripts/generate-brand-assets.mjs`.
 
-- [ ] BRAND-001 Lock brand attributes and personality
-- [ ] BRAND-002 Design the Mirae geometric symbol
-- [ ] BRAND-003 Design the Mirae wordmark
-- [ ] BRAND-004 Create responsive logo lockups
-- [ ] BRAND-005 Create monochrome variants
-- [ ] BRAND-006 Create favicon set
-- [ ] BRAND-007 Create application icon
-- [ ] BRAND-008 Create social avatar
-- [ ] BRAND-009 Define brand motion principles
-- [ ] BRAND-010 Create loading mark animation
-- [ ] BRAND-011 Create Open Graph composition system
-- [ ] BRAND-012 Create email branding assets
-- [ ] BRAND-013 Document logo and identity usage
+- [x] BRAND-001 Lock brand attributes and personality
+- [x] BRAND-002 Design the Mirae geometric symbol
+- [x] BRAND-003 Design the Mirae wordmark
+- [x] BRAND-004 Create responsive logo lockups
+- [x] BRAND-005 Create monochrome variants
+- [x] BRAND-006 Create favicon set
+- [x] BRAND-007 Create application icon
+- [x] BRAND-008 Create social avatar
+- [x] BRAND-009 Define brand motion principles
+- [x] BRAND-010 Create loading mark animation
+- [x] BRAND-011 Create Open Graph composition system
+- [x] BRAND-012 Create email branding assets
+- [x] BRAND-013 Document logo and identity usage
 
 ## Sprint 12 — Portfolio data & media infrastructure
 
@@ -421,7 +421,7 @@ Goal: meaningful artist expression through curated customization.
 
 ## Sprint 18 — Mobile product experience
 
-Goal: make the private app and public experience genuinely mobile-first.
+Goal: make the private app and public experience genuinely mobile-first **and polished to a professional bar** (premium on a phone, not merely responsive).
 
 - [ ] MOBILE-001 Add bottom navigation
 - [ ] MOBILE-002 Add mobile header
@@ -457,6 +457,10 @@ Goal: make the private app and public experience genuinely mobile-first.
 - [ ] MOBILE-032 Audit Android Chrome
 - [ ] MOBILE-033 Audit 320 px viewport
 - [ ] MOBILE-034 Audit landscape mode
+- [ ] MOBILE-035 Elevate Overview into a real mobile dashboard (KPI cards, trend, hierarchy)
+- [ ] MOBILE-036 Unify density, spacing scale and typography across mobile screens
+- [ ] MOBILE-037 Complete empty / loading (skeleton) / error states everywhere
+- [ ] MOBILE-038 Brand motion pass (press feedback, transitions, Loader; reduced-motion safe)
 
 ## Sprint 19 — Sharing, SEO & analytics
 
@@ -564,7 +568,7 @@ Goal: validate the complete experience with working artists before expanding fea
 
 ## Sprint 24 — Commission operations polish
 
-Goal: improve the private workflow only from validated beta feedback.
+Goal: improve the private workflow from validated beta feedback **and take the whole dashboard to a professional, finished bar** (full visual/interaction polish — premium product, not MVP).
 
 - [ ] OPS-001 Add editable commission metadata
 - [ ] OPS-002 Add internal artist notes
@@ -578,6 +582,12 @@ Goal: improve the private workflow only from validated beta feedback.
 - [ ] OPS-010 Add richer activity events
 - [ ] OPS-011 Add client history
 - [ ] OPS-012 Add justified bulk actions
+- [ ] OPS-013 Redesign Overview into a real dashboard (KPI cards, trends, needs-attention, activity)
+- [ ] OPS-014 Unify density, spacing, typography and component usage across the dashboard
+- [ ] OPS-015 Complete empty / loading / error / success states everywhere
+- [ ] OPS-016 Brand motion & press-feedback pass (shared easing; reduced-motion safe)
+- [ ] OPS-017 Full accessibility + keyboard-navigation pass
+- [ ] OPS-018 Apply Mirae identity consistently in-app (sidebar, loaders, favicons, emails)
 
 ## Sprint 25 — Subscription foundation
 
