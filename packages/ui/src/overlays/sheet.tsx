@@ -74,7 +74,10 @@ export function SheetContent({
 export function SheetHeader({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
-      className={cn("border-b border-border px-5 py-4", className)}
+      className={cn(
+        "border-b border-border px-5 pb-4 pt-[max(1rem,env(safe-area-inset-top))]",
+        className,
+      )}
       {...props}
     />
   );
@@ -122,7 +125,7 @@ export function SheetFooter({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex items-center gap-2 border-t border-border px-5 py-4",
+        "flex items-center gap-2 border-t border-border px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]",
         className,
       )}
       {...props}

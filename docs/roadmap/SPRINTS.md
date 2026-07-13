@@ -501,8 +501,8 @@ Goal: make the private app and public experience genuinely mobile-first **and po
 - [x] MOBILE-008 Redesign Overview for mobile
 - [x] MOBILE-009 Make Queue default to grouped list
 - [x] MOBILE-010 Keep board as optional mobile view
-- [ ] MOBILE-011 Convert commission detail to full-screen mobile route or sheet
-- [ ] MOBILE-012 Add sticky detail actions
+- [x] MOBILE-011 Convert commission detail to full-screen mobile route or sheet
+- [x] MOBILE-012 Add sticky detail actions
 - [ ] MOBILE-013 Redesign Requests list and detail
 - [ ] MOBILE-014 Add sticky Accept and Decline actions
 - [ ] MOBILE-015 Optimize Clients
