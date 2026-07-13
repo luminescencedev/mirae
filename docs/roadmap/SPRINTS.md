@@ -493,7 +493,7 @@ Goal: make the private app and public experience genuinely mobile-first **and po
 
 - [x] MOBILE-001 Add bottom navigation
 - [x] MOBILE-002 Add mobile header
-- [ ] MOBILE-003 Add safe-area support
+- [x] MOBILE-003 Add safe-area support
 - [ ] MOBILE-004 Add mobile More menu
 - [ ] MOBILE-005 Adapt search and notifications
 - [ ] MOBILE-006 Handle virtual keyboard correctly

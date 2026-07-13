@@ -249,7 +249,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-2 border-b border-border px-4 py-3 text-sm text-fg-muted">
+        <header
+          className="flex items-center gap-2 border-b border-border px-4 py-3 text-sm text-fg-muted"
+          style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))" }}
+        >
           <Button
             variant="ghost"
             size="icon"
