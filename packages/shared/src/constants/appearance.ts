@@ -18,6 +18,17 @@ export const APPEARANCE_PORTFOLIO_LAYOUTS = [
 ] as const;
 export const APPEARANCE_IMAGE_RADII = ["soft", "medium", "minimal"] as const;
 
+// Orderable public-page blocks (identity + powered-by are fixed top/bottom).
+export const APPEARANCE_SECTIONS = [
+  "links",
+  "about",
+  "work",
+  "commissions",
+  "faq",
+  "elsewhere",
+] as const;
+export type AppearanceSection = (typeof APPEARANCE_SECTIONS)[number];
+
 export type AppearanceAccent = (typeof APPEARANCE_ACCENTS)[number];
 export type AppearanceTypography = (typeof APPEARANCE_TYPOGRAPHY)[number];
 export type AppearanceHeroLayout = (typeof APPEARANCE_HERO_LAYOUTS)[number];
@@ -31,6 +42,7 @@ export type StudioAppearance = {
   heroLayout: AppearanceHeroLayout;
   portfolioLayout: AppearancePortfolioLayout;
   imageRadius: AppearanceImageRadius;
+  sectionOrder: AppearanceSection[];
   showBio: boolean;
   showSocials: boolean;
   showPoweredBy: boolean;
@@ -42,10 +54,30 @@ export const DEFAULT_APPEARANCE: StudioAppearance = {
   heroLayout: "cover",
   portfolioLayout: "editorial",
   imageRadius: "soft",
+  sectionOrder: [...APPEARANCE_SECTIONS],
   showBio: true,
   showSocials: true,
   showPoweredBy: true,
 };
+
+// Coerce input into a valid section order: known sections only, de-duplicated,
+// with any missing sections appended so every block always has a place.
+function normalizeSectionOrder(value: unknown): AppearanceSection[] {
+  const known = APPEARANCE_SECTIONS as readonly string[];
+  const seen = new Set<string>();
+  const out: AppearanceSection[] = [];
+  if (Array.isArray(value)) {
+    for (const raw of value) {
+      const v = String(raw);
+      if (known.includes(v) && !seen.has(v)) {
+        seen.add(v);
+        out.push(v as AppearanceSection);
+      }
+    }
+  }
+  for (const s of APPEARANCE_SECTIONS) if (!seen.has(s)) out.push(s);
+  return out;
+}
 
 function pick<T extends readonly string[]>(
   allowed: T,
@@ -77,6 +109,7 @@ export function normalizeAppearance(input: unknown): StudioAppearance {
       d.portfolioLayout,
     ),
     imageRadius: pick(APPEARANCE_IMAGE_RADII, c.imageRadius, d.imageRadius),
+    sectionOrder: normalizeSectionOrder(c.sectionOrder),
     showBio: bool(c.showBio, d.showBio),
     showSocials: bool(c.showSocials, d.showSocials),
     showPoweredBy: bool(c.showPoweredBy, d.showPoweredBy),

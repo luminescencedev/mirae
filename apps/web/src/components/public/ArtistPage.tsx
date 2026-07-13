@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useReducedMotion } from "motion/react";
@@ -321,6 +321,184 @@ function StudioView({
   );
   const simpleLinks = rest.filter((l) => l.style === "simple");
 
+  // Each orderable block, keyed by section name. Rendered in ap.sectionOrder;
+  // a block that has nothing to show is null and simply skipped.
+  const sectionNodes: Record<string, React.ReactNode> = {
+    links:
+      ap.showSocials && (heroLinks.length > 0 || cardLinks.length > 0) ? (
+        <section className="mb-14 flex flex-col gap-2">
+          {heroLinks.map((l) => (
+            <LinkCard key={l.id} link={l} />
+          ))}
+          {cardLinks.map((l) => (
+            <LinkCard key={l.id} link={l} />
+          ))}
+        </section>
+      ) : null,
+    about: profile.about ? (
+      <section className="mb-14">
+        <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-fg">
+          <span className="size-1.5 rounded-full bg-accent-500" />
+          About
+        </h2>
+        <p className="max-w-[46ch] whitespace-pre-line text-sm leading-relaxed text-fg-muted">
+          {profile.about}
+        </p>
+      </section>
+    ) : null,
+    work:
+      projects.length > 0 ? (
+        <section className="mb-14">
+          <h2 className="mb-4 flex items-center gap-2 text-sm font-medium text-fg">
+            <span className="size-1.5 rounded-full bg-accent-500" />
+            Selected work
+          </h2>
+          <div className="flex flex-col gap-8">
+            {orderedProjects.map((p) => (
+              <article key={p.id}>
+                <div className="mb-2 flex items-baseline justify-between gap-3">
+                  <h3 className="flex items-center gap-2 text-sm font-medium text-fg">
+                    {p.title}
+                    {p.id === featuredProjectId && (
+                      <span className="rounded-full bg-accent-50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-accent-700">
+                        Featured
+                      </span>
+                    )}
+                  </h3>
+                  <span className="font-mono text-xs text-fg-subtle">
+                    {p.projectType.replace(/_/g, " ")}
+                  </span>
+                </div>
+                {p.description && (
+                  <p className="mb-3 max-w-[46ch] text-sm leading-relaxed text-fg-muted">
+                    {p.description}
+                  </p>
+                )}
+                {p.assets.length > 0 && (
+                  <div
+                    className={cn(
+                      "grid gap-2",
+                      p.assets.length === 1 && ap.portfolioLayout === "editorial"
+                        ? "grid-cols-1"
+                        : galleryCols,
+                    )}
+                  >
+                    {p.assets.map((a, ai) => (
+                      <button
+                        key={a.id}
+                        type="button"
+                        onClick={() => onOpen(p.assets, ai)}
+                        className={cn(
+                          "group relative overflow-hidden border border-border/70 bg-surface-muted outline-none focus-visible:ring-2 focus-visible:ring-accent-500",
+                          radiusClass,
+                        )}
+                        style={{ aspectRatio: "4 / 3" }}
+                      >
+                        <img
+                          src={a.url}
+                          alt={a.altText ?? p.title}
+                          loading="lazy"
+                          className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null,
+    commissions:
+      commissionTypes.length > 0 ? (
+        <section className="mb-14">
+          <h2 className="mb-2 flex items-center gap-2 text-sm font-medium text-fg">
+            <span className="size-1.5 rounded-full bg-accent-500" />
+            Commissions
+          </h2>
+          <ul className="border-t border-border/70">
+            {commissionTypes.map((c) => (
+              <li
+                key={c.id}
+                className="flex items-center gap-4 border-b border-border/70 py-3.5"
+              >
+                {c.imageUrl && (
+                  <img
+                    src={c.imageUrl}
+                    alt=""
+                    className={cn(
+                      "size-11 shrink-0 border border-border/70 object-cover",
+                      radiusClass,
+                    )}
+                    loading="lazy"
+                  />
+                )}
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-fg">{c.name}</p>
+                  <p className="truncate text-xs text-fg-subtle">
+                    {c.turnaround ?? "flexible"}
+                    {c.slots != null ? ` · ${c.slots} slots` : ""}
+                  </p>
+                </div>
+                <span className="ml-auto text-sm font-semibold tabular-nums text-fg">
+                  {euro(c.priceFromCents)}
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isClosed}
+                  onClick={() => openReq(c.id)}
+                >
+                  Request
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null,
+    faq:
+      profile.faq.length > 0 ? (
+        <section className="mb-14">
+          <h2 className="mb-2 flex items-center gap-2 text-sm font-medium text-fg">
+            <span className="size-1.5 rounded-full bg-accent-500" />
+            FAQ
+          </h2>
+          <Accordion type="single" collapsible className="flex flex-col gap-2">
+            {profile.faq.map((f, i) => (
+              <AccordionItem
+                key={i}
+                value={`faq-${i}`}
+                className="border-border/70 bg-surface/85 backdrop-blur-sm"
+              >
+                <AccordionTrigger className="text-sm font-medium text-fg">
+                  {f.q}
+                </AccordionTrigger>
+                <AccordionContent className="border-border/70 text-sm leading-relaxed text-fg-muted">
+                  <p className="max-w-[46ch] whitespace-pre-line">{f.a}</p>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </section>
+      ) : null,
+    elsewhere:
+      ap.showSocials && simpleLinks.length > 0 ? (
+        <section className="mb-14">
+          <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-fg">
+            <span className="size-1.5 rounded-full bg-accent-500" />
+            Elsewhere
+          </h2>
+          <ul className="flex flex-col">
+            {simpleLinks.map((l) => (
+              <li key={l.id}>
+                <LinkRow link={l} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null,
+  };
+
   return (
     <div
       className="relative min-h-dvh bg-canvas"
@@ -394,190 +572,10 @@ function StudioView({
             )}
           </section>
 
-          {/* Featured links */}
-          {ap.showSocials && (heroLinks.length > 0 || cardLinks.length > 0) && (
-            <section className="mb-14 flex flex-col gap-2">
-              {heroLinks.map((l) => (
-                <LinkCard key={l.id} link={l} />
-              ))}
-              {cardLinks.map((l) => (
-                <LinkCard key={l.id} link={l} />
-              ))}
-            </section>
-          )}
-
-          {/* About */}
-          {profile.about && (
-            <section className="mb-14">
-              <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-fg">
-                <span className="size-1.5 rounded-full bg-accent-500" />
-                About
-              </h2>
-              <p className="max-w-[46ch] whitespace-pre-line text-sm leading-relaxed text-fg-muted">
-                {profile.about}
-              </p>
-            </section>
-          )}
-
-          {/* Selected work */}
-          {projects.length > 0 && (
-            <section className="mb-14">
-              <h2 className="mb-4 flex items-center gap-2 text-sm font-medium text-fg">
-                <span className="size-1.5 rounded-full bg-accent-500" />
-                Selected work
-              </h2>
-              <div className="flex flex-col gap-8">
-                {orderedProjects.map((p) => (
-                  <article key={p.id}>
-                    <div className="mb-2 flex items-baseline justify-between gap-3">
-                      <h3 className="flex items-center gap-2 text-sm font-medium text-fg">
-                        {p.title}
-                        {p.id === featuredProjectId && (
-                          <span className="rounded-full bg-accent-50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-accent-700">
-                            Featured
-                          </span>
-                        )}
-                      </h3>
-                      <span className="font-mono text-xs text-fg-subtle">
-                        {p.projectType.replace(/_/g, " ")}
-                      </span>
-                    </div>
-                    {p.description && (
-                      <p className="mb-3 max-w-[46ch] text-sm leading-relaxed text-fg-muted">
-                        {p.description}
-                      </p>
-                    )}
-                    {p.assets.length > 0 && (
-                      <div
-                        className={cn(
-                          "grid gap-2",
-                          p.assets.length === 1 &&
-                            ap.portfolioLayout === "editorial"
-                            ? "grid-cols-1"
-                            : galleryCols,
-                        )}
-                      >
-                        {p.assets.map((a, ai) => (
-                          <button
-                            key={a.id}
-                            type="button"
-                            onClick={() => onOpen(p.assets, ai)}
-                            className={cn(
-                              "group relative overflow-hidden border border-border/70 bg-surface-muted outline-none focus-visible:ring-2 focus-visible:ring-accent-500",
-                              radiusClass,
-                            )}
-                            style={{ aspectRatio: "4 / 3" }}
-                          >
-                            <img
-                              src={a.url}
-                              alt={a.altText ?? p.title}
-                              loading="lazy"
-                              className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </article>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Commissions — quiet fixed-price menu */}
-          {commissionTypes.length > 0 && (
-            <section className="mb-14">
-              <h2 className="mb-2 flex items-center gap-2 text-sm font-medium text-fg">
-                <span className="size-1.5 rounded-full bg-accent-500" />
-                Commissions
-              </h2>
-              <ul className="border-t border-border/70">
-                {commissionTypes.map((c) => (
-                  <li
-                    key={c.id}
-                    className="flex items-center gap-4 border-b border-border/70 py-3.5"
-                  >
-                    {c.imageUrl && (
-                      <img
-                        src={c.imageUrl}
-                        alt=""
-                        className={cn(
-                          "size-11 shrink-0 border border-border/70 object-cover",
-                          radiusClass,
-                        )}
-                        loading="lazy"
-                      />
-                    )}
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-fg">{c.name}</p>
-                      <p className="truncate text-xs text-fg-subtle">
-                        {c.turnaround ?? "flexible"}
-                        {c.slots != null ? ` · ${c.slots} slots` : ""}
-                      </p>
-                    </div>
-                    <span className="ml-auto text-sm font-semibold tabular-nums text-fg">
-                      {euro(c.priceFromCents)}
-                    </span>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={isClosed}
-                      onClick={() => openReq(c.id)}
-                    >
-                      Request
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {/* FAQ */}
-          {profile.faq.length > 0 && (
-            <section className="mb-14">
-              <h2 className="mb-2 flex items-center gap-2 text-sm font-medium text-fg">
-                <span className="size-1.5 rounded-full bg-accent-500" />
-                FAQ
-              </h2>
-              <Accordion
-                type="single"
-                collapsible
-                className="flex flex-col gap-2"
-              >
-                {profile.faq.map((f, i) => (
-                  <AccordionItem
-                    key={i}
-                    value={`faq-${i}`}
-                    className="border-border/70 bg-surface/85 backdrop-blur-sm"
-                  >
-                    <AccordionTrigger className="text-sm font-medium text-fg">
-                      {f.q}
-                    </AccordionTrigger>
-                    <AccordionContent className="border-border/70 text-sm leading-relaxed text-fg-muted">
-                      <p className="max-w-[46ch] whitespace-pre-line">{f.a}</p>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </section>
-          )}
-
-          {/* Elsewhere */}
-          {ap.showSocials && simpleLinks.length > 0 && (
-            <section className="mb-14">
-              <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-fg">
-                <span className="size-1.5 rounded-full bg-accent-500" />
-                Elsewhere
-              </h2>
-              <ul className="flex flex-col">
-                {simpleLinks.map((l) => (
-                  <li key={l.id}>
-                    <LinkRow link={l} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+          {/* Movable blocks, rendered in the artist's chosen order */}
+          {ap.sectionOrder.map((key) => (
+            <Fragment key={key}>{sectionNodes[key]}</Fragment>
+          ))}
 
           {ap.showPoweredBy && (
             <div className="flex items-center gap-1.5 text-xs text-fg-subtle">

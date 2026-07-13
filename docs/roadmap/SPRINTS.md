@@ -450,7 +450,7 @@ Ordering (drag-and-drop family)
 - [x] DEBT-004 (PORTUI-005) Add project drag-and-drop ordering
 - [x] DEBT-005 (PORTUI-007) Add asset ordering
 - [x] DEBT-006 (LINKS-010) Add link drag-and-drop ordering
-- [ ] DEBT-007 (CUSTOM-008) Add section ordering (page-block order — needs appearance.sectionOrder)
+- [x] DEBT-007 (CUSTOM-008) Add section ordering (page-block order via appearance.sectionOrder)
 
 Links polish
 

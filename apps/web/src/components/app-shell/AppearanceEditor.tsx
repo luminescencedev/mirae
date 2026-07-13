@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { Reorder, useDragControls } from "motion/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
+  Icon,
   Select,
   SelectContent,
   SelectItem,
@@ -9,8 +11,44 @@ import {
   SelectValue,
   Switch,
 } from "@mirae/ui";
-import { DEFAULT_APPEARANCE, type StudioAppearance } from "@mirae/shared";
+import { DragDropVerticalIcon } from "@hugeicons/core-free-icons";
+import {
+  DEFAULT_APPEARANCE,
+  type AppearanceSection,
+  type StudioAppearance,
+} from "@mirae/shared";
 import { artistApi } from "../../lib/api.ts";
+
+const SECTION_LABELS: Record<AppearanceSection, string> = {
+  links: "Featured links",
+  about: "About",
+  work: "Selected work",
+  commissions: "Commissions",
+  faq: "FAQ",
+  elsewhere: "Elsewhere links",
+};
+
+function SectionRow({ id }: { id: AppearanceSection }) {
+  const controls = useDragControls();
+  return (
+    <Reorder.Item
+      value={id}
+      dragListener={false}
+      dragControls={controls}
+      className="flex items-center gap-2 rounded-lg border border-border bg-surface px-2.5 py-2"
+    >
+      <button
+        type="button"
+        aria-label="Drag to reorder"
+        onPointerDown={(e) => controls.start(e)}
+        className="grid size-7 shrink-0 cursor-grab touch-none place-items-center rounded-md text-fg-subtle hover:bg-surface-muted hover:text-fg active:cursor-grabbing"
+      >
+        <Icon icon={DragDropVerticalIcon} size={14} />
+      </button>
+      <span className="text-sm text-fg">{SECTION_LABELS[id]}</span>
+    </Reorder.Item>
+  );
+}
 
 const KEY = ["artist", "me"];
 
@@ -150,6 +188,27 @@ export function AppearanceEditor() {
             onCheckedChange={(v) => set("showPoweredBy", v)}
           />
         </Row>
+      </div>
+
+      {/* Section order */}
+      <div className="mt-6">
+        <p className="mb-1 text-sm font-medium text-fg">Section order</p>
+        <p className="mb-3 text-xs text-fg-subtle">
+          Drag to reorder the blocks on your public page.
+        </p>
+        <Reorder.Group
+          as="div"
+          axis="y"
+          values={cfg.sectionOrder}
+          onReorder={(v) =>
+            set("sectionOrder", v as StudioAppearance["sectionOrder"])
+          }
+          className="flex flex-col gap-1.5"
+        >
+          {cfg.sectionOrder.map((s) => (
+            <SectionRow key={s} id={s} />
+          ))}
+        </Reorder.Group>
       </div>
 
       <div className="mt-5 flex items-center gap-3">
