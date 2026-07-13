@@ -496,8 +496,8 @@ Goal: make the private app and public experience genuinely mobile-first **and po
 - [x] MOBILE-003 Add safe-area support
 - [x] MOBILE-004 Add mobile More menu
 - [x] MOBILE-005 Adapt search and notifications
-- [ ] MOBILE-006 Handle virtual keyboard correctly
-- [ ] MOBILE-007 Remove hover-only interactions
+- [x] MOBILE-006 Handle virtual keyboard correctly
+- [x] MOBILE-007 Remove hover-only interactions
 - [ ] MOBILE-008 Redesign Overview for mobile
 - [ ] MOBILE-009 Make Queue default to grouped list
 - [ ] MOBILE-010 Keep board as optional mobile view

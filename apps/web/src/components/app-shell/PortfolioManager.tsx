@@ -542,7 +542,7 @@ function AssetTile({
           aria-label="Drag to reorder"
           title="Drag to reorder"
           {...handleProps}
-          className="absolute left-1.5 top-1.5 grid size-7 cursor-grab place-items-center rounded-md bg-black/55 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 active:cursor-grabbing"
+          className="absolute left-1.5 top-1.5 grid size-7 cursor-grab place-items-center rounded-md bg-black/55 text-white opacity-100 transition-opacity focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 active:cursor-grabbing"
         >
           <Icon icon={DragDropVerticalIcon} size={14} />
         </button>
@@ -550,7 +550,7 @@ function AssetTile({
           type="button"
           aria-label="Remove image"
           onClick={onRemove}
-          className="absolute right-1.5 top-1.5 grid size-7 place-items-center rounded-md bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+          className="absolute right-1.5 top-1.5 grid size-7 place-items-center rounded-md bg-black/60 text-white opacity-100 transition-opacity focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100"
         >
           <Icon icon={Delete02Icon} size={14} />
         </button>
@@ -563,7 +563,7 @@ function AssetTile({
             "absolute bottom-1.5 left-1.5 grid size-7 place-items-center rounded-md transition-opacity",
             isCover
               ? "bg-accent-500 text-white opacity-100"
-              : "bg-black/60 text-white opacity-0 group-hover:opacity-100 focus-visible:opacity-100",
+              : "bg-black/60 text-white opacity-100 focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100",
           )}
         >
           <Icon icon={StarIcon} size={14} />
