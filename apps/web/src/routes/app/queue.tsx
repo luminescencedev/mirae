@@ -27,6 +27,14 @@ const ENTER = {
 
 function Queue() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Default to the grouped list on phones (the board is column-heavy); the
+  // board stays available as a tab.
+  const [view, setView] = useState<string>(() =>
+    typeof window !== "undefined" &&
+    window.matchMedia("(max-width: 767px)").matches
+      ? "list"
+      : "board",
+  );
   const {
     data: commissions = [],
     isLoading,
@@ -52,7 +60,7 @@ function Queue() {
             : `${commissions.length} commission${commissions.length === 1 ? "" : "s"} · ${active} active`
         }
       />
-      <div className="px-6 py-6">
+      <div className="px-4 py-5 sm:px-6 sm:py-6">
         {isLoading ? (
           <LoadingState label="Loading queue…" />
         ) : isError ? (
@@ -61,7 +69,7 @@ function Queue() {
             onRetry={() => refetch()}
           />
         ) : (
-          <Tabs defaultValue="board">
+          <Tabs value={view} onValueChange={setView}>
             <TabsList>
               <TabsTrigger value="board">Board</TabsTrigger>
               <TabsTrigger value="list">List</TabsTrigger>

@@ -499,8 +499,8 @@ Goal: make the private app and public experience genuinely mobile-first **and po
 - [x] MOBILE-006 Handle virtual keyboard correctly
 - [x] MOBILE-007 Remove hover-only interactions
 - [x] MOBILE-008 Redesign Overview for mobile
-- [ ] MOBILE-009 Make Queue default to grouped list
-- [ ] MOBILE-010 Keep board as optional mobile view
+- [x] MOBILE-009 Make Queue default to grouped list
+- [x] MOBILE-010 Keep board as optional mobile view
 - [ ] MOBILE-011 Convert commission detail to full-screen mobile route or sheet
 - [ ] MOBILE-012 Add sticky detail actions
 - [ ] MOBILE-013 Redesign Requests list and detail
