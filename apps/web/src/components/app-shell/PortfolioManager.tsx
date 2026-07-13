@@ -13,6 +13,7 @@ import {
   AlertDialogTrigger,
   Badge,
   Button,
+  ErrorState,
   Icon,
   Input,
   Progress,
@@ -69,7 +70,12 @@ const VISIBILITY_LABELS: Record<ProjectVisibility, string> = {
 export function PortfolioManager() {
   const qc = useQueryClient();
   const invalidate = () => qc.invalidateQueries({ queryKey: KEY });
-  const { data: projects, isLoading } = useQuery({
+  const {
+    data: projects,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: KEY,
     queryFn: portfolioApi.list,
   });
@@ -148,6 +154,11 @@ export function PortfolioManager() {
             </div>
           ))}
         </div>
+      ) : isError ? (
+        <ErrorState
+          hint="Couldn’t load your portfolio."
+          onRetry={() => refetch()}
+        />
       ) : !projects?.length ? (
         <div className="grid place-items-center gap-2 rounded-xl border border-dashed border-border px-6 py-12 text-center">
           <div className="text-fg-subtle [&_svg]:size-6">

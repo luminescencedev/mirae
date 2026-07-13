@@ -46,19 +46,46 @@ export function OverviewView() {
   const delivered = commissions.filter((c) => c.status === "delivered").length;
   const earnedCents = commissions.reduce((s, c) => s + (c.paidCents ?? 0), 0);
 
-  const stats: { label: string; value: string; icon: typeof InboxIcon }[] = [
-    { label: "Active", value: String(active.length), icon: PaintBrush01Icon },
+  // Derived sublabels — small, real, no fake trends.
+  const WEEK = 7 * 24 * 60 * 60 * 1000;
+  const dueSoon = active.filter(
+    (c) => c.deadline && new Date(c.deadline).getTime() - Date.now() < WEEK,
+  ).length;
+  const paidCount = commissions.filter((c) => (c.paidCents ?? 0) > 0).length;
+
+  type Stat = {
+    label: string;
+    value: string;
+    sub: string;
+    icon: typeof InboxIcon;
+    highlight?: boolean;
+  };
+  const stats: Stat[] = [
+    {
+      label: "Active",
+      value: String(active.length),
+      sub: dueSoon > 0 ? `${dueSoon} due this week` : "on track",
+      icon: PaintBrush01Icon,
+    },
     {
       label: "New requests",
       value: String(newRequests.length),
+      sub: newRequests.length > 0 ? "needs a reply" : "all caught up",
       icon: InboxIcon,
+      highlight: newRequests.length > 0,
     },
     {
       label: "Delivered",
       value: String(delivered),
+      sub: "all time",
       icon: CheckmarkCircle02Icon,
     },
-    { label: "Earned", value: euro(earnedCents), icon: Money03Icon },
+    {
+      label: "Earned",
+      value: euro(earnedCents),
+      sub: `${paidCount} paid`,
+      icon: Money03Icon,
+    },
   ];
 
   return (
@@ -70,18 +97,36 @@ export function OverviewView() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: i * 0.05, ease: EASE_OUT }}
-            className="rounded-xl border border-border bg-surface p-4 shadow-soft"
+            className={cn(
+              "rounded-xl border bg-surface p-4 shadow-soft",
+              s.highlight ? "border-accent-500/40 ring-1 ring-accent-500/20" : "border-border",
+            )}
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium uppercase tracking-wide text-fg-subtle">
                 {s.label}
               </span>
-              <span className="flex size-7 items-center justify-center rounded-md bg-surface-sunken text-fg-muted">
+              <span
+                className={cn(
+                  "flex size-7 items-center justify-center rounded-md",
+                  s.highlight
+                    ? "bg-accent-50 text-accent-600"
+                    : "bg-surface-sunken text-fg-muted",
+                )}
+              >
                 <Icon icon={s.icon} size={16} strokeWidth={1.8} />
               </span>
             </div>
             <div className="mt-2.5 text-2xl font-semibold tracking-tight tabular-nums text-fg">
               {s.value}
+            </div>
+            <div
+              className={cn(
+                "mt-0.5 text-xs",
+                s.highlight ? "font-medium text-accent-700" : "text-fg-subtle",
+              )}
+            >
+              {s.sub}
             </div>
           </motion.div>
         ))}

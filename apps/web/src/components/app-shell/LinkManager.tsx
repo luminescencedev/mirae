@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
   Button,
+  ErrorState,
   Icon,
   Input,
   Select,
@@ -79,7 +80,12 @@ const PLATFORMS = [
 export function LinkManager() {
   const qc = useQueryClient();
   const invalidate = () => qc.invalidateQueries({ queryKey: KEY });
-  const { data: links, isLoading } = useQuery({
+  const {
+    data: links,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: KEY,
     queryFn: linksApi.list,
   });
@@ -158,6 +164,8 @@ export function LinkManager() {
             <Skeleton key={i} className="h-14 w-full rounded-xl" />
           ))}
         </div>
+      ) : isError ? (
+        <ErrorState hint="Couldn’t load your links." onRetry={() => refetch()} />
       ) : !links?.length ? (
         <div className="grid place-items-center gap-2 rounded-xl border border-dashed border-border px-6 py-10 text-center">
           <div className="text-fg-subtle">

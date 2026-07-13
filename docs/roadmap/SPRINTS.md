@@ -525,10 +525,28 @@ Goal: make the private app and public experience genuinely mobile-first **and po
 - [ ] MOBILE-032 Audit Android Chrome (manual device QA)
 - [ ] MOBILE-033 Audit 320 px viewport (manual device QA)
 - [ ] MOBILE-034 Audit landscape mode (manual device QA)
-- [ ] MOBILE-035 Elevate Overview into a real mobile dashboard (KPI cards, trend, hierarchy)
-- [ ] MOBILE-036 Unify density, spacing scale and typography across mobile screens
-- [ ] MOBILE-037 Complete empty / loading (skeleton) / error states everywhere
-- [ ] MOBILE-038 Brand motion pass (press feedback, transitions, Loader; reduced-motion safe)
+- [x] MOBILE-035 Elevate Overview into a real mobile dashboard (KPI cards, trend, hierarchy)
+- [x] MOBILE-036 Unify density, spacing scale and typography across mobile screens
+- [x] MOBILE-037 Complete empty / loading (skeleton) / error states everywhere
+- [x] MOBILE-038 Brand motion pass (press feedback, transitions, Loader; reduced-motion safe)
+
+Completion notes (Sprint 18): mobile-first shell + premium on both platforms.
+Shipped — bottom nav, mobile header (mark + page), safe-area (viewport-fit=cover
++ insets), mobile overflow menu (search/sign-out), mobile-adapted dialogs,
+virtual-keyboard handling, removal of hover-only controls, tighter global mobile
+gutter (px-4→sm:px-6). Page work: Overview dashboard (KPI cards with real
+sublabels + highlighted actionable stat); Queue defaults to grouped list on
+phones (board optional); Requests/Clients/Deliveries responsive; commission +
+request detail as full-screen sheets with safe-area sticky actions; quote /
+payment / portal / delivery mobile-optimized. Touch drag reordering (motion
+Reorder), gallery/camera upload, studio-page Edit/Preview switch (folds
+CUSTOM-010 + LINKS-017), persistent public request CTA (folds STUDIO-013), swipe
+lightbox. Perf: lazy loading + CLS-safe aspect containers. Polish: global Button
+press feedback (reduced-motion safe), unified density via shared PageHeader /
+cards / gutters, error+loading+empty states across list screens and managers.
+Deferred → media-pipeline: MOBILE-026 responsive R2 images (with DEBT-013/017).
+Pending manual device QA: MOBILE-029..034 (slow connections, thumb reach, iPhone
+Safari, Android Chrome, 320px, landscape).
 
 ## Sprint 19 — Sharing, SEO & analytics
 

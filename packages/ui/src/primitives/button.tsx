@@ -7,7 +7,7 @@ import { cn } from "../utils/cn.ts";
 // padding tightens when an icon is present (has-[>svg]). `asChild` renders the
 // styles onto another element via Radix Slot. See docs/DESIGN_SYSTEM.md.
 export const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all disabled:pointer-events-none disabled:opacity-50 focus-visible:border-accent-500 focus-visible:ring-[3px] focus-visible:ring-accent-500/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium outline-none transition-all active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100 focus-visible:border-accent-500 focus-visible:ring-[3px] focus-visible:ring-accent-500/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
