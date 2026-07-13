@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  animate,
-  useMotionValue,
-  useReducedMotion,
-  motion,
-} from "motion/react";
+import { animate, useMotionValue, motion } from "motion/react";
 import { Badge, Button, Icon, Mark, cn } from "@mirae/ui";
 import {
   DashboardSquare01Icon,
@@ -70,15 +65,12 @@ function NavList({
   activeIndex: number;
   newRequests: number;
 }) {
-  const reduce = useReducedMotion();
   const [hovered, setHovered] = useState<number | null>(null);
   const barIndex = hovered ?? (activeIndex >= 0 ? activeIndex : 0);
   const y = useMotionValue(barIndex * NAV_STEP);
 
   const move = (i: number) => {
-    const target = i * NAV_STEP;
-    if (reduce) y.set(target);
-    else animate(y, target, { type: "spring", stiffness: 420, damping: 38 });
+    animate(y, i * NAV_STEP, { type: "spring", stiffness: 420, damping: 38 });
   };
 
   return (

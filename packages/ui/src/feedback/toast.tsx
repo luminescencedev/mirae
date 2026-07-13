@@ -44,7 +44,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           warning: <Icon icon={Alert02Icon} size={18} />,
           info: <Icon icon={InformationCircleIcon} size={18} />,
           loading: (
-            <span className="inline-flex animate-spin motion-reduce:animate-none">
+            <span className="inline-flex animate-spin">
               <Icon icon={Loading03Icon} size={18} />
             </span>
           ),

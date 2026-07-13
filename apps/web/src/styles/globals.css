@@ -207,25 +207,6 @@
     outline: 2px solid var(--color-accent-500);
     outline-offset: 2px;
   }
-
-  /* Respect reduced-motion — kill non-essential animation. */
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-    /* Toasts (sonner) keep their transitions — the stack-expand and
-       swipe-to-dismiss are functional interactions, not decoration. */
-    [data-sonner-toaster],
-    [data-sonner-toaster] * {
-      animation-duration: revert !important;
-      transition-duration: revert !important;
-    }
-  }
 }
 
 /* Accordion (Radix) height animation — uses the measured content height var. */
