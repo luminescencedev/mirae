@@ -283,7 +283,7 @@ featured
 
 ## Goal
 
-Replace the current functional profile card with a portfolio-first artist homepage.
+Replace the current functional profile card with a **real, unique, creative portfolio homepage** an artist is proud to put in their bio — never a templated profile. Artwork-first, expressive, with **multiple layout variants** (editorial / grid / compact) so pages don't look identical. On mobile it collapses to a **compact link-in-bio feel** without losing the artwork-first hierarchy. This is the single link an artist shares everywhere. See the locked vision in [`../product/PUBLIC_STUDIO_SPEC.md`](../product/PUBLIC_STUDIO_SPEC.md) §1.
 
 ## Tickets
 
@@ -338,7 +338,7 @@ Powered by Mirae
 
 ## Goal
 
-Allow visitors to begin a commission request without breaking the public-studio experience.
+Allow visitors to request a commission without breaking the public-studio experience. **Fiverr-like and decisive**: an in-page drawer/modal where the visitor **must pick a commission type** (each with an **artist-fixed price**, shown and locked — no open budget negotiation), then brief + contact + send. Simple, not a long wizard. See [`../product/PUBLIC_STUDIO_SPEC.md`](../product/PUBLIC_STUDIO_SPEC.md) §7 + §9.
 
 ## Tickets
 
