@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { eq } from "drizzle-orm";
 import { createDb, artistProfiles } from "@mirae/db";
+import { normalizeAppearance, type StudioAppearance } from "@mirae/shared";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist, getUserId } from "../lib/session.ts";
 
@@ -38,6 +39,7 @@ artistsRoutes.patch("/me", async (c) => {
     tagline?: string | null;
     bio?: string | null;
     status?: Status;
+    appearance?: StudioAppearance;
   } = {};
   if (typeof body.displayName === "string" && body.displayName.trim())
     patch.displayName = body.displayName.trim();
@@ -45,6 +47,8 @@ artistsRoutes.patch("/me", async (c) => {
     patch.tagline = body.tagline ? String(body.tagline) : null;
   if ("bio" in body) patch.bio = body.bio ? String(body.bio) : null;
   if (STATUSES.includes(body.status)) patch.status = body.status as Status;
+  if ("appearance" in body)
+    patch.appearance = normalizeAppearance(body.appearance);
 
   if (Object.keys(patch).length === 0) return c.json({ profile: artist });
 

@@ -103,9 +103,11 @@ export function CommissionTypesEditor() {
   }
 
   return (
-    <section>
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold">Commission types</h2>
+    <section className="flex flex-col gap-4">
+      <div className="flex items-start justify-between gap-4">
+        <p className="text-sm text-fg-subtle">
+          Fixed-price services visitors can request from your public page.
+        </p>
         <Button size="sm" onClick={openAdd}>
           <Icon icon={Add01Icon} strokeWidth={1.8} />
           Add type

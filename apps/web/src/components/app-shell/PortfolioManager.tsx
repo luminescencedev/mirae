@@ -92,16 +92,9 @@ export function PortfolioManager() {
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-semibold tracking-tight text-fg">
-            Portfolio
-          </h2>
-          <p className="text-sm text-fg-subtle">
-            Your work, shown first on your public page. Drafts stay private.
-          </p>
-        </div>
-      </div>
+      <p className="text-sm text-fg-subtle">
+        Your work, shown first on your public page. Drafts stay private.
+      </p>
 
       <form
         className="flex gap-2"

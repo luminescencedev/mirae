@@ -108,12 +108,9 @@ export function LinkManager() {
 
   return (
     <section className="flex flex-col gap-4">
-      <div>
-        <h2 className="text-lg font-semibold tracking-tight text-fg">Links</h2>
-        <p className="text-sm text-fg-subtle">
-          Your shop, socials and anything else — shown on your public page.
-        </p>
-      </div>
+      <p className="text-sm text-fg-subtle">
+        Your shop, socials and anything else — shown on your public page.
+      </p>
 
       <form
         className="flex flex-wrap gap-2"

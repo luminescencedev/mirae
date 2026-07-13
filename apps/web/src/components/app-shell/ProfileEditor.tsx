@@ -71,20 +71,20 @@ export function ProfileEditor() {
 
   return (
     <form
-      className="rounded-xl border border-border bg-surface p-5 shadow-soft"
+      className="flex flex-col"
       onSubmit={(e) => {
         e.preventDefault();
         save.mutate();
       }}
     >
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold">Profile</h2>
+      <p className="text-sm text-fg-subtle">
+        Your name, photo, bio and availability.
         {profile && (
-          <span className="text-xs text-fg-subtle">
+          <span className="ml-1 text-fg-muted">
             usemirae.com/@{profile.handle}
           </span>
         )}
-      </div>
+      </p>
 
       {/* Avatar + cover */}
       <div className="mt-4 flex items-center gap-4">

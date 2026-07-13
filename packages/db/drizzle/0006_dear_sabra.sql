@@ -1,0 +1,1 @@
+ALTER TABLE "artist_profiles" ADD COLUMN "appearance" jsonb;
