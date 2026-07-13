@@ -69,11 +69,54 @@ export type PublicProfile = {
   tagline: string | null;
   bio: string | null;
   status: StudioStatus;
+  avatarUrl: string | null;
+  coverUrl: string | null;
+};
+
+export type PublicAsset = {
+  id: string;
+  altText: string | null;
+  width: number | null;
+  height: number | null;
+  blurData: string | null;
+  url: string;
+};
+
+export type PublicProject = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  projectType: ProjectType;
+  featured: boolean;
+  assets: PublicAsset[];
+};
+
+export type PublicLink = {
+  id: string;
+  title: string;
+  url: string;
+  platform: string | null;
+  type: LinkType;
+  style: LinkStyle;
+  featured: boolean;
 };
 
 export type PublicStudio = {
   profile: PublicProfile;
   commissionTypes: CommissionType[];
+  projects: PublicProject[];
+  featuredProjectId: string | null;
+  links: PublicLink[];
+};
+
+// Fire-and-forget click counter for a public link.
+export const trackLinkClick = (id: string) => {
+  try {
+    navigator.sendBeacon?.(`/api/artist-links/${id}/click`);
+  } catch {
+    // never block navigation
+  }
 };
 
 export type RequestInput = {
