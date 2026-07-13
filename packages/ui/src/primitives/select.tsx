@@ -49,6 +49,7 @@ export function SelectContent({
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
         position={position}
+        data-lenis-prevent
         className={cn(
           "z-50 max-h-72 min-w-[8rem] overflow-hidden rounded-lg border border-border bg-surface shadow-panel",
           position === "popper" && "w-[var(--radix-select-trigger-width)]",

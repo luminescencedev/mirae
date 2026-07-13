@@ -110,6 +110,8 @@ export function SheetDescription({
 export function SheetBody({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
+      // Native scroll inside the sheet (opt out of Lenis smooth-scroll).
+      data-lenis-prevent
       className={cn("flex-1 overflow-auto px-5 py-4", className)}
       {...props}
     />
