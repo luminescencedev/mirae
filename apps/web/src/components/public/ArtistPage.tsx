@@ -15,11 +15,13 @@ import {
 } from "@mirae/ui";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { RequestDrawer } from "./RequestDrawer.tsx";
+import { linkIcon } from "../../lib/platform-icons.ts";
 import demoBg from "../../assets/studio-demo-bg.png";
 import {
   publicApi,
   trackLinkClick,
   type PublicAsset,
+  type PublicLink,
   type PublicStudio,
 } from "../../lib/api.ts";
 
@@ -194,6 +196,69 @@ function StudioSkeleton() {
   );
 }
 
+// A link rendered as a card. `featured` gets accent emphasis; `card`/`media`
+// share the quieter neutral treatment. All carry a platform icon.
+function LinkCard({ link }: { link: PublicLink }) {
+  const isFeatured = link.featured || link.style === "featured";
+  return (
+    <a
+      href={link.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => trackLinkClick(link.id)}
+      className={cn(
+        "group flex items-center gap-3 rounded-xl border px-4 py-3.5 text-sm backdrop-blur-sm transition-colors",
+        isFeatured
+          ? "border-accent-500/40 bg-accent-50/70 hover:border-accent-500"
+          : "border-border/70 bg-surface/85 hover:border-accent-500",
+      )}
+    >
+      <span
+        className={cn(
+          "grid size-8 shrink-0 place-items-center rounded-lg",
+          isFeatured
+            ? "bg-accent-500/15 text-accent-700"
+            : "bg-surface-muted text-fg-muted",
+        )}
+      >
+        <Icon icon={linkIcon(link.platform, link.type)} size={16} />
+      </span>
+      <span className="min-w-0">
+        <span className="block truncate font-medium text-fg">{link.title}</span>
+        {link.platform && link.platform !== "custom" && (
+          <span className="block truncate font-mono text-xs text-fg-subtle">
+            {link.platform}
+          </span>
+        )}
+      </span>
+      <span className="ml-auto text-fg-subtle transition-all group-hover:translate-x-0.5 group-hover:text-accent-600">
+        ↗
+      </span>
+    </a>
+  );
+}
+
+// A link rendered as a quiet text row (the "simple" style).
+function LinkRow({ link }: { link: PublicLink }) {
+  return (
+    <a
+      href={link.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => trackLinkClick(link.id)}
+      className="group -mx-2 flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm text-fg-muted transition-colors hover:bg-fg/5 hover:text-fg"
+    >
+      <Icon
+        icon={linkIcon(link.platform, link.type)}
+        size={15}
+        className="text-fg-subtle group-hover:text-fg-muted"
+      />
+      {link.title}
+      <span className="ml-auto text-fg-subtle">↗</span>
+    </a>
+  );
+}
+
 function StudioView({
   data,
   handle,
@@ -243,8 +308,14 @@ function StudioView({
   const cover = profile.coverUrl ?? demoBg;
   const heroMode = ap.heroLayout; // "cover" | "split" | "minimal"
 
-  const featured = links.filter((l) => l.featured || l.style !== "simple");
-  const simple = links.filter((l) => !featured.includes(l));
+  // Group links by how they render: hero cards (featured), quieter cards
+  // (card/media) and plain rows (simple).
+  const heroLinks = links.filter((l) => l.featured || l.style === "featured");
+  const rest = links.filter((l) => !heroLinks.includes(l));
+  const cardLinks = rest.filter(
+    (l) => l.style === "card" || l.style === "media",
+  );
+  const simpleLinks = rest.filter((l) => l.style === "simple");
 
   return (
     <div
@@ -320,27 +391,13 @@ function StudioView({
           </section>
 
           {/* Featured links */}
-          {ap.showSocials && featured.length > 0 && (
+          {ap.showSocials && (heroLinks.length > 0 || cardLinks.length > 0) && (
             <section className="mb-14 flex flex-col gap-2">
-              {featured.map((l) => (
-                <a
-                  key={l.id}
-                  href={l.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => trackLinkClick(l.id)}
-                  className="group flex items-center gap-3 rounded-xl border border-border/70 bg-surface/85 px-4 py-3.5 text-sm backdrop-blur-sm transition-colors hover:border-accent-500"
-                >
-                  <span className="font-medium text-fg">{l.title}</span>
-                  {l.platform && l.platform !== "custom" && (
-                    <span className="font-mono text-xs text-fg-subtle">
-                      {l.platform}
-                    </span>
-                  )}
-                  <span className="ml-auto text-fg-subtle transition-all group-hover:translate-x-0.5 group-hover:text-accent-600">
-                    ↗
-                  </span>
-                </a>
+              {heroLinks.map((l) => (
+                <LinkCard key={l.id} link={l} />
+              ))}
+              {cardLinks.map((l) => (
+                <LinkCard key={l.id} link={l} />
               ))}
             </section>
           )}
@@ -448,25 +505,16 @@ function StudioView({
           )}
 
           {/* Elsewhere */}
-          {ap.showSocials && simple.length > 0 && (
+          {ap.showSocials && simpleLinks.length > 0 && (
             <section className="mb-14">
               <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-fg">
                 <span className="size-1.5 rounded-full bg-accent-500" />
                 Elsewhere
               </h2>
               <ul className="flex flex-col">
-                {simple.map((l) => (
+                {simpleLinks.map((l) => (
                   <li key={l.id}>
-                    <a
-                      href={l.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackLinkClick(l.id)}
-                      className="group -mx-2 flex items-center gap-3 rounded-lg px-2 py-2 text-sm text-fg-muted transition-colors hover:bg-fg/5 hover:text-fg"
-                    >
-                      {l.title}
-                      <span className="ml-auto text-fg-subtle">↗</span>
-                    </a>
+                    <LinkRow link={l} />
                   </li>
                 ))}
               </ul>

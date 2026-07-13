@@ -36,6 +36,7 @@ import {
   type LinkStyle,
   type LinkType,
 } from "../../lib/api.ts";
+import { linkIcon } from "../../lib/platform-icons.ts";
 
 const KEY = ["artist-links"];
 
@@ -200,7 +201,7 @@ function LinkRow({
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-2.5">
       <span className="grid size-8 shrink-0 place-items-center rounded-md bg-surface-muted text-fg-subtle">
-        <Icon icon={Link01Icon} size={15} />
+        <Icon icon={linkIcon(link.platform, link.type)} size={15} />
       </span>
 
       <Input

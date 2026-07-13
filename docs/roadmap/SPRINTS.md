@@ -454,8 +454,8 @@ Ordering (drag-and-drop family)
 
 Links polish
 
-- [ ] DEBT-008 (LINKS-012) Add platform icon mapping
-- [ ] DEBT-009 (LINKS-013/014/015) Add link card variants (simple / featured / media)
+- [x] DEBT-008 (LINKS-012) Add platform icon mapping
+- [x] DEBT-009 (LINKS-013/014/015) Add link card variants (simple / featured / media — media falls back to card until link images land)
 
 Public studio polish
 
