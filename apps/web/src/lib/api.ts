@@ -441,6 +441,75 @@ export const portfolioApi = {
     ),
 };
 
+// ---- Artist links -----------------------------------------------------------
+
+export type LinkType =
+  | "social"
+  | "shop"
+  | "support"
+  | "video"
+  | "stream"
+  | "newsletter"
+  | "contact"
+  | "custom";
+
+export type LinkStyle = "simple" | "card" | "media" | "featured";
+
+export type ArtistLink = {
+  id: string;
+  artistId: string;
+  title: string;
+  url: string;
+  platform: string | null;
+  type: LinkType;
+  style: LinkStyle;
+  position: number;
+  featured: boolean;
+  enabled: boolean;
+  clicks: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ArtistLinkInput = {
+  title?: string;
+  url?: string;
+  platform?: string | null;
+  type?: LinkType;
+  style?: LinkStyle;
+  featured?: boolean;
+  enabled?: boolean;
+};
+
+export const linksApi = {
+  list: () =>
+    fetch("/api/artist-links")
+      .then(json<{ links: ArtistLink[] }>)
+      .then((d) => d.links),
+  create: (body: ArtistLinkInput) =>
+    fetch("/api/artist-links", {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify(body),
+    }).then(json<{ link: ArtistLink }>),
+  update: (id: string, body: ArtistLinkInput) =>
+    fetch(`/api/artist-links/${id}`, {
+      method: "PATCH",
+      headers: jsonHeaders,
+      body: JSON.stringify(body),
+    }).then(json<{ link: ArtistLink }>),
+  reorder: (ids: string[]) =>
+    fetch("/api/artist-links/reorder", {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ ids }),
+    }).then(json<{ ok: true }>),
+  remove: (id: string) =>
+    fetch(`/api/artist-links/${id}`, { method: "DELETE" }).then(
+      json<{ ok: true }>,
+    ),
+};
+
 export const commissionTypesApi = {
   list: () =>
     fetch("/api/commission-types")
