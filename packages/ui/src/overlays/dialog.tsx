@@ -37,6 +37,20 @@ export function DialogContent({
           "fixed left-1/2 top-1/2 z-50 grid w-full max-w-md -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl border border-border bg-surface p-6 shadow-panel outline-none data-[state=open]:animate-[mirae-pop-in_160ms_var(--ease-out)] data-[state=closed]:animate-[mirae-pop-out_130ms_ease-in]",
           className,
         )}
+        // Don't dismiss / disturb drag when interacting with a toast over the
+        // dialog.
+        onPointerDownOutside={(e) => {
+          if (
+            (e.target as HTMLElement | null)?.closest("[data-sonner-toaster]")
+          )
+            e.preventDefault();
+        }}
+        onInteractOutside={(e) => {
+          if (
+            (e.target as HTMLElement | null)?.closest("[data-sonner-toaster]")
+          )
+            e.preventDefault();
+        }}
         {...props}
       >
         {children}

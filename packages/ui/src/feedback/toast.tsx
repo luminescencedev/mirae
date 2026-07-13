@@ -27,16 +27,15 @@ export function useToast() {
   return { toast };
 }
 
-// Mounts sonner's Toaster: top-right, richColors, light theme, Hugeicons for
-// each type, and its native interactions — hover to expand a stack, swipe a
-// toast to the side to dismiss.
+// sonner's Toaster — top-right, richColors, no close button, Hugeicons per
+// type. Native hover-expand + swipe-to-dismiss. Stays interactive over open
+// Radix modals via the [data-sonner-toaster] pointer-events rule in globals.
 export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
       <Toaster
         position="top-right"
-        theme="light"
         richColors
         icons={{
           success: <Icon icon={CheckmarkCircle02Icon} size={18} />,
@@ -44,7 +43,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           warning: <Icon icon={Alert02Icon} size={18} />,
           info: <Icon icon={InformationCircleIcon} size={18} />,
           loading: (
-            <span className="inline-flex animate-spin">
+            <span className="inline-flex animate-spin motion-reduce:animate-none">
               <Icon icon={Loading03Icon} size={18} />
             </span>
           ),

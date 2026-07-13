@@ -64,7 +64,7 @@ These bind the symbol, wordmark, motion, favicon, OG and email work. Full tokens
 - **Geometric, not illustrative.** A single clean geometric form. No brushes, no hand-drawn marks, no gradients-as-identity.
 - **Pastel-blue as a single accent**, used sparingly (focus, active state, a subtle glow) — never a rainbow, never a gradient wash.
 - **Recognizable small.** Reads at 16 px (favicon) as clearly as at hero size.
-- **Quiet motion.** Motion is smooth and brief, driven by the shared easing tokens; it's controlled per component (not gated by the OS `prefers-reduced-motion` setting — see DESIGN_SYSTEM), so keep it restrained.
+- **Quiet motion.** Motion is smooth and brief, driven by the shared easing tokens; it always honors `prefers-reduced-motion`.
 
 ## Symbol brief (feeds BRAND-002+)
 
@@ -108,7 +108,7 @@ Source vectors live in `packages/ui/src/brand/`; rasters are generated from them
 
 ## Motion (BRAND-009 / loader BRAND-010)
 
-Motion is quiet, brief, and single-gesture — never bouncy or attention-seeking. The signature motion is a **left → right fill**: the mark fills over a faint track of itself, then flows out to the right and repeats. It maps directly to the forward reading of the mark and to "future." Implemented as `<Loader/>`. (Motion is component-controlled, not gated by the OS reduced-motion setting — see DESIGN_SYSTEM.)
+Motion is quiet, brief, and single-gesture — never bouncy or attention-seeking. The signature motion is a **left → right fill**: the mark fills over a faint track of itself, then flows out to the right and repeats. It maps directly to the forward reading of the mark and to "future." All brand motion honors `prefers-reduced-motion` (renders solid, no animation). Implemented as `<Loader/>`.
 
 ## Usage (BRAND-013)
 

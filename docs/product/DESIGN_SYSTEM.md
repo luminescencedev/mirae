@@ -31,7 +31,7 @@ The first public version must feel like a **premium client/workflow OS for artis
 - **Theme:** light only for now; dark tokens are dormant in `globals.css` (re-addable without touching components).
 - **Typography:** Inter, self-hosted (`apps/web/src/assets/fonts`, 400/500/600), `--font-sans`.
 - **Icons:** Hugeicons **Stroke Rounded** (house family) via `@mirae/ui` `Icon` (20 / 1.7; 16 / 1.8 in buttons). `react-icons` for brand logos only. Bespoke `BranchReturnIcon` / `EnterKeyIcon` as accents.
-- **Motion (emil-design-eng / apple-design):** strong custom easing tokens (`--ease-out`, `--ease-spring`), scale-on-press, spring `HoverBarList` (one bar slides behind the hovered row — horizontal tabs + vertical lists, no default selection). **Motion policy:** animations are authored + controlled per component, not gated by the OS `prefers-reduced-motion` setting (deliberate product decision — the designed motion always plays); keep motion quiet and purposeful so this stays comfortable.
+- **Motion (emil-design-eng / apple-design):** strong custom easing tokens (`--ease-out`, `--ease-spring`), scale-on-press, spring `HoverBarList` (one bar slides behind the hovered row — horizontal tabs + vertical lists, no default selection). Respects `prefers-reduced-motion`.
 - **Tokens:** pastel-blue `accent-50..950`; semantic `canvas` / `surface` / `surface-muted` / `surface-sunken` / `border` / `border-strong` / `fg` / `fg-muted` / `fg-subtle`; radii `sm..3xl`; `shadow-soft` / `shadow-panel` / `shadow-bezel`.
 
 ## Palette

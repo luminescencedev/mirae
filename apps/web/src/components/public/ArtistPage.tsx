@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import {
   Avatar,
   Button,
@@ -169,6 +169,7 @@ function StudioView({
   onOpen: (assets: PublicAsset[], index: number) => void;
   children: React.ReactNode;
 }) {
+  const rm = useReducedMotion();
   const { profile, commissionTypes, projects, links, featuredProjectId } = data;
   const status = STATUS[profile.status];
   const isClosed = profile.status === "closed";
@@ -213,7 +214,7 @@ function StudioView({
       {/* Centered column between two spacers — like the portfolio */}
       <motion.main
         className="relative z-10 flex w-full items-start px-4 py-12 sm:px-8 sm:py-24"
-        initial={{ opacity: 0, y: 12 }}
+        initial={rm ? false : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.32, ease: "easeOut" }}
       >
