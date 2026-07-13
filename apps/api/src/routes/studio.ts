@@ -10,6 +10,7 @@ import {
   portfolioProjects,
   users,
 } from "@mirae/db";
+import { normalizeAppearance } from "@mirae/shared";
 import { type AuthEnv } from "../auth.ts";
 import { mailLayout, sendEmail } from "../lib/mail.ts";
 
@@ -122,6 +123,7 @@ studioRoutes.get("/:handle", async (c) => {
     projects: publicProjects,
     featuredProjectId: publicProjects.find((p) => p.featured)?.id ?? null,
     links,
+    appearance: normalizeAppearance(profile.appearance),
   });
 });
 

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hugeicons/core-free-icons": "4.2.2",
+    "@mirae/shared": "workspace:*",
     "@mirae/ui": "workspace:*",
     "@tanstack/react-query": "5.101.2",
     "@tanstack/react-router": "1.170.17",

@@ -171,6 +171,19 @@ function StudioView({
 }) {
   const rm = useReducedMotion();
   const { profile, commissionTypes, projects, links, featuredProjectId } = data;
+  const ap = data.appearance;
+  const radiusClass =
+    ap.imageRadius === "minimal"
+      ? "rounded-none"
+      : ap.imageRadius === "medium"
+        ? "rounded-md"
+        : "rounded-xl";
+  const galleryCols =
+    ap.portfolioLayout === "grid"
+      ? "grid-cols-2 sm:grid-cols-3"
+      : ap.portfolioLayout === "compact"
+        ? "grid-cols-3 sm:grid-cols-5"
+        : "grid-cols-2 sm:grid-cols-3"; // editorial
   const status = STATUS[profile.status];
   const isClosed = profile.status === "closed";
   const [reqOpen, setReqOpen] = useState(false);
@@ -238,7 +251,7 @@ function StudioView({
               <span className={cn("size-1.5 rounded-full", status.dot)} />
               {status.label}
             </div>
-            {profile.bio && (
+            {ap.showBio && profile.bio && (
               <p className="mt-4 max-w-[46ch] text-sm leading-relaxed text-fg-muted">
                 {profile.bio}
               </p>
@@ -252,7 +265,7 @@ function StudioView({
           </section>
 
           {/* Featured links */}
-          {featured.length > 0 && (
+          {ap.showSocials && featured.length > 0 && (
             <section className="mb-14 flex flex-col gap-2">
               {featured.map((l) => (
                 <a
@@ -308,9 +321,10 @@ function StudioView({
                       <div
                         className={cn(
                           "grid gap-2",
-                          p.assets.length === 1
+                          p.assets.length === 1 &&
+                            ap.portfolioLayout === "editorial"
                             ? "grid-cols-1"
-                            : "grid-cols-2 sm:grid-cols-3",
+                            : galleryCols,
                         )}
                       >
                         {p.assets.map((a, ai) => (
@@ -318,7 +332,10 @@ function StudioView({
                             key={a.id}
                             type="button"
                             onClick={() => onOpen(p.assets, ai)}
-                            className="group relative overflow-hidden rounded-lg border border-border/70 bg-surface-muted outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+                            className={cn(
+                              "group relative overflow-hidden border border-border/70 bg-surface-muted outline-none focus-visible:ring-2 focus-visible:ring-accent-500",
+                              radiusClass,
+                            )}
                             style={{ aspectRatio: "4 / 3" }}
                           >
                             <img
@@ -372,7 +389,7 @@ function StudioView({
           )}
 
           {/* Elsewhere */}
-          {simple.length > 0 && (
+          {ap.showSocials && simple.length > 0 && (
             <section className="mb-14">
               <h2 className="mb-3 text-sm font-medium text-fg">Elsewhere</h2>
               <ul className="flex flex-col">
@@ -394,13 +411,15 @@ function StudioView({
             </section>
           )}
 
-          <div className="flex items-center gap-1.5 text-xs text-fg-subtle">
-            <Mark className="h-3 w-auto" />
-            Powered by
-            <Link to="/" className="font-medium text-fg-muted hover:text-fg">
-              Mirae
-            </Link>
-          </div>
+          {ap.showPoweredBy && (
+            <div className="flex items-center gap-1.5 text-xs text-fg-subtle">
+              <Mark className="h-3 w-auto" />
+              Powered by
+              <Link to="/" className="font-medium text-fg-muted hover:text-fg">
+                Mirae
+              </Link>
+            </div>
+          )}
         </div>
         <div className="hidden flex-1 md:block" />
       </motion.main>
