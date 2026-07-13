@@ -262,3 +262,13 @@
   -webkit-mask-repeat: repeat;
   mask-repeat: repeat;
 }
+
+/* Keep sonner toasts interactive + swipeable over an open Radix modal.
+   Radix modals set body { pointer-events: none } and Radix's RemoveScroll can
+   clobber touch-action on reopen, which froze hover-expand + swipe-to-dismiss.
+   Force both back on the toaster and each toast. */
+[data-sonner-toaster],
+[data-sonner-toaster] [data-sonner-toast] {
+  pointer-events: auto !important;
+  touch-action: none !important;
+}

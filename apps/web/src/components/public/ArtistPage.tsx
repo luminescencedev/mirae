@@ -14,6 +14,7 @@ import {
   cn,
 } from "@mirae/ui";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { RequestDrawer } from "./RequestDrawer.tsx";
 import demoBg from "../../assets/studio-demo-bg.png";
 import {
   publicApi,
@@ -172,6 +173,12 @@ function StudioView({
   const { profile, commissionTypes, projects, links, featuredProjectId } = data;
   const status = STATUS[profile.status];
   const isClosed = profile.status === "closed";
+  const [reqOpen, setReqOpen] = useState(false);
+  const [reqType, setReqType] = useState<string | null>(null);
+  const openReq = (typeId?: string) => {
+    setReqType(typeId ?? null);
+    setReqOpen(true);
+  };
   // Featured project leads the Work section.
   const orderedProjects = featuredProjectId
     ? [...projects].sort(
@@ -236,12 +243,10 @@ function StudioView({
                 {profile.bio}
               </p>
             )}
-            {!isClosed && (
-              <Button asChild className="mt-6">
-                <Link to="/$handle/request" params={{ handle }}>
-                  Request a commission
-                  <Icon icon={ArrowRight01Icon} strokeWidth={1.8} />
-                </Link>
+            {!isClosed && commissionTypes.length > 0 && (
+              <Button className="mt-6" onClick={() => openReq()}>
+                Request a commission
+                <Icon icon={ArrowRight01Icon} strokeWidth={1.8} />
               </Button>
             )}
           </section>
@@ -353,14 +358,12 @@ function StudioView({
                       {euro(c.priceFromCents)}
                     </span>
                     <Button
-                      asChild
                       size="sm"
                       variant="outline"
                       disabled={isClosed}
+                      onClick={() => openReq(c.id)}
                     >
-                      <Link to="/$handle/request" params={{ handle }}>
-                        Request
-                      </Link>
+                      Request
                     </Button>
                   </li>
                 ))}
@@ -402,6 +405,14 @@ function StudioView({
         <div className="hidden flex-1 md:block" />
       </motion.main>
 
+      <RequestDrawer
+        handle={handle}
+        studioName={profile.displayName}
+        types={commissionTypes}
+        open={reqOpen}
+        onOpenChange={setReqOpen}
+        initialTypeId={reqType}
+      />
       {children}
     </div>
   );

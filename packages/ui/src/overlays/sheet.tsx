@@ -4,7 +4,15 @@ import { cn } from "../utils/cn.ts";
 
 // Right-side slide-over (Radix Dialog). Overlay fades; the panel slides in
 // from the right. Use for detail panels / editors alongside a list.
-export const Sheet = DialogPrimitive.Root;
+//
+// Non-modal by default: a modal Radix Dialog sets `body { pointer-events:
+// none }`, which freezes anything portaled over it (notably sonner toasts —
+// no swipe-to-dismiss after reopen). We keep the dimmed overlay + close-on-
+// outside via the DismissableLayer, just without the body pointer lock. Pass
+// `modal` to override.
+export function Sheet(props: ComponentProps<typeof DialogPrimitive.Root>) {
+  return <DialogPrimitive.Root modal={false} {...props} />;
+}
 export const SheetTrigger = DialogPrimitive.Trigger;
 export const SheetClose = DialogPrimitive.Close;
 
@@ -15,12 +23,29 @@ export function SheetContent({
 }: ComponentProps<typeof DialogPrimitive.Content>) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[1px] data-[state=open]:animate-[mirae-fade-in_200ms_ease-out] data-[state=closed]:animate-[mirae-fade-out_150ms_ease-in]" />
+      {/* Manual dim — Radix's Overlay only renders for modal dialogs, and this
+         Sheet is non-modal (see Sheet). This keeps the backdrop. */}
+      <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[1px] animate-[mirae-fade-in_200ms_ease-out]" />
       <DialogPrimitive.Content
         className={cn(
           "fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col border-l border-border bg-surface shadow-panel outline-none data-[state=open]:animate-[mirae-slide-in-right_320ms_cubic-bezier(0.32,0.72,0,1)] data-[state=closed]:animate-[mirae-slide-out-right_260ms_ease-in]",
           className,
         )}
+        // Don't dismiss / disturb drag when interacting with a toast over the
+        // sheet. Guard both pointer + focus outside so the toast stays fully
+        // interactive across open/close cycles.
+        onPointerDownOutside={(e) => {
+          if (
+            (e.target as HTMLElement | null)?.closest("[data-sonner-toaster]")
+          )
+            e.preventDefault();
+        }}
+        onInteractOutside={(e) => {
+          if (
+            (e.target as HTMLElement | null)?.closest("[data-sonner-toaster]")
+          )
+            e.preventDefault();
+        }}
         {...props}
       >
         {children}
