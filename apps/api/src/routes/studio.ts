@@ -10,7 +10,7 @@ import {
   portfolioProjects,
   users,
 } from "@mirae/db";
-import { normalizeAppearance } from "@mirae/shared";
+import { normalizeAppearance, normalizeFaq } from "@mirae/shared";
 import { type AuthEnv } from "../auth.ts";
 import { mailLayout, sendEmail } from "../lib/mail.ts";
 
@@ -71,22 +71,33 @@ studioRoutes.get("/:handle", async (c) => {
     list.push(a);
     assetsByProject.set(a.projectId, list);
   }
-  const publicProjects = projects.map((p) => ({
-    id: p.id,
-    title: p.title,
-    slug: p.slug,
-    description: p.description,
-    projectType: p.projectType,
-    featured: p.featured,
-    assets: (assetsByProject.get(p.id) ?? []).map((a) => ({
-      id: a.id,
-      altText: a.altText,
-      width: a.width,
-      height: a.height,
-      blurData: a.blurData,
-      url: `/api/portfolio/assets/${a.id}/raw`,
-    })),
-  }));
+  const publicProjects = projects.map((p) => {
+    // Lead with the chosen cover asset, keeping the rest in position order.
+    const projectAssets = assetsByProject.get(p.id) ?? [];
+    const ordered = p.coverAssetId
+      ? [...projectAssets].sort(
+          (a, b) =>
+            (b.id === p.coverAssetId ? 1 : 0) -
+            (a.id === p.coverAssetId ? 1 : 0),
+        )
+      : projectAssets;
+    return {
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      description: p.description,
+      projectType: p.projectType,
+      featured: p.featured,
+      assets: ordered.map((a) => ({
+        id: a.id,
+        altText: a.altText,
+        width: a.width,
+        height: a.height,
+        blurData: a.blurData,
+        url: `/api/portfolio/assets/${a.id}/raw`,
+      })),
+    };
+  });
 
   // Enabled links (link-in-bio), ordered.
   const links = await db
@@ -111,6 +122,8 @@ studioRoutes.get("/:handle", async (c) => {
       displayName: profile.displayName,
       tagline: profile.tagline,
       bio: profile.bio,
+      about: profile.about,
+      faq: normalizeFaq(profile.faq),
       status: profile.status,
       avatarUrl: profile.avatarR2Key
         ? `/api/studio/${profile.handle}/avatar`
@@ -119,7 +132,15 @@ studioRoutes.get("/:handle", async (c) => {
         ? `/api/studio/${profile.handle}/cover`
         : null,
     },
-    commissionTypes: types,
+    commissionTypes: types.map((t) => ({
+      id: t.id,
+      name: t.name,
+      blurb: t.blurb,
+      priceFromCents: t.priceFromCents,
+      turnaround: t.turnaround,
+      slots: t.slots,
+      imageUrl: t.imageR2Key ? `/api/commission-types/${t.id}/image` : null,
+    })),
     projects: publicProjects,
     featuredProjectId: publicProjects.find((p) => p.featured)?.id ?? null,
     links,

@@ -165,6 +165,20 @@ portfolioRoutes.patch("/projects/:id", async (c) => {
     if (v === "published") set.publishedAt = new Date();
   }
 
+  // Cover asset — must belong to this project (or explicit null to clear).
+  if ("coverAssetId" in body) {
+    const cid = body.coverAssetId;
+    if (cid == null) set.coverAssetId = null;
+    else if (typeof cid === "string") {
+      const [a] = await db
+        .select({ id: portfolioAssets.id })
+        .from(portfolioAssets)
+        .where(and(eq(portfolioAssets.id, cid), eq(portfolioAssets.projectId, id)))
+        .limit(1);
+      if (a) set.coverAssetId = cid;
+    }
+  }
+
   // Featured is exclusive per artist.
   if (body.featured === true) {
     await db
@@ -208,6 +222,46 @@ portfolioRoutes.post("/projects/reorder", async (c) => {
       .update(portfolioProjects)
       .set({ position: pos++ })
       .where(eq(portfolioProjects.id, id));
+  }
+  return c.json({ ok: true });
+});
+
+// POST /api/portfolio/assets/reorder — bulk-set asset positions within their
+// project. Only assets the artist owns are touched.
+portfolioRoutes.post("/assets/reorder", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const body = (await c.req.json().catch(() => ({}))) as { ids?: unknown };
+  if (!Array.isArray(body.ids))
+    return c.json({ error: "ids array required." }, 400);
+  const db = createDb(c.env.DATABASE_URL);
+  const ids = body.ids.map(String);
+  if (ids.length === 0) return c.json({ ok: true });
+  // Owned assets = assets whose project belongs to this artist.
+  const owned = new Set(
+    (
+      await db
+        .select({ id: portfolioAssets.id })
+        .from(portfolioAssets)
+        .innerJoin(
+          portfolioProjects,
+          eq(portfolioAssets.projectId, portfolioProjects.id),
+        )
+        .where(
+          and(
+            eq(portfolioProjects.artistId, artist.id),
+            inArray(portfolioAssets.id, ids),
+          ),
+        )
+    ).map((r) => r.id),
+  );
+  let pos = 0;
+  for (const id of ids) {
+    if (!owned.has(id)) continue;
+    await db
+      .update(portfolioAssets)
+      .set({ position: pos++ })
+      .where(eq(portfolioAssets.id, id));
   }
   return c.json({ ok: true });
 });

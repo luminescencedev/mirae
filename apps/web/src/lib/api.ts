@@ -1,7 +1,7 @@
 // Typed fetch client for the Hono API. Same-origin (/api/*), cookie session.
-import type { StudioAppearance } from "@mirae/shared";
+import type { FaqItem, StudioAppearance } from "@mirae/shared";
 
-export type { StudioAppearance };
+export type { FaqItem, StudioAppearance };
 
 export type CommissionType = {
   id: string;
@@ -11,6 +11,7 @@ export type CommissionType = {
   priceFromCents: number | null;
   turnaround: string | null;
   slots: number | null;
+  imageUrl: string | null;
   active: boolean;
   sortOrder: number;
   createdAt: string;
@@ -43,6 +44,8 @@ export type ArtistProfile = {
   displayName: string;
   tagline: string | null;
   bio: string | null;
+  about: string | null;
+  faq: FaqItem[] | null;
   status: StudioStatus;
   avatarR2Key: string | null;
   coverR2Key: string | null;
@@ -54,6 +57,8 @@ export type ArtistProfileInput = {
   displayName?: string;
   tagline?: string | null;
   bio?: string | null;
+  about?: string | null;
+  faq?: FaqItem[];
   status?: StudioStatus;
   appearance?: StudioAppearance;
 };
@@ -84,6 +89,8 @@ export type PublicProfile = {
   displayName: string;
   tagline: string | null;
   bio: string | null;
+  about: string | null;
+  faq: FaqItem[];
   status: StudioStatus;
   avatarUrl: string | null;
   coverUrl: string | null;
@@ -436,6 +443,7 @@ export type PortfolioProject = {
   visibility: ProjectVisibility;
   position: number;
   featured: boolean;
+  coverAssetId: string | null;
   createdAt: string;
   updatedAt: string;
   publishedAt: string | null;
@@ -448,6 +456,7 @@ export type PortfolioProjectPatch = {
   projectType?: ProjectType;
   visibility?: ProjectVisibility;
   featured?: boolean;
+  coverAssetId?: string | null;
 };
 
 // The owner-or-published image stream for an asset.
@@ -473,6 +482,12 @@ export const portfolioApi = {
     }).then(json<{ project: PortfolioProject }>),
   reorder: (ids: string[]) =>
     fetch("/api/portfolio/projects/reorder", {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ ids }),
+    }).then(json<{ ok: true }>),
+  reorderAssets: (ids: string[]) =>
+    fetch("/api/portfolio/assets/reorder", {
       method: "POST",
       headers: jsonHeaders,
       body: JSON.stringify({ ids }),
@@ -590,5 +605,17 @@ export const commissionTypesApi = {
   remove: (id: string) =>
     fetch(`/api/commission-types/${id}`, { method: "DELETE" }).then(
       json<{ ok: true }>,
+    ),
+  uploadImage: (id: string, file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return fetch(`/api/commission-types/${id}/image`, {
+      method: "POST",
+      body: fd,
+    }).then(json<{ commissionType: CommissionType }>);
+  },
+  removeImage: (id: string) =>
+    fetch(`/api/commission-types/${id}/image`, { method: "DELETE" }).then(
+      json<{ commissionType: CommissionType }>,
     ),
 };

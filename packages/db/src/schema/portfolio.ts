@@ -7,6 +7,7 @@ import {
   timestamp,
   unique,
   uuid,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { projectType, projectVisibility } from "./enums.ts";
 import { artistProfiles } from "./studio.ts";
@@ -29,6 +30,12 @@ export const portfolioProjects = pgTable(
     position: integer("position").notNull().default(0),
     // At most one featured project per artist (enforced in the app layer).
     featured: boolean("featured").notNull().default(false),
+    // The asset shown first / as the project's cover. Nulled if that asset is
+    // deleted.
+    coverAssetId: uuid("cover_asset_id").references(
+      (): AnyPgColumn => portfolioAssets.id,
+      { onDelete: "set null" },
+    ),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

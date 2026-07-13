@@ -1,6 +1,7 @@
 import { createDb } from "../client.ts";
 import {
   activityLogs,
+  artistLinks,
   artistProfiles,
   clients,
   commissionRequests,
@@ -8,6 +9,7 @@ import {
   commissions,
   deliveries,
   files,
+  portfolioProjects,
   quoteItems,
   quotes,
   users,
@@ -40,6 +42,24 @@ const [artist] = await db
     displayName: "Rain Aoki",
     tagline: "Character illustrator · semi-realistic & anime",
     bio: "I take on character illustrations, key visuals and emote sets. Two revision rounds included.",
+    about:
+      "I've drawn characters for indie games, VTubers and tabletop for six " +
+      "years. I keep my queue small so every piece gets real attention — " +
+      "expect sketches, revision rounds and full source files on delivery.",
+    faq: [
+      {
+        q: "What's your turnaround?",
+        a: "Usually 2–3 weeks depending on scope and where you land in the queue.",
+      },
+      {
+        q: "How many revisions are included?",
+        a: "Two rounds on every commission; extra rounds are billed hourly.",
+      },
+      {
+        q: "Can I use the art commercially?",
+        a: "Personal use by default. Commercial licensing is a separate line item — just ask.",
+      },
+    ],
     status: "open",
   })
   .returning();
@@ -70,6 +90,71 @@ await db.insert(commissionTypes).values([
     priceFromCents: 40000,
     turnaround: "3–4 weeks",
     sortOrder: 2,
+  },
+]);
+
+// Link-in-bio for the public studio.
+await db.insert(artistLinks).values([
+  {
+    artistId: artist.id,
+    title: "Shop — prints & adopts",
+    url: "https://example.gumroad.com",
+    platform: "kofi",
+    type: "shop",
+    style: "featured",
+    featured: true,
+    position: 0,
+  },
+  {
+    artistId: artist.id,
+    title: "Commission terms",
+    url: "https://example.com/terms",
+    platform: "website",
+    type: "custom",
+    style: "card",
+    position: 1,
+  },
+  {
+    artistId: artist.id,
+    title: "Instagram",
+    url: "https://instagram.com/example",
+    platform: "instagram",
+    type: "social",
+    style: "simple",
+    position: 2,
+  },
+  {
+    artistId: artist.id,
+    title: "ArtStation",
+    url: "https://artstation.com/example",
+    platform: "artstation",
+    type: "social",
+    style: "simple",
+    position: 3,
+  },
+]);
+
+// Published portfolio projects (images are uploaded via the manager, so these
+// have none — the public page still lists them with titles + descriptions).
+await db.insert(portfolioProjects).values([
+  {
+    artistId: artist.id,
+    title: "Ashfall — key art",
+    slug: "ashfall-key-art",
+    description: "Cover illustration for a narrative RPG. Full render.",
+    projectType: "illustration",
+    visibility: "published",
+    featured: true,
+    position: 0,
+  },
+  {
+    artistId: artist.id,
+    title: "Character lineup",
+    slug: "character-lineup",
+    description: "Cast exploration for an indie title.",
+    projectType: "character_design",
+    visibility: "published",
+    position: 1,
   },
 ]);
 

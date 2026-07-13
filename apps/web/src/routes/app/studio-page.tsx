@@ -12,6 +12,7 @@ import {
 import { LinkSquare02Icon, RefreshIcon } from "@hugeicons/core-free-icons";
 import { PageHeader } from "../../components/app-shell/PageHeader.tsx";
 import { ProfileEditor } from "../../components/app-shell/ProfileEditor.tsx";
+import { AboutEditor } from "../../components/app-shell/AboutEditor.tsx";
 import { AppearanceEditor } from "../../components/app-shell/AppearanceEditor.tsx";
 import { PortfolioManager } from "../../components/app-shell/PortfolioManager.tsx";
 import { LinkManager } from "../../components/app-shell/LinkManager.tsx";
@@ -23,16 +24,20 @@ const TABS = [
   { value: "portfolio", label: "Portfolio" },
   { value: "links", label: "Links" },
   { value: "commissions", label: "Commissions" },
+  { value: "about", label: "About & FAQ" },
   { value: "appearance", label: "Appearance" },
 ] as const;
 
 function StudioPage() {
-  const { data: profile } = useQuery({
+  const { data: profile, dataUpdatedAt } = useQuery({
     queryKey: ["artist", "me"],
     queryFn: artistApi.me,
   });
   const handle = profile?.handle;
   const [previewKey, setPreviewKey] = useState(0);
+  // Reload the preview whenever the profile/appearance query refreshes (e.g.
+  // after a save) or the user hits refresh manually.
+  const iframeKey = `${dataUpdatedAt}_${previewKey}`;
 
   return (
     <div className="flex h-full flex-col">
@@ -65,7 +70,7 @@ function StudioPage() {
 
         <div className="mt-6 flex min-h-0 flex-1 flex-col gap-6 lg:flex-row lg:items-stretch">
           {/* Left half — the active editor (scrolls on its own) */}
-          <div className="min-w-0 flex-1 lg:overflow-y-auto lg:pr-1">
+          <div className="min-w-0 flex-1 lg:overflow-y-auto lg:px-1 lg:py-1">
             <TabsContent value="profile">
               <ProfileEditor />
             </TabsContent>
@@ -77,6 +82,9 @@ function StudioPage() {
             </TabsContent>
             <TabsContent value="commissions">
               <CommissionTypesEditor />
+            </TabsContent>
+            <TabsContent value="about">
+              <AboutEditor />
             </TabsContent>
             <TabsContent value="appearance">
               <AppearanceEditor />
@@ -100,7 +108,7 @@ function StudioPage() {
             </div>
             {handle ? (
               <iframe
-                key={previewKey}
+                key={iframeKey}
                 title="Public page preview"
                 src={`/@${handle}`}
                 className="size-full flex-1 border-0 bg-canvas"

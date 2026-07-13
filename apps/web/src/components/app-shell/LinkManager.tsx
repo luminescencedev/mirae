@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Reorder, useDragControls } from "motion/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertDialog,
@@ -27,6 +28,7 @@ import {
   ArrowDown01Icon,
   ArrowUp01Icon,
   Delete02Icon,
+  DragDropVerticalIcon,
   Link01Icon,
   StarIcon,
 } from "@hugeicons/core-free-icons";
@@ -36,6 +38,7 @@ import {
   type LinkStyle,
   type LinkType,
 } from "../../lib/api.ts";
+import { linkIcon } from "../../lib/platform-icons.ts";
 
 const KEY = ["artist-links"];
 
@@ -97,12 +100,21 @@ export function LinkManager() {
     mutationFn: linksApi.reorder,
     onSuccess: invalidate,
   });
+
+  const [order, setOrder] = useState<ArtistLink[]>([]);
+  useEffect(() => {
+    if (links) setOrder(links);
+  }, [links]);
+  const orderRef = useRef(order);
+  orderRef.current = order;
+  const commit = () => reorder.mutate(orderRef.current.map((l) => l.id));
+
   const move = (index: number, dir: -1 | 1) => {
-    if (!links) return;
-    const next = [...links];
+    const next = [...order];
     const t = index + dir;
     if (t < 0 || t >= next.length) return;
     [next[index], next[t]] = [next[t], next[index]];
+    setOrder(next);
     reorder.mutate(next.map((l) => l.id));
   };
 
@@ -157,17 +169,24 @@ export function LinkManager() {
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
-          {links.map((link, i) => (
+        <Reorder.Group
+          as="div"
+          axis="y"
+          values={order}
+          onReorder={setOrder}
+          className="flex flex-col gap-2"
+        >
+          {order.map((link, i) => (
             <LinkRow
               key={link.id}
               link={link}
               onChanged={invalidate}
+              onCommit={commit}
               onMoveUp={i > 0 ? () => move(i, -1) : undefined}
-              onMoveDown={i < links.length - 1 ? () => move(i, 1) : undefined}
+              onMoveDown={i < order.length - 1 ? () => move(i, 1) : undefined}
             />
           ))}
-        </div>
+        </Reorder.Group>
       )}
     </section>
   );
@@ -176,16 +195,32 @@ export function LinkManager() {
 function LinkRow({
   link,
   onChanged,
+  onCommit,
   onMoveUp,
   onMoveDown,
 }: {
   link: ArtistLink;
   onChanged: () => void;
+  onCommit: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
 }) {
+  const dragControls = useDragControls();
+  const [dragging, setDragging] = useState(false);
   const [title, setTitle] = useState(link.title);
   const [url, setUrl] = useState(link.url);
+
+  // Motion's onDragEnd is unreliable with dragControls, so end the lift on the
+  // global pointerup and persist the order then.
+  useEffect(() => {
+    if (!dragging) return;
+    const up = () => {
+      setDragging(false);
+      onCommit();
+    };
+    window.addEventListener("pointerup", up);
+    return () => window.removeEventListener("pointerup", up);
+  }, [dragging, onCommit]);
 
   const patch = useMutation({
     mutationFn: (body: Parameters<typeof linksApi.update>[1]) =>
@@ -198,9 +233,29 @@ function LinkRow({
   });
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-2.5">
+    <Reorder.Item
+      value={link}
+      dragListener={false}
+      dragControls={dragControls}
+      className={cn(
+        "relative flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-2.5 transition-shadow",
+        dragging && "z-20 cursor-grabbing drag-lift",
+      )}
+    >
+      <button
+        type="button"
+        aria-label="Drag to reorder"
+        title="Drag to reorder"
+        onPointerDown={(e) => {
+          setDragging(true);
+          dragControls.start(e);
+        }}
+        className="grid size-8 shrink-0 cursor-grab touch-none place-items-center rounded-md text-fg-subtle hover:bg-surface-muted hover:text-fg active:cursor-grabbing"
+      >
+        <Icon icon={DragDropVerticalIcon} size={15} />
+      </button>
       <span className="grid size-8 shrink-0 place-items-center rounded-md bg-surface-muted text-fg-subtle">
-        <Icon icon={Link01Icon} size={15} />
+        <Icon icon={linkIcon(link.platform, link.type)} size={15} />
       </span>
 
       <Input
@@ -325,7 +380,7 @@ function LinkRow({
           </AlertDialogContent>
         </AlertDialog>
       </div>
-    </div>
+    </Reorder.Item>
   );
 }
 
