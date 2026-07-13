@@ -27,11 +27,15 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <Toaster
         position="bottom-left"
-        richColors
         closeButton
         toastOptions={{
           style: {
+            background: "var(--color-surface, #fff)",
+            color: "var(--color-fg, #121316)",
+            border: "1px solid var(--color-border, #e7e8ec)",
             borderRadius: "12px",
+            boxShadow:
+              "0 1px 2px rgba(20,21,24,.06), 0 10px 30px rgba(20,21,24,.10)",
             fontFamily: "var(--font-sans, ui-sans-serif, system-ui)",
           },
         }}
