@@ -91,13 +91,10 @@ export function AppearanceEditor() {
   });
 
   return (
-    <section className="rounded-xl border border-border bg-surface p-5 shadow-soft">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-fg">Appearance</h2>
-        <span className="text-xs text-fg-subtle">
-          Applies to your public page
-        </span>
-      </div>
+    <section className="flex flex-col">
+      <p className="text-sm text-fg-subtle">
+        How your public page looks — applies live.
+      </p>
 
       <div className="mt-3 divide-y divide-border">
         <Row label="Accent">

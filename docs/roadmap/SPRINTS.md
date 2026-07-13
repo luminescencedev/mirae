@@ -402,22 +402,34 @@ Goal: let visitors start a request without breaking the public-studio experience
 
 Goal: meaningful artist expression through curated customization.
 
-- [ ] CUSTOM-001 Create studio appearance model
-- [ ] CUSTOM-002 Add accent presets
-- [ ] CUSTOM-003 Add typography presets
-- [ ] CUSTOM-004 Add hero layout options
-- [ ] CUSTOM-005 Add portfolio layout options
-- [ ] CUSTOM-006 Add image-radius presets
-- [ ] CUSTOM-007 Add section visibility controls
-- [ ] CUSTOM-008 Add section ordering
-- [ ] CUSTOM-009 Build desktop split preview
-- [ ] CUSTOM-010 Build mobile Edit and Preview tabs
-- [ ] CUSTOM-011 Add unsaved-change detection
-- [ ] CUSTOM-012 Add reset-to-published action
-- [ ] CUSTOM-013 Add save-draft action
-- [ ] CUSTOM-014 Add explicit publish action
-- [ ] CUSTOM-015 Add accessible contrast validation
-- [ ] CUSTOM-016 Add appearance migration defaults
+- [x] CUSTOM-001 Create studio appearance model
+- [~] CUSTOM-002 Add accent presets — persisted + editor; visual wiring deferred
+- [~] CUSTOM-003 Add typography presets — persisted + editor; visual wiring deferred
+- [~] CUSTOM-004 Add hero layout options — persisted + editor; visual wiring deferred
+- [x] CUSTOM-005 Add portfolio layout options
+- [x] CUSTOM-006 Add image-radius presets
+- [x] CUSTOM-007 Add section visibility controls
+- [ ] CUSTOM-008 Add section ordering (deferred)
+- [x] CUSTOM-009 Build desktop split preview
+- [ ] CUSTOM-010 Build mobile Edit and Preview tabs (→ Sprint 18)
+- [ ] CUSTOM-011 Add unsaved-change detection (deferred)
+- [ ] CUSTOM-012 Add reset-to-published action (deferred)
+- [ ] CUSTOM-013 Add save-draft action (deferred)
+- [ ] CUSTOM-014 Add explicit publish action (deferred)
+- [ ] CUSTOM-015 Add accessible contrast validation (deferred)
+- [x] CUSTOM-016 Add appearance migration defaults
+
+Completion notes (Sprint 17): `StudioAppearance` model + `normalizeAppearance`
+server validator (`packages/shared`); `appearance` jsonb column (migration 0006);
+PATCH `/artists/me` accepts appearance; public payload normalizes it. Editor
+(`AppearanceEditor`) exposes accent/typography/hero/portfolio layout, image
+corners and section-visibility toggles. Studio-page redesign: top segmented tabs
+(Profile / Portfolio / Links / Commissions / Appearance) + 50/50 editor↔live
+`/@handle` iframe preview, harmonized editor headers. Visually applied so far:
+portfolio layout, image radius, section visibility, featured-first ordering.
+Deferred: visual wiring of accent/typography/hero, manual section ordering,
+mobile edit/preview tabs (→ S18), unsaved-change/reset/save-draft/publish flow
+(save is live), contrast validation.
 
 ## Sprint 18 — Mobile product experience
 
