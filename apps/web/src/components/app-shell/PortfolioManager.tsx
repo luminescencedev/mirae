@@ -192,6 +192,11 @@ function ProjectCard({
     mutationFn: (assetId: string) => portfolioApi.removeAsset(assetId),
     onSuccess: onChanged,
   });
+  const setAlt = useMutation({
+    mutationFn: (v: { id: string; altText: string }) =>
+      portfolioApi.setAlt(v.id, v.altText),
+    onSuccess: onChanged,
+  });
 
   const upload = async (files: FileList | null) => {
     if (!files?.length) return;
@@ -347,25 +352,12 @@ function ProjectCard({
       {/* Assets */}
       <div className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-4">
         {project.assets.map((asset) => (
-          <div
+          <AssetTile
             key={asset.id}
-            className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-surface-muted"
-          >
-            <img
-              src={assetUrl(asset.id)}
-              alt={asset.altText ?? ""}
-              className="size-full object-cover"
-              loading="lazy"
-            />
-            <button
-              type="button"
-              aria-label="Remove image"
-              onClick={() => removeAsset.mutate(asset.id)}
-              className="absolute right-1.5 top-1.5 grid size-7 place-items-center rounded-md bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
-            >
-              <Icon icon={Delete02Icon} size={14} />
-            </button>
-          </div>
+            asset={asset}
+            onRemove={() => removeAsset.mutate(asset.id)}
+            onSetAlt={(altText) => setAlt.mutate({ id: asset.id, altText })}
+          />
         ))}
 
         {/* Upload dropzone */}
@@ -404,6 +396,48 @@ function ProjectCard({
           }}
         />
       </div>
+    </div>
+  );
+}
+
+function AssetTile({
+  asset,
+  onRemove,
+  onSetAlt,
+}: {
+  asset: PortfolioProject["assets"][number];
+  onRemove: () => void;
+  onSetAlt: (altText: string) => void;
+}) {
+  const [alt, setAlt] = useState(asset.altText ?? "");
+  return (
+    <div className="group flex flex-col gap-1.5">
+      <div className="relative aspect-square overflow-hidden rounded-lg border border-border bg-surface-muted">
+        <img
+          src={assetUrl(asset.id)}
+          alt={asset.altText ?? ""}
+          className="size-full object-cover"
+          loading="lazy"
+        />
+        <button
+          type="button"
+          aria-label="Remove image"
+          onClick={onRemove}
+          className="absolute right-1.5 top-1.5 grid size-7 place-items-center rounded-md bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+        >
+          <Icon icon={Delete02Icon} size={14} />
+        </button>
+      </div>
+      <Input
+        value={alt}
+        onChange={(e) => setAlt(e.target.value)}
+        onBlur={() => {
+          if (alt !== (asset.altText ?? "")) onSetAlt(alt);
+        }}
+        placeholder="Alt text — describe the image"
+        aria-label="Alt text"
+        className="h-7 text-xs"
+      />
     </div>
   );
 }
