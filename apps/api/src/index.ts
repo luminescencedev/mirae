@@ -12,7 +12,7 @@ import { portalRoutes } from "./routes/portal.ts";
 import { deliveryRoutes } from "./routes/delivery.ts";
 import { portfolioRoutes } from "./routes/portfolio.ts";
 import { linksRoutes } from "./routes/links.ts";
-import { isSocialBot, renderStudioOg } from "./lib/og.ts";
+import { injectStudioMeta } from "./lib/og.ts";
 import { log, serializeError } from "./lib/log.ts";
 
 type Bindings = AuthEnv & {
@@ -72,6 +72,55 @@ async function serveSpa(c: { env: Bindings; req: { raw: Request } }) {
 
 // Health check — hit directly on the Worker (wrangler dev: :8787/health).
 app.get("/health", (c) => c.json({ status: "ok" }));
+
+// robots.txt — allow public pages, keep the app/API/private tokens out.
+app.get("/robots.txt", (c) => {
+  const origin = new URL(c.req.url).origin;
+  const body = [
+    "User-agent: *",
+    "Allow: /",
+    "Disallow: /app",
+    "Disallow: /api",
+    "Disallow: /portal",
+    "Disallow: /delivery",
+    "Disallow: /login",
+    "Disallow: /signup",
+    "Disallow: /onboarding",
+    "",
+    `Sitemap: ${origin}/sitemap.xml`,
+    "",
+  ].join("\n");
+  return c.body(body, 200, { "content-type": "text/plain; charset=utf-8" });
+});
+
+// sitemap.xml — the landing page + every indexable (non-closed) studio.
+app.get("/sitemap.xml", async (c) => {
+  const origin = new URL(c.req.url).origin;
+  const db = createDb(c.env.DATABASE_URL);
+  const rows = await db
+    .select({
+      handle: artistProfiles.handle,
+      status: artistProfiles.status,
+      updatedAt: artistProfiles.updatedAt,
+    })
+    .from(artistProfiles);
+  const urls = [
+    `<url><loc>${origin}/</loc></url>`,
+    ...rows
+      .filter((r) => r.status !== "closed")
+      .map(
+        (r) =>
+          `<url><loc>${origin}/@${r.handle}</loc><lastmod>${new Date(
+            r.updatedAt,
+          ).toISOString()}</lastmod></url>`,
+      ),
+  ].join("");
+  const xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
+  return c.body(xml, 200, {
+    "content-type": "application/xml; charset=utf-8",
+    "cache-control": "public, max-age=3600",
+  });
+});
 app.get("/api/health", (c) => c.json({ status: "ok" }));
 
 // Better Auth — handles /api/auth/* (sign-up, sign-in, session, …).
@@ -133,13 +182,13 @@ app.route("/api/portfolio", portfolioRoutes);
 // Artist links (link-in-bio) — owner-scoped CRUD + public click counter.
 app.route("/api/artist-links", linksRoutes);
 
-// Social crawlers hitting /@handle get a server-rendered Open Graph document
-// (nice link unfurls in Discord/Twitter/etc.); humans fall through to the SPA.
+// Public studio pages (/@handle): serve the real SPA index.html with per-studio
+// SEO + Open Graph metadata injected, so humans boot the app and crawlers /
+// social scrapers get correct head tags (title, description, canonical, OG,
+// Twitter, JSON-LD; noindex for closed studios). No cloaking.
 app.get("/:handle", async (c) => {
   const raw = c.req.param("handle");
-  if (!raw.startsWith("@") || !isSocialBot(c.req.header("user-agent"))) {
-    return serveSpa(c);
-  }
+  if (!raw.startsWith("@") || c.req.method !== "GET") return serveSpa(c);
   const handle = raw.slice(1).toLowerCase();
   const db = createDb(c.env.DATABASE_URL);
   const [profile] = await db
@@ -149,7 +198,15 @@ app.get("/:handle", async (c) => {
     .limit(1);
   // Unknown handle → let the SPA render its own not-found page.
   if (!profile) return serveSpa(c);
-  return c.html(renderStudioOg(profile, new URL(c.req.url).origin));
+
+  const url = new URL(c.req.url);
+  url.pathname = "/";
+  const res = await c.env.ASSETS.fetch(
+    new Request(url, { headers: c.req.raw.headers }),
+  );
+  const baseHtml = await res.text();
+  const html = injectStudioMeta(baseHtml, profile, new URL(c.req.url).origin);
+  return c.html(html);
 });
 
 // SPA fallback: anything not handled above (and not an /api route) is served
