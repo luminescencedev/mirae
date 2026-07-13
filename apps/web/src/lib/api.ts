@@ -443,6 +443,7 @@ export type PortfolioProject = {
   visibility: ProjectVisibility;
   position: number;
   featured: boolean;
+  coverAssetId: string | null;
   createdAt: string;
   updatedAt: string;
   publishedAt: string | null;
@@ -455,6 +456,7 @@ export type PortfolioProjectPatch = {
   projectType?: ProjectType;
   visibility?: ProjectVisibility;
   featured?: boolean;
+  coverAssetId?: string | null;
 };
 
 // The owner-or-published image stream for an asset.

@@ -71,22 +71,33 @@ studioRoutes.get("/:handle", async (c) => {
     list.push(a);
     assetsByProject.set(a.projectId, list);
   }
-  const publicProjects = projects.map((p) => ({
-    id: p.id,
-    title: p.title,
-    slug: p.slug,
-    description: p.description,
-    projectType: p.projectType,
-    featured: p.featured,
-    assets: (assetsByProject.get(p.id) ?? []).map((a) => ({
-      id: a.id,
-      altText: a.altText,
-      width: a.width,
-      height: a.height,
-      blurData: a.blurData,
-      url: `/api/portfolio/assets/${a.id}/raw`,
-    })),
-  }));
+  const publicProjects = projects.map((p) => {
+    // Lead with the chosen cover asset, keeping the rest in position order.
+    const projectAssets = assetsByProject.get(p.id) ?? [];
+    const ordered = p.coverAssetId
+      ? [...projectAssets].sort(
+          (a, b) =>
+            (b.id === p.coverAssetId ? 1 : 0) -
+            (a.id === p.coverAssetId ? 1 : 0),
+        )
+      : projectAssets;
+    return {
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      description: p.description,
+      projectType: p.projectType,
+      featured: p.featured,
+      assets: ordered.map((a) => ({
+        id: a.id,
+        altText: a.altText,
+        width: a.width,
+        height: a.height,
+        blurData: a.blurData,
+        url: `/api/portfolio/assets/${a.id}/raw`,
+      })),
+    };
+  });
 
   // Enabled links (link-in-bio), ordered.
   const links = await db

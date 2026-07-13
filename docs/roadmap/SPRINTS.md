@@ -441,7 +441,7 @@ draft/publish state machine (`CUSTOM-011..014`) keep their own future sprints.
 
 Portfolio manager
 
-- [ ] DEBT-001 (PORTUI-008) Add project cover selection
+- [x] DEBT-001 (PORTUI-008) Add project cover selection
 - [x] DEBT-002 (PORTUI-010) Add alt-text editing
 - [x] DEBT-003 (PORTUI-014) Add upload retry and failure states
 
@@ -462,7 +462,7 @@ Public studio polish
 - [x] DEBT-010 (STUDIO-012) Add commission representative images
 - [x] DEBT-011 (STUDIO-014) Add artist about section
 - [x] DEBT-012 (STUDIO-015) Add optional FAQ section
-- [ ] DEBT-013 (STUDIO-019) Add responsive image sizes
+- [ ] DEBT-013 (STUDIO-019) Add responsive image sizes (deferred → media-pipeline: needs Worker-side resize / Cloudflare Images)
 
 Appearance visual wiring
 
@@ -472,8 +472,20 @@ Appearance visual wiring
 
 Data
 
-- [ ] DEBT-017 (PORTFOLIO-012) Add image dimension metadata
-- [ ] DEBT-018 (PORTFOLIO-016) Add migration and demo seed
+- [ ] DEBT-017 (PORTFOLIO-012) Add image dimension metadata (deferred → media-pipeline: width/height columns exist but need Worker-side decode to populate)
+- [x] DEBT-018 (PORTFOLIO-016) Add migration and demo seed
+
+Completion notes (Sprint 17.5): burned down deferred polish debt. Shipped —
+appearance visual wiring (accent/typography/hero) + accent spread across the
+public page; platform link icons + link card variants; per-image alt-text;
+upload retry/failure states; drag-and-drop reordering (projects, assets, links)
+via motion Reorder; public-page section ordering; artist About + FAQ (accordion);
+commission representative images; project cover selection (cover-first ordering);
+extended dev seed with links + portfolio + about/FAQ. Deferred to a future
+**media-pipeline** ticket: DEBT-013 responsive image sizes and DEBT-017 image
+dimension metadata — both need Worker-side image decode/resize (Cloudflare
+Images), out of scope here. Migrations 0007 (about/faq), 0008 (commission image),
+0009 (project cover) applied.
 
 ## Sprint 18 — Mobile product experience
 

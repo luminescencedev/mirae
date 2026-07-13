@@ -450,8 +450,15 @@ function ProjectCard({
           <AssetTile
             key={asset.id}
             asset={asset}
+            isCover={project.coverAssetId === asset.id}
             onRemove={() => removeAsset.mutate(asset.id)}
             onSetAlt={(altText) => setAlt.mutate({ id: asset.id, altText })}
+            onToggleCover={() =>
+              patch.mutate({
+                coverAssetId:
+                  project.coverAssetId === asset.id ? null : asset.id,
+              })
+            }
             handleProps={assetDrag.handleProps(asset.id)}
             rowProps={assetDrag.rowProps(asset.id)}
           />
@@ -499,14 +506,18 @@ function ProjectCard({
 
 function AssetTile({
   asset,
+  isCover,
   onRemove,
   onSetAlt,
+  onToggleCover,
   handleProps,
   rowProps,
 }: {
   asset: PortfolioProject["assets"][number];
+  isCover: boolean;
   onRemove: () => void;
   onSetAlt: (altText: string) => void;
+  onToggleCover: () => void;
   handleProps: DragHandleProps;
   rowProps: DragRowProps;
 }) {
@@ -515,7 +526,10 @@ function AssetTile({
     <div className="group flex flex-col gap-1.5">
       <div
         {...rowProps}
-        className="relative aspect-square overflow-hidden rounded-lg border border-border bg-surface-muted transition-shadow data-[dragging]:opacity-50 data-[drop-target]:ring-2 data-[drop-target]:ring-accent-500"
+        className={cn(
+          "relative aspect-square overflow-hidden rounded-lg border bg-surface-muted transition-shadow data-[dragging]:opacity-50 data-[drop-target]:ring-2 data-[drop-target]:ring-accent-500",
+          isCover ? "border-accent-500 ring-1 ring-accent-500" : "border-border",
+        )}
       >
         <img
           src={assetUrl(asset.id)}
@@ -540,6 +554,25 @@ function AssetTile({
         >
           <Icon icon={Delete02Icon} size={14} />
         </button>
+        <button
+          type="button"
+          aria-label={isCover ? "Cover image" : "Set as cover"}
+          title={isCover ? "Cover image" : "Set as cover"}
+          onClick={onToggleCover}
+          className={cn(
+            "absolute bottom-1.5 left-1.5 grid size-7 place-items-center rounded-md transition-opacity",
+            isCover
+              ? "bg-accent-500 text-white opacity-100"
+              : "bg-black/60 text-white opacity-0 group-hover:opacity-100 focus-visible:opacity-100",
+          )}
+        >
+          <Icon icon={StarIcon} size={14} />
+        </button>
+        {isCover && (
+          <span className="absolute bottom-1.5 right-1.5 rounded bg-accent-500 px-1.5 py-0.5 text-[10px] font-medium text-white">
+            Cover
+          </span>
+        )}
       </div>
       <Input
         value={alt}

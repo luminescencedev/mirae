@@ -165,6 +165,20 @@ portfolioRoutes.patch("/projects/:id", async (c) => {
     if (v === "published") set.publishedAt = new Date();
   }
 
+  // Cover asset — must belong to this project (or explicit null to clear).
+  if ("coverAssetId" in body) {
+    const cid = body.coverAssetId;
+    if (cid == null) set.coverAssetId = null;
+    else if (typeof cid === "string") {
+      const [a] = await db
+        .select({ id: portfolioAssets.id })
+        .from(portfolioAssets)
+        .where(and(eq(portfolioAssets.id, cid), eq(portfolioAssets.projectId, id)))
+        .limit(1);
+      if (a) set.coverAssetId = cid;
+    }
+  }
+
   // Featured is exclusive per artist.
   if (body.featured === true) {
     await db
