@@ -270,7 +270,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <div id="main-content" className="flex-1 overflow-auto">
+        <div
+          id="main-content"
+          data-lenis-prevent
+          className="flex-1 overflow-auto"
+        >
           {children}
         </div>
       </main>

@@ -17,6 +17,7 @@ export function DropdownMenuContent({
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
         sideOffset={sideOffset}
+        data-lenis-prevent
         className={cn(
           "z-50 min-w-40 overflow-hidden rounded-lg border border-border bg-surface p-1 shadow-panel outline-none [transform-origin:var(--radix-dropdown-menu-content-transform-origin)] data-[state=open]:animate-[mirae-pop-in_150ms_var(--ease-out)] data-[state=closed]:animate-[mirae-pop-out_120ms_ease-in]",
           className,
