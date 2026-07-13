@@ -583,6 +583,36 @@ SHARE-001/002 composited OG image cards. Deferred: SHARE-014 most-viewed
 projects (needs per-project view events). Migrations 0010 (events) + 0011
 (meta_title/meta_description).
 
+## Sprint 19.6 — Media pipeline (deferred image work)
+
+Goal: real image processing for the public studio — responsive variants,
+dimension/blur placeholders, and composited social (OG) cards. Consolidates
+everything deferred with the note "→ media-pipeline" across Sprints 12/15/17.5/
+18/19. Needs a server-side image path the Worker doesn't have today.
+
+**Decision first (MEDIA-001):** pick the approach before building.
+
+- **Cloudflare Images** (managed resize/variants + `/cdn-cgi/image/...`): least
+  code, paid add-on, handles srcset + format negotiation. Likely best fit.
+- **Worker-side wasm** (`@cloudflare/image-resizing` / `photon`/`resvg` +
+  `satori` for OG cards): no add-on, more code + CPU, OG cards fully custom.
+
+Tickets
+
+- [ ] MEDIA-001 Decide pipeline approach (Cloudflare Images vs Worker wasm) + record in DECISIONS.md
+- [ ] MEDIA-002 Extract + persist image dimensions on upload (= PORTFOLIO-012 / DEBT-017; `width`/`height` columns already exist on `portfolio_assets`)
+- [ ] MEDIA-003 Generate tiny blur placeholders (`blurData`) on upload for blur-up loading
+- [ ] MEDIA-004 Serve responsive variants (srcset) for portfolio, cover, avatar + commission images (= STUDIO-019 / DEBT-013 / MOBILE-026)
+- [ ] MEDIA-005 Composited artist OG card — name + avatar + tagline on brand ground (= SHARE-001), wire to `og:image`
+- [ ] MEDIA-006 Composited project OG card (= SHARE-002)
+- [ ] MEDIA-007 Cache + invalidation for generated images (bust on media/profile update)
+- [ ] MEDIA-008 Blur-up + `width`/`height` on `<img>` everywhere to kill remaining CLS
+
+Notes: current fallbacks in place — `og:image` uses the raw cover/avatar (not a
+composited card); images serve at original size with `loading="lazy"` + fixed
+aspect-ratio containers. This sprint upgrades quality without changing the
+public UX contract.
+
 ## Sprint 20 — Onboarding & guided launch
 
 Goal: take a new user from signup to a published, shareable studio in one journey.
