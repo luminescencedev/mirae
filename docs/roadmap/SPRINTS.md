@@ -507,9 +507,9 @@ Goal: make the private app and public experience genuinely mobile-first **and po
 - [x] MOBILE-014 Add sticky Accept and Decline actions
 - [x] MOBILE-015 Optimize Clients
 - [x] MOBILE-016 Optimize Deliveries
-- [ ] MOBILE-017 Optimize quote builder
-- [ ] MOBILE-018 Optimize payment controls
-- [ ] MOBILE-019 Optimize portal and delivery pages
+- [x] MOBILE-017 Optimize quote builder
+- [x] MOBILE-018 Optimize payment controls
+- [x] MOBILE-019 Optimize portal and delivery pages
 - [ ] MOBILE-020 Add touch portfolio ordering
 - [ ] MOBILE-021 Add gallery and camera upload
 - [ ] MOBILE-022 Add Edit and Preview switch
