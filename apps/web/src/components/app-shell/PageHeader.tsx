@@ -11,7 +11,7 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex items-end justify-between gap-4 px-6 pt-6">
+    <div className="flex items-end justify-between gap-4 px-4 pt-5 sm:px-6 sm:pt-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-fg">
           {title}
