@@ -7,9 +7,8 @@ import {
   useReducedMotion,
   motion,
 } from "motion/react";
-import { Badge, Button, Icon, cn } from "@mirae/ui";
+import { Badge, Button, Icon, Mark, cn } from "@mirae/ui";
 import {
-  CubeIcon,
   DashboardSquare01Icon,
   InboxIcon,
   Package01Icon,
@@ -186,9 +185,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       >
         <div className="flex h-14 items-center px-4">
           <span className="grid size-9 shrink-0 place-items-center">
-            <span className="flex size-8 items-center justify-center rounded-md bg-fg text-white">
-              <Icon icon={CubeIcon} size={18} />
-            </span>
+            <Mark className="h-4 w-auto text-fg" />
           </span>
           <Label
             collapsed={collapsed}

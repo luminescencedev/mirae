@@ -1,7 +1,6 @@
 import { type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { Icon } from "@mirae/ui";
-import { CubeIcon } from "@hugeicons/core-free-icons";
+import { Mark } from "@mirae/ui";
 
 /** Centered auth shell (login / signup / onboarding). */
 export function AuthLayout({
@@ -19,9 +18,7 @@ export function AuthLayout({
     <div className="grid min-h-screen place-items-center bg-surface-sunken px-6 py-16">
       <div className="w-full max-w-sm">
         <Link to="/" className="mb-6 flex items-center justify-center gap-2">
-          <span className="flex size-8 items-center justify-center rounded-md bg-fg text-white">
-            <Icon icon={CubeIcon} size={18} />
-          </span>
+          <Mark className="h-6 w-auto text-fg" />
           <span className="text-base font-semibold tracking-tight">Mirae</span>
         </Link>
         <div className="rounded-xl border border-border bg-surface p-6 shadow-soft">

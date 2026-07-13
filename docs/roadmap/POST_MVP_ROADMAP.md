@@ -436,7 +436,7 @@ type StudioAppearance = {
 
 ## Goal
 
-Make the private application and public experience genuinely mobile-first.
+Make the private application and public experience genuinely mobile-first **and visually polished to a professional bar** — not merely responsive. Every screen should look like a finished premium product on a phone, matching the marketing-screenshot quality bar in `docs/product/DESIGN_SYSTEM.md`.
 
 ## Tickets
 
@@ -486,6 +486,13 @@ Make the private application and public experience genuinely mobile-first.
 - [ ] MOBILE-033 Audit 320 px viewport
 - [ ] MOBILE-034 Audit landscape mode
 
+### Visual polish (professional bar)
+
+- [ ] MOBILE-035 Elevate Overview into a real dashboard on mobile — KPI cards, at-a-glance status, trend/sparkline, clear hierarchy (not a stat strip)
+- [ ] MOBILE-036 Unify density, spacing scale and typography across every mobile screen
+- [ ] MOBILE-037 Complete empty / loading (skeleton) / error states on every screen
+- [ ] MOBILE-038 Brand motion pass — press feedback, screen/sheet transitions, the `<Loader/>` fill, all `prefers-reduced-motion` safe
+
 ## Acceptance
 
 - Every critical artist action is possible with one hand.
@@ -493,6 +500,7 @@ Make the private application and public experience genuinely mobile-first.
 - No sticky action is hidden by browser chrome or keyboard.
 - Artists can publish a complete studio from mobile.
 - Clients can request, review and download from mobile.
+- **Every screen meets the premium quality bar** — considered spacing, complete states, and motion; nothing reads as an unstyled MVP.
 
 ---
 
@@ -708,7 +716,7 @@ Validate the complete experience with working artists before expanding features 
 
 ## Goal
 
-Improve the private workflow only from validated beta feedback.
+Improve the private workflow from validated beta feedback, **and take the whole dashboard to a professional, finished bar** — a full visual/interaction polish pass so the private app reads as a premium product, not an MVP.
 
 ## Tickets
 
@@ -725,11 +733,21 @@ Improve the private workflow only from validated beta feedback.
 - [ ] OPS-011 Add client history
 - [ ] OPS-012 Add justified bulk actions
 
+### Dashboard redesign & polish (professional bar)
+
+- [ ] OPS-013 Redesign Overview into a real dashboard — KPI cards, revenue/queue trends, needs-attention, recent activity; premium hierarchy
+- [ ] OPS-014 Unify density, spacing scale, typography and component usage across every dashboard screen
+- [ ] OPS-015 Complete empty / loading (skeleton) / error / success states everywhere
+- [ ] OPS-016 Brand motion & press-feedback pass across the app (shared easing tokens, `prefers-reduced-motion` safe)
+- [ ] OPS-017 Full accessibility + keyboard-navigation pass (focus states, roles, contrast)
+- [ ] OPS-018 Apply the Mirae identity consistently in-app (sidebar, loaders, favicons, transactional emails)
+
 ## Acceptance
 
 - Every built feature is linked to repeated tester friction.
 - Operational depth does not make the interface noisy.
 - All important changes remain traceable.
+- **The dashboard looks and feels like a finished premium product** — every screen could be a marketing screenshot; complete states, consistent density, and polished motion throughout.
 
 ---
 

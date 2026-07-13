@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Icon, Input, Textarea, cn } from "@mirae/ui";
+import { Button, Icon, Input, Mark, Textarea, cn } from "@mirae/ui";
 import {
   ArrowLeft01Icon,
   CheckmarkCircle02Icon,
-  CubeIcon,
 } from "@hugeicons/core-free-icons";
 import { Field } from "../marketing/AuthLayout.tsx";
 import { publicApi } from "../../lib/api.ts";
@@ -229,7 +228,7 @@ export function RequestForm({ handle }: { handle: string }) {
       )}
 
       <div className="mt-8 flex items-center justify-center gap-1.5 text-xs text-fg-subtle">
-        <Icon icon={CubeIcon} size={13} />
+        <Mark className="h-3 w-auto" />
         Powered by
         <Link to="/" className="font-medium text-fg-muted hover:text-fg">
           Mirae

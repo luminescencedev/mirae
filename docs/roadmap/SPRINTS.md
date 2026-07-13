@@ -421,7 +421,7 @@ Goal: meaningful artist expression through curated customization.
 
 ## Sprint 18 — Mobile product experience
 
-Goal: make the private app and public experience genuinely mobile-first.
+Goal: make the private app and public experience genuinely mobile-first **and polished to a professional bar** (premium on a phone, not merely responsive).
 
 - [ ] MOBILE-001 Add bottom navigation
 - [ ] MOBILE-002 Add mobile header
@@ -457,6 +457,10 @@ Goal: make the private app and public experience genuinely mobile-first.
 - [ ] MOBILE-032 Audit Android Chrome
 - [ ] MOBILE-033 Audit 320 px viewport
 - [ ] MOBILE-034 Audit landscape mode
+- [ ] MOBILE-035 Elevate Overview into a real mobile dashboard (KPI cards, trend, hierarchy)
+- [ ] MOBILE-036 Unify density, spacing scale and typography across mobile screens
+- [ ] MOBILE-037 Complete empty / loading (skeleton) / error states everywhere
+- [ ] MOBILE-038 Brand motion pass (press feedback, transitions, Loader; reduced-motion safe)
 
 ## Sprint 19 — Sharing, SEO & analytics
 
@@ -564,7 +568,7 @@ Goal: validate the complete experience with working artists before expanding fea
 
 ## Sprint 24 — Commission operations polish
 
-Goal: improve the private workflow only from validated beta feedback.
+Goal: improve the private workflow from validated beta feedback **and take the whole dashboard to a professional, finished bar** (full visual/interaction polish — premium product, not MVP).
 
 - [ ] OPS-001 Add editable commission metadata
 - [ ] OPS-002 Add internal artist notes
@@ -578,6 +582,12 @@ Goal: improve the private workflow only from validated beta feedback.
 - [ ] OPS-010 Add richer activity events
 - [ ] OPS-011 Add client history
 - [ ] OPS-012 Add justified bulk actions
+- [ ] OPS-013 Redesign Overview into a real dashboard (KPI cards, trends, needs-attention, activity)
+- [ ] OPS-014 Unify density, spacing, typography and component usage across the dashboard
+- [ ] OPS-015 Complete empty / loading / error / success states everywhere
+- [ ] OPS-016 Brand motion & press-feedback pass (shared easing; reduced-motion safe)
+- [ ] OPS-017 Full accessibility + keyboard-navigation pass
+- [ ] OPS-018 Apply Mirae identity consistently in-app (sidebar, loaders, favicons, emails)
 
 ## Sprint 25 — Subscription foundation
 

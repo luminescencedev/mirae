@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Button, Icon } from "@mirae/ui";
-import { CubeIcon } from "@hugeicons/core-free-icons";
+import { Button, Mark } from "@mirae/ui";
 
 const NAV = [
   { label: "Product", to: "/", hash: undefined },
@@ -14,9 +13,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-30 border-b border-border/60 bg-canvas/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-6">
         <Link to="/" className="flex items-center gap-2">
-          <span className="flex size-7 items-center justify-center rounded-md bg-fg text-white">
-            <Icon icon={CubeIcon} size={16} />
-          </span>
+          <Mark className="h-5 w-auto text-fg" />
           <span className="text-sm font-semibold tracking-tight">Mirae</span>
         </Link>
         <nav className="ml-2 hidden items-center gap-1 md:flex">

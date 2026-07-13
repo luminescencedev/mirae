@@ -1,6 +1,5 @@
-import { Badge, Button, Icon } from "@mirae/ui";
+import { Badge, Button, Icon, Mark } from "@mirae/ui";
 import {
-  CubeIcon,
   DashboardSquare01Icon,
   InboxIcon,
   Notification03Icon,
@@ -37,9 +36,7 @@ export function DashboardPreview() {
       {/* Sidebar (static, expanded) */}
       <aside className="flex w-64 shrink-0 flex-col border-r border-border">
         <div className="flex h-14 items-center gap-2.5 px-4">
-          <span className="flex size-8 items-center justify-center rounded-md bg-fg text-white">
-            <Icon icon={CubeIcon} size={18} />
-          </span>
+          <Mark className="h-5 w-auto text-fg" />
           <span className="text-sm font-semibold tracking-tight">Mirae</span>
         </div>
         <div className="px-4">
