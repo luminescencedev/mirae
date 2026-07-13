@@ -1,15 +1,8 @@
-// Server-rendered Open Graph HTML for social crawlers hitting /@handle.
-// Humans get the SPA; only known bots get this meta-only document.
+// SEO + Open Graph for public studio pages. We inject per-studio metadata into
+// the real index.html (so humans boot the SPA and crawlers/social scrapers get
+// correct head tags) — no cloaking, no separate bot document.
 
-// Common link-unfurling crawlers (chat apps, social networks, search).
-const BOT_UA =
-  /(facebookexternalhit|Facebot|Twitterbot|Slackbot|Discordbot|WhatsApp|TelegramBot|LinkedInBot|Pinterest|redditbot|Applebot|Googlebot|bingbot|DuckDuckBot|embedly|Iframely|vkShare|Mastodon|Threads|Bluesky|SkypeUriPreview|ia_archiver)/i;
-
-export function isSocialBot(ua: string | undefined | null): boolean {
-  return !!ua && BOT_UA.test(ua);
-}
-
-function escapeHtml(s: string): string {
+function escapeAttr(s: string): string {
   return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -17,45 +10,83 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-type StudioMeta = {
+// Safe to embed inside a <script type="application/ld+json"> block.
+function jsonLd(obj: unknown): string {
+  return JSON.stringify(obj).replace(/</g, "\\u003c");
+}
+
+export type StudioMeta = {
   handle: string;
   displayName: string;
   tagline: string | null;
   bio: string | null;
+  status: string;
+  avatarR2Key: string | null;
+  coverR2Key: string | null;
 };
 
-export function renderStudioOg(profile: StudioMeta, origin: string): string {
-  const title = `${profile.displayName} · Commissions`;
+function studioImageUrl(profile: StudioMeta, origin: string): string {
+  if (profile.coverR2Key) return `${origin}/api/studio/${profile.handle}/cover`;
+  if (profile.avatarR2Key)
+    return `${origin}/api/studio/${profile.handle}/avatar`;
+  return `${origin}/og-default.png`;
+}
+
+/** Rewrite the base index.html <head> with this studio's SEO/OG metadata. */
+export function injectStudioMeta(
+  html: string,
+  profile: StudioMeta,
+  origin: string,
+): string {
+  const title = `${profile.displayName} · Commissions · Mirae`;
   const rawDesc =
     profile.tagline ||
     profile.bio ||
     `Request a commission from ${profile.displayName} on Mirae.`;
   const desc = rawDesc.length > 200 ? `${rawDesc.slice(0, 197)}…` : rawDesc;
   const url = `${origin}/@${profile.handle}`;
+  const image = studioImageUrl(profile, origin);
+  const hasImage = !!(profile.coverR2Key || profile.avatarR2Key);
+  const closed = profile.status === "closed";
 
-  const t = escapeHtml(title);
-  const d = escapeHtml(desc);
-  const u = escapeHtml(url);
+  const t = escapeAttr(title);
+  const d = escapeAttr(desc);
+  const u = escapeAttr(url);
+  const img = escapeAttr(image);
 
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>${t}</title>
-<meta name="description" content="${d}" />
-<meta property="og:type" content="profile" />
-<meta property="og:site_name" content="Mirae" />
-<meta property="og:title" content="${t}" />
-<meta property="og:description" content="${d}" />
-<meta property="og:url" content="${u}" />
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="${t}" />
-<meta name="twitter:description" content="${d}" />
-</head>
-<body>
-<h1>${escapeHtml(profile.displayName)}</h1>
-<p>${d}</p>
-<p><a href="${u}">View this studio on Mirae</a></p>
-</body>
-</html>`;
+  const ld = jsonLd({
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    mainEntity: {
+      "@type": "Person",
+      name: profile.displayName,
+      description: desc,
+      url,
+      ...(hasImage ? { image } : {}),
+    },
+  });
+
+  const head = [
+    `<meta name="description" content="${d}" />`,
+    `<link rel="canonical" href="${u}" />`,
+    `<meta name="robots" content="${closed ? "noindex, follow" : "index, follow"}" />`,
+    `<meta property="og:type" content="profile" />`,
+    `<meta property="og:site_name" content="Mirae" />`,
+    `<meta property="og:title" content="${t}" />`,
+    `<meta property="og:description" content="${d}" />`,
+    `<meta property="og:url" content="${u}" />`,
+    `<meta property="og:image:alt" content="${escapeAttr(profile.displayName)}" />`,
+    `<meta name="twitter:title" content="${t}" />`,
+    `<meta name="twitter:description" content="${d}" />`,
+    `<meta name="twitter:image" content="${img}" />`,
+    `<script type="application/ld+json">${ld}</script>`,
+  ].join("\n    ");
+
+  return html
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${t}</title>`)
+    .replace(
+      /<meta property="og:image"[^>]*>/,
+      `<meta property="og:image" content="${img}" />`,
+    )
+    .replace("</head>", `    ${head}\n  </head>`);
 }

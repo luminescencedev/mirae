@@ -552,13 +552,13 @@ Safari, Android Chrome, 320px, landscape).
 
 Goal: make each public studio attractive to share and measurable without invasive tracking.
 
-- [ ] SHARE-001 Generate dynamic artist OG images
-- [ ] SHARE-002 Generate project OG images
-- [ ] SHARE-003 Add canonical URLs
-- [ ] SHARE-004 Add structured metadata
-- [ ] SHARE-005 Add sitemap strategy
-- [ ] SHARE-006 Add robots controls
-- [ ] SHARE-007 Add indexing toggle for closed studios
+- [~] SHARE-001 Generate dynamic artist OG images (og:image = cover/avatar now; composited card → media-pipeline)
+- [ ] SHARE-002 Generate project OG images (→ media-pipeline, needs image renderer)
+- [x] SHARE-003 Add canonical URLs
+- [x] SHARE-004 Add structured metadata
+- [x] SHARE-005 Add sitemap strategy
+- [x] SHARE-006 Add robots controls
+- [x] SHARE-007 Add indexing toggle for closed studios
 - [ ] SHARE-008 Add social preview in Studio editor
 - [ ] SHARE-009 Add studio-view analytics
 - [ ] SHARE-010 Add unique-session estimate
