@@ -559,7 +559,7 @@ Goal: make each public studio attractive to share and measurable without invasiv
 - [x] SHARE-005 Add sitemap strategy
 - [x] SHARE-006 Add robots controls
 - [x] SHARE-007 Add indexing toggle for closed studios
-- [ ] SHARE-008 Add social preview in Studio editor
+- [x] SHARE-008 Add social preview in Studio editor
 - [x] SHARE-009 Add studio-view analytics
 - [x] SHARE-010 Add unique-session estimate
 - [x] SHARE-011 Add link-click analytics
@@ -567,7 +567,21 @@ Goal: make each public studio attractive to share and measurable without invasiv
 - [x] SHARE-013 Add request-conversion analytics
 - [ ] SHARE-014 Add most-viewed projects (deferred — needs per-project view events)
 - [x] SHARE-015 Add privacy-friendly referrer reporting
-- [ ] SHARE-016 Add custom social title and description
+- [x] SHARE-016 Add custom social title and description
+
+Completion notes (Sprint 19): public studios are now discoverable + shareable.
+Worker injects per-studio SEO/OG metadata into the real index.html (title,
+description, canonical, robots noindex-when-closed, Open Graph, Twitter card,
+ProfilePage JSON-LD); og:image = artist cover/avatar/default. Added /robots.txt
++ dynamic /sitemap.xml (non-closed studios). Landing/base document got proper
+default OG tags. Privacy-friendly analytics (no cookies/PII): studio_events +
+ingestion (view/link/request funnel, daily IP+UA hash for unique views, referrer
+host only) + owner GET /api/analytics + an Insights tab (KPIs, 14-day chart, top
+referrers). Custom social title/description per studio (override defaults) with a
+live share-preview card in the profile editor. Deferred → media-pipeline:
+SHARE-001/002 composited OG image cards. Deferred: SHARE-014 most-viewed
+projects (needs per-project view events). Migrations 0010 (events) + 0011
+(meta_title/meta_description).
 
 ## Sprint 20 — Onboarding & guided launch
 

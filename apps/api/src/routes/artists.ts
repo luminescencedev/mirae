@@ -46,6 +46,8 @@ artistsRoutes.patch("/me", async (c) => {
     bio?: string | null;
     about?: string | null;
     faq?: FaqItem[];
+    metaTitle?: string | null;
+    metaDescription?: string | null;
     status?: Status;
     appearance?: StudioAppearance;
   } = {};
@@ -56,6 +58,14 @@ artistsRoutes.patch("/me", async (c) => {
   if ("bio" in body) patch.bio = body.bio ? String(body.bio) : null;
   if ("about" in body) patch.about = normalizeAbout(body.about);
   if ("faq" in body) patch.faq = normalizeFaq(body.faq);
+  if ("metaTitle" in body)
+    patch.metaTitle = body.metaTitle
+      ? String(body.metaTitle).trim().slice(0, 70)
+      : null;
+  if ("metaDescription" in body)
+    patch.metaDescription = body.metaDescription
+      ? String(body.metaDescription).trim().slice(0, 200)
+      : null;
   if (STATUSES.includes(body.status)) patch.status = body.status as Status;
   if ("appearance" in body)
     patch.appearance = normalizeAppearance(body.appearance);
