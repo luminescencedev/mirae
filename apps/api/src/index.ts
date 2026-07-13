@@ -11,6 +11,7 @@ import { commissionsRoutes } from "./routes/commissions.ts";
 import { portalRoutes } from "./routes/portal.ts";
 import { deliveryRoutes } from "./routes/delivery.ts";
 import { portfolioRoutes } from "./routes/portfolio.ts";
+import { linksRoutes } from "./routes/links.ts";
 import { isSocialBot, renderStudioOg } from "./lib/og.ts";
 import { log, serializeError } from "./lib/log.ts";
 
@@ -129,6 +130,8 @@ app.route("/api/portal", portalRoutes);
 app.route("/api/delivery", deliveryRoutes);
 // Portfolio projects + assets (owner-scoped CRUD; public image stream).
 app.route("/api/portfolio", portfolioRoutes);
+// Artist links (link-in-bio) — owner-scoped CRUD + public click counter.
+app.route("/api/artist-links", linksRoutes);
 
 // Social crawlers hitting /@handle get a server-rendered Open Graph document
 // (nice link unfurls in Discord/Twitter/etc.); humans fall through to the SPA.

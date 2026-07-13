@@ -36,6 +36,13 @@
       "when": 1783905869608,
       "tag": "0004_first_talos",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783908800516,
+      "tag": "0005_lumpy_sir_ram",
+      "breakpoints": true
     }
   ]
 }
