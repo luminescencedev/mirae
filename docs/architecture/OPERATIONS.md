@@ -50,4 +50,48 @@ Operational runbook for Mirae in production. Pairs with
 
 ## Incident response (TRUST-020)
 
-_Added in TRUST-020 below._
+### Severity
+
+| Sev | Meaning | Examples |
+| --- | --- | --- |
+| **S1** | Service down or data at risk | site 5xx, DB unreachable, data exposure, active abuse |
+| **S2** | Major feature broken, no data risk | uploads failing, portal/delivery inaccessible |
+| **S3** | Minor / cosmetic | a single non-critical bug, degraded polish |
+
+### Checklist
+
+1. **Detect & declare** — note the time, symptom, and suspected severity. For
+   S1, start a written timeline immediately.
+2. **Assess blast radius** — how many artists/clients affected? Is client data
+   exposed? Check Worker logs (`wrangler tail`) filtered by `level:"error"` and
+   the audit trail (`event:"audit.*"`).
+3. **Contain** — stop the bleeding before fixing root cause:
+   - Compromised share link → rotate/revoke the portal or delivery token.
+   - Compromised account → delete sessions for the user (or the account).
+   - Abuse/spam → activate/tighten the rate-limit binding; block at Cloudflare.
+   - Bad deploy → redeploy the previous known-good build.
+4. **Eradicate & recover** — ship the fix, restore data if needed (see
+   Backup & recovery), then run `pnpm smoke`.
+5. **Verify** — confirm the original symptom is gone and no regressions; watch
+   logs for recurrence.
+6. **Communicate** — for S1/S2 affecting users, notify affected artists with
+   what happened, impact, and resolution. For data exposure, follow the
+   applicable breach-notification timeline.
+7. **Post-mortem** (S1/S2) — within a few days: timeline, root cause,
+   contributing factors, and concrete follow-ups (prevention + detection). Blameless.
+
+### Key levers
+
+- **Logs**: `wrangler tail` (structured JSON; filter by `event`/`level`).
+- **Token controls**: portal + delivery rotate/revoke endpoints.
+- **Rate limiting**: `RATE_LIMITER` binding (see SECURITY.md) + Cloudflare WAF.
+- **Rollback**: redeploy the previous build; DB PITR for data.
+- **Secrets rotation**: rotate the affected Worker secret + redeploy; rotating
+  `BETTER_AUTH_SECRET` invalidates all sessions (forces re-login).
+
+### Contacts
+
+- Infra: Cloudflare dashboard (Worker, R2, WAF).
+- Database: Neon console (branches, PITR).
+- Email: Resend dashboard.
+- Security reports: security@usemirae.com.

@@ -700,7 +700,7 @@ Goal: prepare Mirae for real artists, real clients and real files.
 - [x] TRUST-017 Add critical-path automated tests
 - [x] TRUST-018 Add deploy smoke test
 - [x] TRUST-019 Add backup and recovery documentation
-- [ ] TRUST-020 Add incident response checklist
+- [x] TRUST-020 Add incident response checklist
 
 ## Sprint 23 — Closed artist beta
 
