@@ -228,6 +228,58 @@ commissionsRoutes.post("/:id/portal", async (c) => {
   return c.json({ token });
 });
 
+// POST /api/commissions/:id/portal/rotate — issue a fresh token, invalidating
+// the previous portal link (owner).
+commissionsRoutes.post("/:id/portal/rotate", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const token = crypto.randomUUID().replace(/-/g, "");
+  await db
+    .update(commissions)
+    .set({ portalToken: token })
+    .where(eq(commissions.id, commissionId));
+  await db.insert(activityLogs).values({
+    artistId: artist.id,
+    commissionId,
+    type: "portal",
+    message: "Portal link rotated",
+  });
+  return c.json({ token });
+});
+
+// POST /api/commissions/:id/portal/revoke — disable the portal link (owner).
+commissionsRoutes.post("/:id/portal/revoke", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  await db
+    .update(commissions)
+    .set({ portalToken: null })
+    .where(eq(commissions.id, commissionId));
+  await db.insert(activityLogs).values({
+    artistId: artist.id,
+    commissionId,
+    type: "portal",
+    message: "Portal link revoked",
+  });
+  return c.json({ ok: true });
+});
+
 // --- Delivery (one per commission) ----------------------------------------
 
 // GET /api/commissions/:id/delivery — the delivery row (or null).

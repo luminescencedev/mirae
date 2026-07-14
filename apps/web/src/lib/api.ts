@@ -433,6 +433,14 @@ export const commissionsApi = {
     fetch(`/api/commissions/${id}/portal`, { method: "POST" })
       .then(json<{ token: string }>)
       .then((d) => d.token),
+  rotatePortal: (id: string) =>
+    fetch(`/api/commissions/${id}/portal/rotate`, { method: "POST" })
+      .then(json<{ token: string }>)
+      .then((d) => d.token),
+  revokePortal: (id: string) =>
+    fetch(`/api/commissions/${id}/portal/revoke`, { method: "POST" }).then(
+      json<{ ok: true }>,
+    ),
   threads: (id: string) =>
     fetch(`/api/commissions/${id}/threads`).then(
       json<{
