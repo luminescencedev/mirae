@@ -643,15 +643,17 @@ Goal: take a new user from signup to a published, shareable studio in one journe
 - [~] ONBOARD-014 Add contextual empty-state actions (dock steps deep-link to each section; full per-page empty-state CTAs pending)
 - [ ] ONBOARD-015 Add onboarding analytics (pending)
 
-Approach (WIP, pending final review): rather than a forced data-collection
-wizard, onboarding = a **first-run spotlight tour** (dims the app, highlights nav
-/ setup dock / studio tabs / view-page / requests, explains each, always
-skippable) + a **persistent floating progress dock** (bottom-right green ring;
-expands to the step list with checked/struck states + a copy-link action;
-auto-hides when complete or dismissed). The user drives the real app, guided,
-instead of a separate wizard. Still open: richer handle selection (003),
-appearance preset (008), explicit publish flow (010), onboarding analytics
-(015). **Do not mark the sprint complete until the final onboarding is approved.**
+Approach (shipped + approved): rather than a forced data-collection wizard,
+onboarding = a **first-run spotlight tour** (8 steps — dims the app, tracks +
+highlights nav / setup dock / studio tabs / view-page / requests / search /
+notifications with an explanatory card; navigates across routes; always
+skippable) + a **persistent floating progress dock** (bottom-right, gradient
+ring; expands to the step list with checked/struck states, brand mark, segmented
+gradient progress bar + copy-link; stays until setup is complete, collapse/expand
+only). The user drives the real app, guided, instead of a separate wizard.
+Still open (post-beta): richer handle selection (003), appearance preset (008),
+explicit publish flow (010), onboarding analytics (015) — beta will decide what
+to add/trim.
 
 ## Sprint 21 — Premium client portal
 
