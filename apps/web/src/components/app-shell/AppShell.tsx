@@ -31,7 +31,6 @@ import {
   Store01Icon,
   Settings01Icon,
   UnfoldMoreIcon,
-  BubbleChatIcon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import type { IconData } from "../mockups/seed.ts";
@@ -44,6 +43,7 @@ import { MobileMenu } from "./MobileMenu.tsx";
 import { AppTour, type TourStep } from "./AppTour.tsx";
 import { OnboardingDock } from "./OnboardingDock.tsx";
 import { FeedbackDialog } from "./FeedbackDialog.tsx";
+import { FeedbackWidget } from "./FeedbackWidget.tsx";
 
 const TOUR_KEY = "mirae-tour-done";
 const TOUR_STEPS: TourStep[] = [
@@ -419,16 +419,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <OnboardingDock />
 
-      {/* Desktop-only floating feedback trigger; on mobile it lives in the
-          overflow menu. Opens the shared dialog. */}
-      <button
-        type="button"
-        onClick={() => setFeedbackOpen(true)}
-        className="fixed bottom-4 left-[calc(16rem+1rem)] z-40 hidden items-center gap-2 rounded-full border border-border bg-surface py-2 pl-3 pr-4 text-sm font-medium text-fg-muted shadow-panel outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-accent-500 md:flex"
-      >
-        <Icon icon={BubbleChatIcon} size={16} strokeWidth={1.8} />
-        Feedback
-      </button>
+      {/* Desktop: anchored popover. Mobile: modal opened from the overflow menu. */}
+      <FeedbackWidget />
       <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} />
 
       {tourOpen && (
