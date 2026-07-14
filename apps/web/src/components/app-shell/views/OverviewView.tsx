@@ -99,7 +99,9 @@ export function OverviewView() {
             transition={{ duration: 0.3, delay: i * 0.05, ease: EASE_OUT }}
             className={cn(
               "rounded-xl border bg-surface p-4 shadow-soft",
-              s.highlight ? "border-accent-500/40 ring-1 ring-accent-500/20" : "border-border",
+              s.highlight
+                ? "border-accent-500/40 ring-1 ring-accent-500/20"
+                : "border-border",
             )}
           >
             <div className="flex items-center justify-between">

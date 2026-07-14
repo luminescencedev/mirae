@@ -32,8 +32,7 @@ export function AboutEditor() {
     setFaq((f) => f.map((it, j) => (j === i ? { ...it, ...patch } : it)));
   const addItem = () =>
     setFaq((f) => (f.length >= MAX_FAQ_ITEMS ? f : [...f, { q: "", a: "" }]));
-  const removeItem = (i: number) =>
-    setFaq((f) => f.filter((_, j) => j !== i));
+  const removeItem = (i: number) => setFaq((f) => f.filter((_, j) => j !== i));
 
   return (
     <section className="flex flex-col gap-6">

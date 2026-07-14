@@ -511,7 +511,9 @@ function AssetTile({
         {...rowProps}
         className={cn(
           "relative aspect-square overflow-hidden rounded-lg border bg-surface-muted transition-shadow data-[dragging]:opacity-50 data-[drop-target]:ring-2 data-[drop-target]:ring-accent-500",
-          isCover ? "border-accent-500 ring-1 ring-accent-500" : "border-border",
+          isCover
+            ? "border-accent-500 ring-1 ring-accent-500"
+            : "border-border",
         )}
       >
         <img

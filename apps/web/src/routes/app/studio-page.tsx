@@ -176,9 +176,7 @@ function StudioPage() {
             className={cn(
               "flex-col overflow-hidden rounded-xl border border-border bg-surface-sunken shadow-soft lg:flex lg:h-full lg:flex-1",
               // Mobile has no fixed-height parent — give the preview real height.
-              mobileView === "preview"
-                ? "flex h-[70dvh]"
-                : "hidden",
+              mobileView === "preview" ? "flex h-[70dvh]" : "hidden",
             )}
           >
             <div className="flex items-center justify-between border-b border-border bg-surface px-3 py-2">

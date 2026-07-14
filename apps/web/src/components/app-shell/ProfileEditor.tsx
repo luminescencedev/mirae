@@ -226,7 +226,9 @@ export function ProfileEditor() {
           </p>
         </div>
         <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-fg-muted">Custom title</span>
+          <span className="text-xs font-medium text-fg-muted">
+            Custom title
+          </span>
           <Input
             value={metaTitle}
             maxLength={70}

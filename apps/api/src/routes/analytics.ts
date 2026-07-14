@@ -29,9 +29,8 @@ analyticsRoutes.get("/", async (c) => {
     );
 
   const views = rows.filter((r) => r.type === "view");
-  const uniqueViews = new Set(
-    views.map((r) => r.sessionHash).filter(Boolean),
-  ).size;
+  const uniqueViews = new Set(views.map((r) => r.sessionHash).filter(Boolean))
+    .size;
   const linkClicks = rows.filter((r) => r.type === "link_click").length;
   const requestStarts = rows.filter((r) => r.type === "request_start").length;
   const requestSubmits = rows.filter((r) => r.type === "request_submit").length;
@@ -50,14 +49,17 @@ analyticsRoutes.get("/", async (c) => {
   // Top referrer hosts (from views).
   const refCounts = new Map<string, number>();
   for (const v of views)
-    if (v.refHost) refCounts.set(v.refHost, (refCounts.get(v.refHost) ?? 0) + 1);
+    if (v.refHost)
+      refCounts.set(v.refHost, (refCounts.get(v.refHost) ?? 0) + 1);
   const topReferrers = [...refCounts.entries()]
     .map(([host, count]) => ({ host, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
 
   const conversion =
-    views.length > 0 ? Math.round((requestSubmits / views.length) * 1000) / 10 : 0;
+    views.length > 0
+      ? Math.round((requestSubmits / views.length) * 1000) / 10
+      : 0;
 
   return c.json({
     views: views.length,

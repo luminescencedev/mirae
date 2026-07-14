@@ -153,7 +153,11 @@ export function Calendar({
                   {isSelected && (
                     <motion.span
                       layoutId={`cal-sel-${uid}-${cursor.getFullYear()}-${cursor.getMonth()}`}
-                      transition={{ type: "spring", bounce: 0.18, duration: 0.4 }}
+                      transition={{
+                        type: "spring",
+                        bounce: 0.18,
+                        duration: 0.4,
+                      }}
                       className={cn(
                         "absolute inset-0 m-auto rounded-lg bg-accent-500",
                         lg ? "size-9 lg:size-10" : "size-8",
