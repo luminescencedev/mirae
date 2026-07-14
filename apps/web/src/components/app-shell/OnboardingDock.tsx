@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
-import { Icon, cn, useToast } from "@mirae/ui";
+import { Icon, Mark, cn, useToast } from "@mirae/ui";
 import {
   ArrowRight01Icon,
   Cancel01Icon,
@@ -103,6 +103,7 @@ export function OnboardingDock() {
               >
                 <Icon icon={Cancel01Icon} size={15} />
               </button>
+              <Mark className="mx-auto mb-3 h-5 w-auto text-fg" />
               <p className="text-base font-semibold tracking-tight text-fg">
                 You're almost there
               </p>
@@ -208,6 +209,14 @@ export function OnboardingDock() {
   );
 }
 
+// Ramp filled ticks from deep navy → accent blue (echoes the OG card gradient).
+const RAMP_FROM = [30, 39, 73]; // #1e2749 (accent-950)
+const RAMP_TO = [107, 147, 240]; // #6b93f0 (accent-500)
+function rampColor(t: number): string {
+  const c = RAMP_FROM.map((a, k) => Math.round(a + (RAMP_TO[k] - a) * t));
+  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+}
+
 function SegmentedBar({
   pct,
   count = 28,
@@ -220,16 +229,23 @@ function SegmentedBar({
   const filled = Math.round((pct / 100) * count);
   return (
     <div className={cn("flex items-center gap-[3px]", className)}>
-      {Array.from({ length: count }).map((_, i) => (
-        <span
-          key={i}
-          className={cn(
-            "h-4 w-[3px] rounded-full transition-colors duration-300 ease-out",
-            i < filled ? "bg-accent-500" : "bg-surface-muted",
-          )}
-          style={{ transitionDelay: `${i * 15}ms` }}
-        />
-      ))}
+      {Array.from({ length: count }).map((_, i) => {
+        const on = i < filled;
+        const t = filled <= 1 ? 1 : i / (filled - 1);
+        return (
+          <span
+            key={i}
+            className={cn(
+              "h-4 w-[3px] rounded-full transition-colors duration-300 ease-out",
+              !on && "bg-surface-muted",
+            )}
+            style={{
+              transitionDelay: `${i * 15}ms`,
+              backgroundColor: on ? rampColor(t) : undefined,
+            }}
+          />
+        );
+      })}
     </div>
   );
 }
