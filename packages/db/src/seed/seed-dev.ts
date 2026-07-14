@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { createDb } from "../client.ts";
 import {
   activityLogs,
@@ -9,22 +10,34 @@ import {
   commissions,
   deliveries,
   files,
+  portfolioAssets,
   portfolioProjects,
   quoteItems,
   quotes,
   users,
 } from "../schema/index.ts";
+import {
+  AVATAR,
+  COVER,
+  DELIVERABLE,
+  DEMO_HANDLE,
+  PROJECTS,
+  assetKey,
+} from "./demo-media.ts";
 
-// Dev seed — a demo studio (Rain Aoki) with realistic commission data.
-// Idempotent: deleting the user cascades through every owned table.
+// Demo seed — one rich, showcase-ready studio (@rainaoki) with a full profile,
+// portfolio (images live in R2 — run scripts/seed-demo-media.mjs to generate +
+// upload them to matching keys), commission types, links, live commissions, a
+// sent quote and a public delivery. Safe to re-run: it removes the demo user
+// (cascade) then reinserts.
 const url = process.env.DATABASE_URL;
 if (!url) throw new Error("DATABASE_URL is not set");
 const db = createDb(url);
 
 const USER_ID = "usr_demo_rain";
 
-console.log("Resetting demo data…");
-await db.delete(users);
+console.log("Resetting demo studio…");
+await db.delete(users).where(eq(users.id, USER_ID));
 
 console.log("Seeding…");
 await db.insert(users).values({
@@ -38,10 +51,10 @@ const [artist] = await db
   .insert(artistProfiles)
   .values({
     userId: USER_ID,
-    handle: "rainaoki",
+    handle: DEMO_HANDLE,
     displayName: "Rain Aoki",
     tagline: "Character illustrator · semi-realistic & anime",
-    bio: "I take on character illustrations, key visuals and emote sets. Two revision rounds included.",
+    bio: "I take on character illustrations, key visuals and emote sets. Two revision rounds included on every piece.",
     about:
       "I've drawn characters for indie games, VTubers and tabletop for six " +
       "years. I keep my queue small so every piece gets real attention — " +
@@ -59,8 +72,17 @@ const [artist] = await db
         q: "Can I use the art commercially?",
         a: "Personal use by default. Commercial licensing is a separate line item — just ask.",
       },
+      {
+        q: "How do payments work?",
+        a: "50% upfront to lock your slot, 50% on delivery. Bank transfer, PayPal or Wise.",
+      },
     ],
+    metaTitle: "Rain Aoki · Commissions",
+    metaDescription:
+      "Character illustration, key visuals and emote sets — open for commissions.",
     status: "open",
+    avatarR2Key: AVATAR.key,
+    coverR2Key: COVER.key,
   })
   .returning();
 
@@ -68,7 +90,7 @@ await db.insert(commissionTypes).values([
   {
     artistId: artist.id,
     name: "Character illustration",
-    blurb: "Full-body or half-body, rendered.",
+    blurb: "Full-body or half-body, fully rendered with a simple background.",
     priceFromCents: 15000,
     turnaround: "~2 weeks",
     slots: 3,
@@ -85,15 +107,23 @@ await db.insert(commissionTypes).values([
   },
   {
     artistId: artist.id,
+    name: "Reference sheet",
+    blurb: "Turnaround, expressions and colour callouts for your character.",
+    priceFromCents: 22000,
+    turnaround: "2–3 weeks",
+    slots: 2,
+    sortOrder: 2,
+  },
+  {
+    artistId: artist.id,
     name: "Key visual (commercial)",
-    blurb: "Illustration for a launch, cover or campaign.",
+    blurb: "Illustration for a launch, cover or campaign. Licence included.",
     priceFromCents: 40000,
     turnaround: "3–4 weeks",
-    sortOrder: 2,
+    sortOrder: 3,
   },
 ]);
 
-// Link-in-bio for the public studio.
 await db.insert(artistLinks).values([
   {
     artistId: artist.id,
@@ -132,31 +162,54 @@ await db.insert(artistLinks).values([
     style: "simple",
     position: 3,
   },
+  {
+    artistId: artist.id,
+    title: "Bluesky",
+    url: "https://bsky.app/profile/example",
+    platform: "bluesky",
+    type: "social",
+    style: "simple",
+    position: 4,
+  },
 ]);
 
-// Published portfolio projects (images are uploaded via the manager, so these
-// have none — the public page still lists them with titles + descriptions).
-await db.insert(portfolioProjects).values([
-  {
-    artistId: artist.id,
-    title: "Ashfall — key art",
-    slug: "ashfall-key-art",
-    description: "Cover illustration for a narrative RPG. Full render.",
-    projectType: "illustration",
-    visibility: "published",
-    featured: true,
-    position: 0,
-  },
-  {
-    artistId: artist.id,
-    title: "Character lineup",
-    slug: "character-lineup",
-    description: "Cast exploration for an indie title.",
-    projectType: "character_design",
-    visibility: "published",
-    position: 1,
-  },
-]);
+// Portfolio — projects + their (R2-backed) assets. First asset is the cover.
+for (const [i, p] of PROJECTS.entries()) {
+  const [project] = await db
+    .insert(portfolioProjects)
+    .values({
+      artistId: artist.id,
+      title: p.title,
+      slug: p.slug,
+      description: p.description,
+      projectType: p.projectType,
+      visibility: "published",
+      featured: p.featured,
+      publishedAt: new Date(),
+      position: i,
+    })
+    .returning();
+
+  const inserted = await db
+    .insert(portfolioAssets)
+    .values(
+      p.assets.map((a, idx) => ({
+        projectId: project.id,
+        r2Key: assetKey(p.slug, idx),
+        mimeType: "image/png",
+        width: a.w,
+        height: a.h,
+        altText: a.label,
+        position: idx,
+      })),
+    )
+    .returning({ id: portfolioAssets.id });
+
+  await db
+    .update(portfolioProjects)
+    .set({ coverAssetId: inserted[0].id })
+    .where(eq(portfolioProjects.id, project.id));
+}
 
 const insertedClients = await db
   .insert(clients)
@@ -245,9 +298,8 @@ await db.insert(activityLogs).values([
   },
 ]);
 
-// A finished commission with a public delivery + one deliverable file, so
-// /delivery/:token has something to show. (The R2 object isn't seeded, so the
-// download link is illustrative only.)
+// A finished commission with a public delivery + a deliverable file, so
+// /delivery/:token has something to show.
 const [delivered] = await db
   .insert(commissions)
   .values({
@@ -271,10 +323,10 @@ await db.insert(deliveries).values({
 await db.insert(files).values({
   commissionId: delivered.id,
   kind: "deliverable",
-  key: "commissions/demo/sticker-sheet.png",
+  key: DELIVERABLE.key,
   name: "sticker-sheet.png",
   sizeBytes: 2_400_000,
 });
 
-console.log("✓ Seed complete — studio @rainaoki");
+console.log(`✓ Seed complete — studio @${DEMO_HANDLE}`);
 process.exit(0);
