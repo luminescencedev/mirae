@@ -62,7 +62,7 @@ function StudioPage() {
   }, []);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex flex-col lg:h-full">
       <PageHeader
         title="Studio page"
         subtitle="Everything a visitor sees at your public page."
@@ -80,7 +80,7 @@ function StudioPage() {
 
       <Tabs
         defaultValue="profile"
-        className="flex min-h-0 flex-1 flex-col px-4 py-5 sm:px-6 sm:py-6"
+        className="flex flex-col px-4 py-5 sm:px-6 sm:py-6 lg:min-h-0 lg:flex-1"
       >
         {/* Mobile: toggle between editing and the live preview */}
         <div className="mb-4 flex rounded-lg bg-surface-muted p-1 lg:hidden">
@@ -139,7 +139,7 @@ function StudioPage() {
           />
         </div>
 
-        <div className="mt-6 flex min-h-0 flex-1 flex-col gap-6 lg:flex-row lg:items-stretch">
+        <div className="mt-6 flex flex-col gap-6 lg:min-h-0 lg:flex-1 lg:flex-row lg:items-stretch">
           {/* Left half — the active editor (scrolls on its own) */}
           <div
             className={cn(
@@ -173,8 +173,11 @@ function StudioPage() {
           {/* Right half — live preview of the public page */}
           <aside
             className={cn(
-              "h-full flex-1 flex-col overflow-hidden rounded-xl border border-border bg-surface-sunken shadow-soft lg:flex",
-              mobileView === "preview" ? "flex" : "hidden",
+              "flex-col overflow-hidden rounded-xl border border-border bg-surface-sunken shadow-soft lg:flex lg:h-full lg:flex-1",
+              // Mobile has no fixed-height parent — give the preview real height.
+              mobileView === "preview"
+                ? "flex h-[70dvh]"
+                : "hidden",
             )}
           >
             <div className="flex items-center justify-between border-b border-border bg-surface px-3 py-2">
