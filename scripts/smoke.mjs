@@ -4,7 +4,10 @@
 //   node scripts/smoke.mjs               # defaults to https://usemirae.com
 //   BASE_URL=https://app.usemirae.com node scripts/smoke.mjs
 
-const BASE = (process.env.BASE_URL ?? "https://usemirae.com").replace(/\/$/, "");
+const BASE = (process.env.BASE_URL ?? "https://usemirae.com").replace(
+  /\/$/,
+  "",
+);
 
 const checks = [
   { path: "/health", expect: (r, body) => r.ok && body.includes("ok") },

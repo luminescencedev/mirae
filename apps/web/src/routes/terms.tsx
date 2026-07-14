@@ -48,14 +48,15 @@ function Terms() {
       <section className="flex flex-col gap-2">
         <h2>Termination</h2>
         <p>
-          You can delete your account at any time from <strong>Settings</strong>.
-          You can export your data beforehand.
+          You can delete your account at any time from <strong>Settings</strong>
+          . You can export your data beforehand.
         </p>
       </section>
       <section className="flex flex-col gap-2">
         <h2>Contact</h2>
         <p>
-          Questions? Email <a href="mailto:hello@usemirae.com">hello@usemirae.com</a>.
+          Questions? Email{" "}
+          <a href="mailto:hello@usemirae.com">hello@usemirae.com</a>.
         </p>
       </section>
     </LegalDoc>

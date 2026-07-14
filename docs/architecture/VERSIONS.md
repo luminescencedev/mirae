@@ -124,10 +124,10 @@ Radix UI primitives (pin each individually, same release wave):
 
 ## Cloudflare tooling
 
-| Package                   | Version      | Notes                                          |
-| ------------------------- | ------------ | ---------------------------------------------- |
-| wrangler                  | 4.107.1      |                                                |
-| @cloudflare/workers-types | 5.20260708.1 | dev dependency — TS types for Worker bindings. |
+| Package                   | Version      | Notes                                                       |
+| ------------------------- | ------------ | ----------------------------------------------------------- |
+| wrangler                  | 4.107.1      |                                                             |
+| @cloudflare/workers-types | 5.20260708.1 | dev dependency — TS types for Worker bindings.              |
 | vitest                    | 3.2.4        | dev dependency — unit tests for pure API logic (TRUST-017). |
 
 ## Dev-runtime choice

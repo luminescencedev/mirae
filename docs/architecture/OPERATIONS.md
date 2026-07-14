@@ -52,11 +52,11 @@ Operational runbook for Mirae in production. Pairs with
 
 ### Severity
 
-| Sev | Meaning | Examples |
-| --- | --- | --- |
-| **S1** | Service down or data at risk | site 5xx, DB unreachable, data exposure, active abuse |
-| **S2** | Major feature broken, no data risk | uploads failing, portal/delivery inaccessible |
-| **S3** | Minor / cosmetic | a single non-critical bug, degraded polish |
+| Sev    | Meaning                            | Examples                                              |
+| ------ | ---------------------------------- | ----------------------------------------------------- |
+| **S1** | Service down or data at risk       | site 5xx, DB unreachable, data exposure, active abuse |
+| **S2** | Major feature broken, no data risk | uploads failing, portal/delivery inaccessible         |
+| **S3** | Minor / cosmetic                   | a single non-critical bug, degraded polish            |
 
 ### Checklist
 

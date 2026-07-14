@@ -300,7 +300,11 @@ commissionsRoutes.post("/:id/delivery/revoke", async (c) => {
   const artist = await getArtist(c);
   if (!artist) return c.json({ error: "unauthorized" }, 401);
   const db = createDb(c.env.DATABASE_URL);
-  const commissionId = await ownedCommissionId(db, c.req.param("id"), artist.id);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
   if (!commissionId) return c.json({ error: "not found" }, 404);
   await db
     .update(deliveries)
@@ -314,7 +318,11 @@ commissionsRoutes.post("/:id/delivery/rotate", async (c) => {
   const artist = await getArtist(c);
   if (!artist) return c.json({ error: "unauthorized" }, 401);
   const db = createDb(c.env.DATABASE_URL);
-  const commissionId = await ownedCommissionId(db, c.req.param("id"), artist.id);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
   if (!commissionId) return c.json({ error: "not found" }, 404);
   const token = newToken();
   const [row] = await db

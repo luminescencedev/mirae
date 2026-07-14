@@ -24,12 +24,12 @@ hardening). Pairs with `DECISIONS.md` (locked architecture) and `ARCHITECTURE.md
 
 **Upload endpoints** (all authenticated + owner-scoped today)
 
-| Endpoint | Limit | MIME |
-| --- | --- | --- |
-| portfolio asset | 10 MB | image allowlist |
-| avatar / cover | 8 MB | image allowlist |
-| commission-type image | 8 MB | image allowlist |
-| commission file (reference/wip/deliverable) | size recorded, **no MIME allowlist** | any |
+| Endpoint                                    | Limit                                | MIME            |
+| ------------------------------------------- | ------------------------------------ | --------------- |
+| portfolio asset                             | 10 MB                                | image allowlist |
+| avatar / cover                              | 8 MB                                 | image allowlist |
+| commission-type image                       | 8 MB                                 | image allowlist |
+| commission file (reference/wip/deliverable) | size recorded, **no MIME allowlist** | any             |
 
 ## Threats → mitigations (mapped to Sprint 22 tickets)
 
@@ -65,13 +65,13 @@ hardening). Pairs with `DECISIONS.md` (locked architecture) and `ARCHITECTURE.md
 
 Every R2-serving endpoint was reviewed for authorization + safe headers:
 
-| Endpoint | Gate | Headers |
-| --- | --- | --- |
-| `GET /api/delivery/:token/files/:id` | delivery token + commission match | `attachment` + `nosniff` |
-| `GET /api/portal/:token/files/:id` | portal token + commission match + `reference` kind only | `nosniff` (references can't be svg/html — blocked at upload) |
-| `GET /api/studio/:handle/{avatar,cover}` | public by design | `nosniff` |
-| `GET /api/commission-types/:id/image` | public by design | `nosniff` |
-| `GET portfolio asset` | public by design | `nosniff` |
+| Endpoint                                 | Gate                                                    | Headers                                                      |
+| ---------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------ |
+| `GET /api/delivery/:token/files/:id`     | delivery token + commission match                       | `attachment` + `nosniff`                                     |
+| `GET /api/portal/:token/files/:id`       | portal token + commission match + `reference` kind only | `nosniff` (references can't be svg/html — blocked at upload) |
+| `GET /api/studio/:handle/{avatar,cover}` | public by design                                        | `nosniff`                                                    |
+| `GET /api/commission-types/:id/image`    | public by design                                        | `nosniff`                                                    |
+| `GET portfolio asset`                    | public by design                                        | `nosniff`                                                    |
 
 All streams now send `X-Content-Type-Options: nosniff`; deliverables download as
 attachments; active-content MIME is blocked at commission-file upload.

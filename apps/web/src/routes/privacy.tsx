@@ -59,7 +59,8 @@ function Privacy() {
       <section className="flex flex-col gap-2">
         <h2>Contact</h2>
         <p>
-          Questions about privacy? Email <a href="mailto:privacy@usemirae.com">privacy@usemirae.com</a>.
+          Questions about privacy? Email{" "}
+          <a href="mailto:privacy@usemirae.com">privacy@usemirae.com</a>.
         </p>
       </section>
     </LegalDoc>

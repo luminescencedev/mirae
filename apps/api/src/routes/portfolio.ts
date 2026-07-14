@@ -314,7 +314,10 @@ portfolioRoutes.post("/projects/:id/assets", async (c) => {
   const bytes = await file.arrayBuffer();
   const dims = imageSize(bytes);
   // Guard against decompression / resolution bombs.
-  if (dims && (dims.width > MAX_IMAGE_DIMENSION || dims.height > MAX_IMAGE_DIMENSION))
+  if (
+    dims &&
+    (dims.width > MAX_IMAGE_DIMENSION || dims.height > MAX_IMAGE_DIMENSION)
+  )
     return c.json({ error: "Image is too large (max 12000px per side)." }, 413);
   await c.env.FILES.put(key, bytes, {
     httpMetadata: { contentType: file.type },
