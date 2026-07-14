@@ -226,6 +226,7 @@ export type PortalView = {
       createdAt: string;
     }[];
   };
+  references: { id: string; name: string; sizeBytes: number | null }[];
 };
 
 export type PortalMessage = {

@@ -5,6 +5,7 @@ import {
   artistProfiles,
   commissions,
   createDb,
+  files,
   portalFeedback,
   portalMessages,
   portalThreads,
@@ -13,7 +14,7 @@ import {
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 
-type Bindings = AuthEnv & { ASSETS: Fetcher };
+type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
 export const portalRoutes = new Hono<{ Bindings: Bindings }>();
 
@@ -69,6 +70,17 @@ portalRoutes.get("/:token", async (c) => {
     .where(eq(revisionRounds.commissionId, commission.id))
     .orderBy(asc(revisionRounds.roundNumber));
 
+  const references = await db
+    .select({
+      id: files.id,
+      name: files.name,
+      sizeBytes: files.sizeBytes,
+    })
+    .from(files)
+    .where(
+      and(eq(files.commissionId, commission.id), eq(files.kind, "reference")),
+    );
+
   return c.json({
     commission: {
       title: commission.title,
@@ -91,7 +103,41 @@ portalRoutes.get("/:token", async (c) => {
         createdAt: r.createdAt,
       })),
     },
+    references,
   });
+});
+
+// GET /api/portal/:token/files/:fileId — stream a reference file from R2,
+// gated by the portal token (reference kind only — deliverables use the
+// delivery token).
+portalRoutes.get("/:token/files/:fileId", async (c) => {
+  const db = createDb(c.env.DATABASE_URL);
+  const [commission] = await db
+    .select({ id: commissions.id })
+    .from(commissions)
+    .where(eq(commissions.portalToken, c.req.param("token")))
+    .limit(1);
+  if (!commission) return c.json({ error: "not found" }, 404);
+
+  const [file] = await db
+    .select()
+    .from(files)
+    .where(
+      and(
+        eq(files.id, c.req.param("fileId")),
+        eq(files.commissionId, commission.id),
+        eq(files.kind, "reference"),
+      ),
+    )
+    .limit(1);
+  if (!file) return c.json({ error: "not found" }, 404);
+
+  const object = await c.env.FILES.get(file.key);
+  if (!object) return c.json({ error: "not found" }, 404);
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set("etag", object.httpEtag);
+  return new Response(object.body, { headers });
 });
 
 // POST /api/portal/:token/quote/accept — client accepts the sent quote.

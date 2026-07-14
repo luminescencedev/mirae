@@ -671,7 +671,7 @@ Goal: bring the client-facing experience to the quality of the public studio.
 - [x] CLIENTUX-008 Add quote acceptance
 - [x] CLIENTUX-009 Add quote decline with note
 - [x] CLIENTUX-010 Add delivery acknowledgement
-- [ ] CLIENTUX-011 Add secure reference gallery
+- [x] CLIENTUX-011 Add secure reference gallery
 - [ ] CLIENTUX-012 Add token rotation
 - [ ] CLIENTUX-013 Add token revocation
 - [ ] CLIENTUX-014 Add mobile portal polish

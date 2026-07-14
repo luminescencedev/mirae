@@ -699,6 +699,31 @@ export function PortalPage({ token }: { token: string }) {
 
       <Revisions token={token} revisions={data.revisions} />
 
+      {data.references.length > 0 && (
+        <div className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft">
+          <p className="mb-3 text-sm font-semibold text-fg">References</p>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+            {data.references.map((r) => (
+              <a
+                key={r.id}
+                href={`/api/portal/${encodeURIComponent(token)}/files/${r.id}`}
+                target="_blank"
+                rel="noreferrer"
+                title={r.name}
+                className="group aspect-square overflow-hidden rounded-lg border border-border bg-surface-muted"
+              >
+                <img
+                  src={`/api/portal/${encodeURIComponent(token)}/files/${r.id}`}
+                  alt={r.name}
+                  loading="lazy"
+                  className="size-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
       {quote && <QuoteCard token={token} quote={quote} />}
 
       <Threads token={token} artist={artist} threads={data.threads} />
