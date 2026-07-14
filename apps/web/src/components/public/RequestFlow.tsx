@@ -78,7 +78,8 @@ export function RequestFlow({
 
   // Prefill the clicked type even if a draft existed without one.
   useEffect(() => {
-    if (initialTypeId) setDraft((d) => (d.typeId ? d : { ...d, typeId: initialTypeId }));
+    if (initialTypeId)
+      setDraft((d) => (d.typeId ? d : { ...d, typeId: initialTypeId }));
   }, [initialTypeId]);
 
   // Persist the draft (cleared on success).
@@ -283,7 +284,9 @@ export function RequestFlow({
                     />
                   </label>
                   <label className="flex flex-col gap-1.5">
-                    <span className="text-sm font-medium text-fg">Deadline</span>
+                    <span className="text-sm font-medium text-fg">
+                      Deadline
+                    </span>
                     <Input
                       value={draft.deadline}
                       onChange={(e) => set("deadline", e.target.value)}

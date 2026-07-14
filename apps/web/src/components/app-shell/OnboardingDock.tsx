@@ -25,7 +25,10 @@ export function OnboardingDock() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
 
-  const profileQ = useQuery({ queryKey: ["artist", "me"], queryFn: artistApi.me });
+  const profileQ = useQuery({
+    queryKey: ["artist", "me"],
+    queryFn: artistApi.me,
+  });
   const typesQ = useQuery({
     queryKey: ["commission-types"],
     queryFn: commissionTypesApi.list,
@@ -34,7 +37,10 @@ export function OnboardingDock() {
     queryKey: ["portfolio"],
     queryFn: portfolioApi.list,
   });
-  const linksQ = useQuery({ queryKey: ["artist-links"], queryFn: linksApi.list });
+  const linksQ = useQuery({
+    queryKey: ["artist-links"],
+    queryFn: linksApi.list,
+  });
 
   const profile = profileQ.data;
   if (!profile) return null;

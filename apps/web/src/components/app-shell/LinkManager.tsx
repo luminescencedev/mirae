@@ -165,7 +165,10 @@ export function LinkManager() {
           ))}
         </div>
       ) : isError ? (
-        <ErrorState hint="Couldn’t load your links." onRetry={() => refetch()} />
+        <ErrorState
+          hint="Couldn’t load your links."
+          onRetry={() => refetch()}
+        />
       ) : !links?.length ? (
         <div className="grid place-items-center gap-2 rounded-xl border border-dashed border-border px-6 py-10 text-center">
           <div className="text-fg-subtle">
@@ -347,67 +350,69 @@ function LinkRow({
       >
         <div className="overflow-hidden">
           <div className="flex flex-col gap-2 border-t border-border pt-2">
-          <div className="grid grid-cols-3 gap-2">
-            <Select
-              value={link.platform ?? "custom"}
-              onValueChange={(v) => patch.mutate({ platform: v })}
-            >
-              <SelectTrigger className="h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {PLATFORMS.map((p) => (
-                  <SelectItem key={p} value={p}>
-                    {p}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              value={link.type}
-              onValueChange={(v) => patch.mutate({ type: v as LinkType })}
-            >
-              <SelectTrigger className="h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(TYPE_LABELS).map(([v, label]) => (
-                  <SelectItem key={v} value={v}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              value={link.style}
-              onValueChange={(v) => patch.mutate({ style: v as LinkStyle })}
-            >
-              <SelectTrigger className="h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(STYLE_LABELS).map(([v, label]) => (
-                  <SelectItem key={v} value={v}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center gap-1">
-            <IconBtn
-              label="Move up"
-              icon={ArrowUp01Icon}
-              onClick={onMoveUp}
-              disabled={!onMoveUp}
-            />
-            <IconBtn
-              label="Move down"
-              icon={ArrowDown01Icon}
-              onClick={onMoveDown}
-              disabled={!onMoveDown}
-            />
-            <span className="text-xs text-fg-subtle">Platform · type · card style</span>
+            <div className="grid grid-cols-3 gap-2">
+              <Select
+                value={link.platform ?? "custom"}
+                onValueChange={(v) => patch.mutate({ platform: v })}
+              >
+                <SelectTrigger className="h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PLATFORMS.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={link.type}
+                onValueChange={(v) => patch.mutate({ type: v as LinkType })}
+              >
+                <SelectTrigger className="h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(TYPE_LABELS).map(([v, label]) => (
+                    <SelectItem key={v} value={v}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={link.style}
+                onValueChange={(v) => patch.mutate({ style: v as LinkStyle })}
+              >
+                <SelectTrigger className="h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(STYLE_LABELS).map(([v, label]) => (
+                    <SelectItem key={v} value={v}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-1">
+              <IconBtn
+                label="Move up"
+                icon={ArrowUp01Icon}
+                onClick={onMoveUp}
+                disabled={!onMoveUp}
+              />
+              <IconBtn
+                label="Move down"
+                icon={ArrowDown01Icon}
+                onClick={onMoveDown}
+                disabled={!onMoveDown}
+              />
+              <span className="text-xs text-fg-subtle">
+                Platform · type · card style
+              </span>
             </div>
           </div>
         </div>

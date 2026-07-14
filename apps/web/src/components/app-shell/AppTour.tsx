@@ -99,7 +99,10 @@ export function AppTour({
     ? step.place === "top" || rect.top + rect.height / 2 > vh / 2
     : false;
   const cardLeft = rect
-    ? Math.max(12, Math.min(rect.left + rect.width / 2 - cardW / 2, vw - cardW - 12))
+    ? Math.max(
+        12,
+        Math.min(rect.left + rect.width / 2 - cardW / 2, vw - cardW - 12),
+      )
     : 12;
   const cardStyle: React.CSSProperties = rect
     ? above

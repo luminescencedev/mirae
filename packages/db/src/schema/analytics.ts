@@ -1,10 +1,4 @@
-import {
-  index,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { artistProfiles } from "./studio.ts";
 
 // Privacy-friendly public-studio events. No cookies, no stored IPs — a daily

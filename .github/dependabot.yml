@@ -11,6 +11,16 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # These are pinned deliberately (see docs/architecture/VERSIONS.md +
+      # DECISIONS.md). Block major bumps so Dependabot can't fight the pins —
+      # TypeScript is locked to 6.x on purpose (not 7.x).
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
