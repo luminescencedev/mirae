@@ -15,6 +15,7 @@ import { linksRoutes } from "./routes/links.ts";
 import { analyticsRoutes } from "./routes/analytics.ts";
 import { injectStudioMeta } from "./lib/og.ts";
 import { studioOgResponse } from "./lib/og-card.ts";
+import { sweepOrphans } from "./lib/cleanup.ts";
 import { log, serializeError } from "./lib/log.ts";
 
 type Bindings = AuthEnv & {
@@ -265,4 +266,22 @@ app.onError((err, c) => {
   return c.json({ error: "Internal server error" }, 500);
 });
 
-export default app;
+// Export a module worker so we can attach the scheduled (cron) handler that
+// sweeps orphaned R2 objects. `fetch` stays the Hono app.
+export default {
+  fetch: app.fetch,
+  async scheduled(
+    _event: ScheduledEvent,
+    env: Parameters<typeof app.fetch>[1] & {
+      DATABASE_URL: string;
+      FILES: R2Bucket;
+    },
+    ctx: ExecutionContext,
+  ) {
+    ctx.waitUntil(
+      sweepOrphans(env)
+        .then((n) => log("info", "orphan_sweep", { deleted: n }))
+        .catch((e) => log("error", "orphan_sweep_failed", serializeError(e))),
+    );
+  },
+};
