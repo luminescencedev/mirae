@@ -98,9 +98,7 @@ function Shell({
       <main className="mx-auto w-full max-w-xl flex-1 px-5 py-8 sm:px-6 sm:py-10">
         {children}
       </main>
-      <footer
-        className="mx-auto flex max-w-xl items-center justify-center gap-1.5 px-6 pb-[calc(env(safe-area-inset-bottom)+2rem)] pt-4 text-xs text-fg-subtle"
-      >
+      <footer className="mx-auto flex max-w-xl items-center justify-center gap-1.5 px-6 pb-[calc(env(safe-area-inset-bottom)+2rem)] pt-4 text-xs text-fg-subtle">
         <Mark className="h-3 w-auto" />
         Powered by
         <Link to="/" className="font-medium text-fg-muted hover:text-fg">
@@ -154,7 +152,9 @@ function Timeline({ status }: { status: PortalView["commission"]["status"] }) {
                 />
               )}
             </span>
-            <div className={cn("flex items-center gap-2", last ? "pb-0" : "pb-5")}>
+            <div
+              className={cn("flex items-center gap-2", last ? "pb-0" : "pb-5")}
+            >
               <span
                 className={cn(
                   "text-sm",
@@ -531,7 +531,8 @@ function NewThread({ token }: { token: string }) {
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const create = useMutation({
-    mutationFn: () => publicApi.createThread(token, subject.trim(), body.trim()),
+    mutationFn: () =>
+      publicApi.createThread(token, subject.trim(), body.trim()),
     onSuccess: () => {
       setSubject("");
       setBody("");
@@ -581,7 +582,11 @@ function NewThread({ token }: { token: string }) {
         </p>
       )}
       <div className="mt-3 flex gap-2">
-        <Button type="submit" size="sm" disabled={!body.trim() || create.isPending}>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={!body.trim() || create.isPending}
+        >
           {create.isPending ? "Sending…" : "Send"}
         </Button>
         <Button

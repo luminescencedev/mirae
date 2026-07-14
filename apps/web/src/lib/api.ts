@@ -148,10 +148,7 @@ export const trackLinkClick = (id: string) => {
 };
 
 export type StudioEventType =
-  | "view"
-  | "link_click"
-  | "request_start"
-  | "request_submit";
+  "view" | "link_click" | "request_start" | "request_submit";
 
 // Fire-and-forget privacy-friendly studio event (no cookies, no PII).
 export const trackStudioEvent = (
@@ -454,7 +451,11 @@ export const commissionsApi = {
       headers: jsonHeaders,
       body: JSON.stringify({ body }),
     }).then(json<{ ok: true }>),
-  setThreadStatus: (id: string, threadId: string, status: "open" | "resolved") =>
+  setThreadStatus: (
+    id: string,
+    threadId: string,
+    status: "open" | "resolved",
+  ) =>
     fetch(`/api/commissions/${id}/threads/${threadId}`, {
       method: "PATCH",
       headers: jsonHeaders,

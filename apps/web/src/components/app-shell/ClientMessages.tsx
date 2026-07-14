@@ -101,7 +101,11 @@ function Thread({
           placeholder="Reply to the client…"
           className="min-h-9 flex-1 resize-none"
         />
-        <Button type="submit" size="sm" disabled={!reply.trim() || send.isPending}>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={!reply.trim() || send.isPending}
+        >
           {send.isPending ? "…" : "Send"}
         </Button>
       </form>
