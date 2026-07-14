@@ -670,7 +670,7 @@ Goal: bring the client-facing experience to the quality of the public studio.
 - [x] CLIENTUX-007 Add thread open and resolved states
 - [x] CLIENTUX-008 Add quote acceptance
 - [x] CLIENTUX-009 Add quote decline with note
-- [ ] CLIENTUX-010 Add delivery acknowledgement
+- [x] CLIENTUX-010 Add delivery acknowledgement
 - [ ] CLIENTUX-011 Add secure reference gallery
 - [ ] CLIENTUX-012 Add token rotation
 - [ ] CLIENTUX-013 Add token revocation

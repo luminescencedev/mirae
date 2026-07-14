@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Icon, Mark } from "@mirae/ui";
+import { Button, Icon, Mark } from "@mirae/ui";
 import { CheckmarkCircle02Icon, File01Icon } from "@hugeicons/core-free-icons";
 import { publicApi } from "../../lib/api.ts";
 
@@ -27,9 +27,14 @@ function fmtSize(bytes: number | null): string {
 }
 
 export function DeliveryPage({ token }: { token: string }) {
+  const qc = useQueryClient();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["delivery", token],
     queryFn: () => publicApi.delivery(token),
+  });
+  const ack = useMutation({
+    mutationFn: () => publicApi.ackDelivery(token),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["delivery", token] }),
   });
 
   if (isLoading) {
@@ -105,6 +110,21 @@ export function DeliveryPage({ token }: { token: string }) {
               </li>
             ))}
           </ul>
+        )}
+
+        {delivery.acknowledgedAt ? (
+          <p className="mt-6 flex items-center justify-center gap-1.5 rounded-lg bg-emerald-50 py-2.5 text-sm font-medium text-emerald-700">
+            <Icon icon={CheckmarkCircle02Icon} size={15} strokeWidth={2} />
+            Receipt confirmed
+          </p>
+        ) : (
+          <Button
+            className="mt-6 w-full"
+            disabled={ack.isPending}
+            onClick={() => ack.mutate()}
+          >
+            {ack.isPending ? "Confirming…" : "Confirm you received this"}
+          </Button>
         )}
       </div>
     </Shell>

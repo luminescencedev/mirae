@@ -251,7 +251,11 @@ export type DeliveryFile = {
 };
 
 export type DeliveryView = {
-  delivery: { message: string | null; deliveredAt: string | null };
+  delivery: {
+    message: string | null;
+    deliveredAt: string | null;
+    acknowledgedAt: string | null;
+  };
   commission: { title: string };
   artist: { displayName: string } | null;
   files: DeliveryFile[];
@@ -310,6 +314,10 @@ export const publicApi = {
       method: "POST",
       headers: jsonHeaders,
       body: JSON.stringify({ reason }),
+    }).then(json<{ ok: true }>),
+  ackDelivery: (token: string) =>
+    fetch(`/api/delivery/${encodeURIComponent(token)}/ack`, {
+      method: "POST",
     }).then(json<{ ok: true }>),
   studio: (handle: string) =>
     fetch(`/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}`).then(
