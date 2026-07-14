@@ -69,6 +69,19 @@ const TOUR_STEPS: TourStep[] = [
     title: "Requests land here",
     body: "When someone requests a commission from your page, you'll manage it here — from brief to delivery.",
   },
+  {
+    target: "search",
+    to: "/app/overview",
+    title: "Find anything fast",
+    body: "Press ⌘K (or tap here) for the command palette — jump to any commission, client or page.",
+  },
+  {
+    target: "notifications",
+    to: "/app/overview",
+    title: "Stay in the loop",
+    body: "New requests and studio activity show up here so nothing slips.",
+    place: "bottom",
+  },
 ];
 
 const NAV_ROW = 36; // h-9
@@ -247,6 +260,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <div className="px-4">
           <button
+            data-tour="search"
             onClick={() => setPaletteOpen(true)}
             className="flex h-9 w-full items-center rounded-md text-sm text-fg-subtle outline-none ring-1 ring-inset ring-border transition-[color,box-shadow] hover:text-fg hover:ring-border-strong focus-visible:ring-2 focus-visible:ring-accent-500"
           >
@@ -328,7 +342,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="hidden text-fg-subtle md:inline">/</span>
           <span className="hidden text-fg md:inline">{current}</span>
           <div className="ml-auto flex items-center gap-1">
-            <NotificationsMenu />
+            <span data-tour="notifications" className="inline-flex">
+              <NotificationsMenu />
+            </span>
             <MobileMenu
               userName={userName}
               userEmail={userEmail}
