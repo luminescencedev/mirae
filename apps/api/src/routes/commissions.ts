@@ -21,6 +21,16 @@ import { wouldExceedQuota } from "../lib/quota.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
+const MAX_COMMISSION_FILE_BYTES = 50 * 1024 * 1024; // 50 MB per file
+// Types that can execute script in a browser if served inline.
+const BLOCKED_MIME = new Set([
+  "image/svg+xml",
+  "text/html",
+  "application/xhtml+xml",
+  "text/javascript",
+  "application/javascript",
+]);
+
 // The client email + portal token for a commission (from its originating
 // request), for notification emails.
 async function clientInfoFor(
@@ -442,6 +452,11 @@ commissionsRoutes.post("/:id/files", async (c) => {
   const form = await c.req.formData().catch(() => null);
   const file = form?.get("file");
   if (!(file instanceof File)) return c.json({ error: "No file." }, 400);
+  if (file.size > MAX_COMMISSION_FILE_BYTES)
+    return c.json({ error: "File exceeds 50 MB." }, 413);
+  // Block active content that could execute if ever served inline.
+  if (BLOCKED_MIME.has(file.type))
+    return c.json({ error: "This file type isn't allowed." }, 415);
   if (await wouldExceedQuota(db, artist.id, file.size))
     return c.json({ error: "Storage quota exceeded." }, 413);
 

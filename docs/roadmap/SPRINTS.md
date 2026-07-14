@@ -683,7 +683,7 @@ Goal: prepare Mirae for real artists, real clients and real files.
 
 - [x] TRUST-001 Threat-model public upload endpoints
 - [x] TRUST-002 Add upload quotas
-- [ ] TRUST-003 Add upload type and resolution limits
+- [x] TRUST-003 Add upload type and resolution limits
 - [ ] TRUST-004 Add orphan cleanup jobs
 - [ ] TRUST-005 Audit private file access
 - [ ] TRUST-006 Add global rate limiting

@@ -24,6 +24,7 @@ const IMAGE_MIME = new Set([
   "image/avif",
 ]);
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_IMAGE_DIMENSION = 12000; // px per side — decompression-bomb guard
 
 function slugify(input: string): string {
   return (
@@ -312,6 +313,9 @@ portfolioRoutes.post("/projects/:id/assets", async (c) => {
   const key = `artists/${artist.id}/portfolio/${projectId}/${crypto.randomUUID()}`;
   const bytes = await file.arrayBuffer();
   const dims = imageSize(bytes);
+  // Guard against decompression / resolution bombs.
+  if (dims && (dims.width > MAX_IMAGE_DIMENSION || dims.height > MAX_IMAGE_DIMENSION))
+    return c.json({ error: "Image is too large (max 12000px per side)." }, 413);
   await c.env.FILES.put(key, bytes, {
     httpMetadata: { contentType: file.type },
   });
