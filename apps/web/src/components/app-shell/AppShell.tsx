@@ -18,6 +18,7 @@ import {
   SidebarLeft01Icon,
   SidebarRight01Icon,
   Store01Icon,
+  Settings01Icon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import type { IconData } from "../mockups/seed.ts";
@@ -95,6 +96,7 @@ const NAV: { label: string; icon: IconData; to: string }[] = [
   { label: "Clients", icon: UserGroupIcon, to: "/app/clients" },
   { label: "Deliveries", icon: Package01Icon, to: "/app/deliveries" },
   { label: "Studio page", icon: Store01Icon, to: "/app/studio-page" },
+  { label: "Settings", icon: Settings01Icon, to: "/app/settings" },
 ];
 
 function Label({
