@@ -13,10 +13,15 @@ import {
   revisionRounds,
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
+import { rateLimit } from "../lib/rate-limit.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
 export const portalRoutes = new Hono<{ Bindings: Bindings }>();
+
+// Throttle the whole public, token-scoped surface (reads + writes) so a token
+// holder can't flood messages/revisions/feedback or the notification paths.
+portalRoutes.use("*", rateLimit());
 
 // GET /api/portal/:token — the PUBLIC client view of a commission (no auth).
 // Token-addressed; returns safe fields only.
@@ -138,6 +143,12 @@ portalRoutes.get("/:token/files/:fileId", async (c) => {
   object.writeHttpMetadata(headers);
   headers.set("etag", object.httpEtag);
   headers.set("x-content-type-options", "nosniff");
+  // Serve user content as a download, never inline (defence-in-depth against
+  // an svg/html reference executing on the app origin).
+  headers.set(
+    "content-disposition",
+    `attachment; filename="${encodeURIComponent(file.name)}"`,
+  );
   return new Response(object.body, { headers });
 });
 

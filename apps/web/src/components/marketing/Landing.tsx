@@ -38,16 +38,20 @@ export function Landing() {
         </section>
 
         {/* Product preview on a pastel-blue glow */}
-        <section className="relative mx-auto max-w-7xl pb-24">
+        <section className="relative mx-auto max-w-7xl px-4 pb-24 sm:px-6">
           <div
             aria-hidden
             className="pointer-events-none absolute left-1/2 top-6 -z-0 h-[460px] w-[960px] max-w-full -translate-x-1/2 rounded-full bg-accent-400/25 blur-[120px]"
           />
           {/* Double bezel — translucent blurred outer shell with a pastel
-              accent tint + ring; inner core holds the product preview. */}
+              accent tint + ring; inner core holds the product preview. The
+              preview is a fixed-size desktop "screenshot" scaled down + centered
+              on small screens so it never crops to a broken half-layout. */}
           <div className="relative z-10 mx-auto max-w-7xl rounded-[28px] border border-white/60 bg-accent-50/40 p-2 shadow-panel ring-1 ring-inset ring-accent-300/30 backdrop-blur-md">
-            <div className="h-[760px] overflow-hidden rounded-[20px] border border-border bg-surface">
-              <DashboardPreview />
+            <div className="relative h-[230px] overflow-hidden rounded-[20px] border border-border bg-surface sm:h-[380px] md:h-[500px] lg:h-[760px]">
+              <div className="absolute left-1/2 top-0 h-[760px] w-[1216px] origin-top -translate-x-1/2 scale-[0.3] sm:scale-[0.5] md:scale-[0.66] lg:scale-100">
+                <DashboardPreview />
+              </div>
             </div>
           </div>
         </section>
