@@ -27,9 +27,9 @@ export function MobileMenu({
       <DropdownMenuTrigger asChild>
         <button
           aria-label="Menu"
-          className="grid size-8 place-items-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-accent-500 md:hidden"
+          className="grid size-8 place-items-center rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-accent-500 md:hidden"
         >
-          <span className="size-8 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+          <span className="size-8 rounded-lg bg-gradient-to-br from-accent-300 to-accent-500" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

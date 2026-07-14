@@ -45,43 +45,17 @@ function StudioAvatar({
         width={size}
         height={size}
         style={{ width: size, height: size }}
-        className="shrink-0 rounded-full object-cover ring-1 ring-black/5"
+        className="shrink-0 rounded-lg object-cover ring-1 ring-black/5"
       />
     );
   }
   return (
     <span
       style={{ width: size, height: size }}
-      className="grid shrink-0 place-items-center rounded-full bg-linear-to-br from-accent-300 to-accent-500 font-semibold text-white"
+      className="grid shrink-0 place-items-center rounded-lg bg-linear-to-br from-accent-300 to-accent-500 font-semibold text-white"
     >
       {initial}
     </span>
-  );
-}
-
-/** Slim brand bar — anchors the client in the artist's studio, credits Mirae. */
-function BrandBar({ artist }: { artist: PortalArtist }) {
-  return (
-    <header
-      className="sticky top-0 z-10 border-b border-border/70 bg-canvas/80 backdrop-blur-md"
-      style={{ paddingTop: "env(safe-area-inset-top)" }}
-    >
-      <div className="mx-auto flex h-14 max-w-xl items-center justify-between px-5 sm:px-6">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <StudioAvatar artist={artist} size={28} />
-          <span className="truncate text-sm font-medium text-fg">
-            {artist ? `${artist.displayName}'s studio` : "Commission"}
-          </span>
-        </div>
-        <Link
-          to="/"
-          className="flex shrink-0 items-center gap-1.5 text-xs text-fg-subtle transition-colors hover:text-fg-muted"
-        >
-          <Mark className="h-3 w-auto" />
-          Mirae
-        </Link>
-      </div>
-    </header>
   );
 }
 
@@ -94,8 +68,16 @@ function Shell({
 }) {
   return (
     <div className="flex min-h-dvh flex-col overflow-x-hidden bg-surface-sunken">
-      <BrandBar artist={artist ?? null} />
       <main className="mx-auto w-full max-w-xl flex-1 px-5 py-8 sm:px-6 sm:py-10">
+        {/* Studio identity — inline, no bar/border/background. */}
+        {artist && (
+          <div className="mb-7 flex items-center gap-3">
+            <StudioAvatar artist={artist} size={40} />
+            <span className="truncate text-sm font-medium text-fg">
+              {artist.displayName}'s studio
+            </span>
+          </div>
+        )}
         {children}
       </main>
       <footer className="mx-auto flex max-w-xl items-center justify-center gap-1.5 px-6 pb-[calc(env(safe-area-inset-bottom)+2rem)] pt-4 text-xs text-fg-subtle">

@@ -25,7 +25,7 @@ function CommissionCard({
       className="cursor-pointer rounded-lg border border-border bg-surface p-3 text-left shadow-soft outline-none transition-shadow hover:shadow-panel focus-visible:ring-2 focus-visible:ring-accent-500"
     >
       <div className="flex items-center gap-2">
-        <span className="size-5 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+        <span className="size-5 rounded-lg bg-gradient-to-br from-accent-300 to-accent-500" />
         <span className="text-xs text-fg-muted">{item.clientName ?? "—"}</span>
       </div>
       <h4 className="mt-2 text-sm font-medium tracking-tight text-fg">

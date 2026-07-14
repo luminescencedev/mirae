@@ -6,15 +6,17 @@ import { publicApi } from "../../lib/api.ts";
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-surface-sunken">
-      <div className="mx-auto max-w-lg px-5 py-12 sm:px-6">{children}</div>
-      <div className="mx-auto flex max-w-lg items-center justify-center gap-1.5 px-6 pb-12 text-xs text-fg-subtle">
+    <div className="flex min-h-dvh flex-col bg-surface-sunken">
+      <div className="mx-auto w-full max-w-lg flex-1 px-5 py-12 sm:px-6">
+        {children}
+      </div>
+      <footer className="mx-auto flex max-w-lg items-center justify-center gap-1.5 px-6 pb-[calc(env(safe-area-inset-bottom)+2rem)] pt-4 text-xs text-fg-subtle">
         <Mark className="h-3 w-auto" />
         Powered by
         <Link to="/" className="font-medium text-fg-muted hover:text-fg">
           Mirae
         </Link>
-      </div>
+      </footer>
     </div>
   );
 }

@@ -66,7 +66,7 @@ export function DashboardPreview() {
           ))}
         </nav>
         <div className="mt-auto flex items-center gap-2.5 border-t border-border px-4 py-3">
-          <span className="size-8 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+          <span className="size-8 rounded-lg bg-gradient-to-br from-accent-300 to-accent-500" />
           <div className="min-w-0">
             <p className="truncate text-sm font-medium">Rain Aoki</p>
             <p className="truncate text-xs text-fg-subtle">Studio · Pro</p>
@@ -130,7 +130,7 @@ export function DashboardPreview() {
                     key={c.client + c.type}
                     className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 shadow-soft transition hover:shadow-panel active:scale-[0.99]"
                   >
-                    <span className="size-8 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+                    <span className="size-8 shrink-0 rounded-lg bg-gradient-to-br from-accent-300 to-accent-500" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{c.type}</p>
                       <p className="truncate text-xs text-fg-muted">

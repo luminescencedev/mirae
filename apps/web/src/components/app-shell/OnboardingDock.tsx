@@ -77,10 +77,7 @@ export function OnboardingDock() {
 
   return (
     <div
-      className="fixed right-4 z-40 flex flex-col items-end gap-3"
-      style={{
-        bottom: "calc(env(safe-area-inset-bottom) + 5rem)",
-      }}
+      className="fixed bottom-20 right-4 z-40 flex flex-col items-end gap-3 md:bottom-4"
       data-tour="onboarding-dock"
     >
       <AnimatePresence>

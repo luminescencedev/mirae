@@ -40,10 +40,7 @@ export function FeedbackWidget() {
   };
 
   return (
-    <div
-      className="fixed left-4 z-40 flex flex-col items-start gap-3"
-      style={{ bottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}
-    >
+    <div className="fixed bottom-20 left-4 z-40 flex flex-col items-start gap-3 md:bottom-4 md:left-[calc(16rem+1rem)]">
       <AnimatePresence>
         {open && (
           <motion.div
