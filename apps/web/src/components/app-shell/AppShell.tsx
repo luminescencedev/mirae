@@ -27,6 +27,47 @@ import { CommandPalette } from "./CommandPalette.tsx";
 import { NotificationsMenu } from "./NotificationsMenu.tsx";
 import { BottomNav } from "./BottomNav.tsx";
 import { MobileMenu } from "./MobileMenu.tsx";
+import { AppTour, type TourStep } from "./AppTour.tsx";
+
+const TOUR_KEY = "mirae-tour-done";
+const TOUR_STEPS: TourStep[] = [
+  {
+    target: "nav-overview",
+    to: "/app/overview",
+    title: "This is your Overview",
+    body: "Your studio at a glance — active work, new requests, earnings. You always land here.",
+  },
+  {
+    target: "launch-checklist",
+    to: "/app/overview",
+    title: "Your launch checklist",
+    body: "Finish these steps to go live. Each one takes you straight to where you set it up.",
+  },
+  {
+    target: "nav-studio-page",
+    to: "/app/overview",
+    title: "Your public studio",
+    body: "The Studio page is everything visitors see at usemirae.com/@you — let's open it.",
+  },
+  {
+    target: "studio-tabs",
+    to: "/app/studio-page",
+    title: "Set it all up here",
+    body: "Profile, portfolio, links, commissions, appearance — switch tabs and the preview updates live.",
+  },
+  {
+    target: "studio-view",
+    to: "/app/studio-page",
+    title: "Share your studio",
+    body: "Preview it or open your public page anytime, then drop the link in your bio.",
+  },
+  {
+    target: "nav-requests",
+    to: "/app/overview",
+    title: "Requests land here",
+    body: "When someone requests a commission from your page, you'll manage it here — from brief to delivery.",
+  },
+];
 
 const NAV_ROW = 36; // h-9
 const NAV_STEP = NAV_ROW + 2; // + gap-0.5
@@ -100,6 +141,7 @@ function NavList({
         <Link
           key={item.label}
           to={item.to}
+          data-tour={`nav-${item.to.replace("/app/", "")}`}
           onMouseEnter={() => {
             setHovered(i);
             move(i);
@@ -134,6 +176,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const collapsed = !open;
   const [paletteOpen, setPaletteOpen] = useState(false);
+  // First-run guided tour (skippable, shown once).
+  const [tourOpen, setTourOpen] = useState(
+    () => typeof window !== "undefined" && !localStorage.getItem(TOUR_KEY),
+  );
 
   // Start collapsed on small screens so the sidebar doesn't crowd the content.
   useEffect(() => {
@@ -306,6 +352,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       />
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+
+      {tourOpen && (
+        <AppTour
+          steps={TOUR_STEPS}
+          onClose={() => {
+            localStorage.setItem(TOUR_KEY, "1");
+            setTourOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

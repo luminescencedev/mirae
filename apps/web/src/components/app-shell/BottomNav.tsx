@@ -26,6 +26,7 @@ export function BottomNav({
           <Link
             key={item.label}
             to={item.to}
+            data-tour={`nav-${item.to.replace("/app/", "")}`}
             aria-current={active ? "page" : undefined}
             className={cn(
               "relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium outline-none transition-transform active:scale-95 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent-500",
