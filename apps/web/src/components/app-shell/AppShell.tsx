@@ -31,6 +31,7 @@ import {
   Store01Icon,
   Settings01Icon,
   UnfoldMoreIcon,
+  BubbleChatIcon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import type { IconData } from "../mockups/seed.ts";
@@ -42,7 +43,7 @@ import { BottomNav } from "./BottomNav.tsx";
 import { MobileMenu } from "./MobileMenu.tsx";
 import { AppTour, type TourStep } from "./AppTour.tsx";
 import { OnboardingDock } from "./OnboardingDock.tsx";
-import { FeedbackWidget } from "./FeedbackWidget.tsx";
+import { FeedbackDialog } from "./FeedbackDialog.tsx";
 
 const TOUR_KEY = "mirae-tour-done";
 const TOUR_STEPS: TourStep[] = [
@@ -109,7 +110,6 @@ const NAV: { label: string; icon: IconData; to: string }[] = [
   { label: "Clients", icon: UserGroupIcon, to: "/app/clients" },
   { label: "Deliveries", icon: Package01Icon, to: "/app/deliveries" },
   { label: "Studio page", icon: Store01Icon, to: "/app/studio-page" },
-  { label: "Settings", icon: Settings01Icon, to: "/app/settings" },
 ];
 
 function Label({
@@ -206,6 +206,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const collapsed = !open;
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   // First-run guided tour (skippable, shown once).
   const [tourOpen, setTourOpen] = useState(
     () => typeof window !== "undefined" && !localStorage.getItem(TOUR_KEY),
@@ -393,6 +394,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               userName={userName}
               userEmail={userEmail}
               onSearch={() => setPaletteOpen(true)}
+              onFeedback={() => setFeedbackOpen(true)}
               onSignOut={handleSignOut}
             />
           </div>
@@ -416,7 +418,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
 
       <OnboardingDock />
-      <FeedbackWidget />
+
+      {/* Desktop-only floating feedback trigger; on mobile it lives in the
+          overflow menu. Opens the shared dialog. */}
+      <button
+        type="button"
+        onClick={() => setFeedbackOpen(true)}
+        className="fixed bottom-4 left-[calc(16rem+1rem)] z-40 hidden items-center gap-2 rounded-full border border-border bg-surface py-2 pl-3 pr-4 text-sm font-medium text-fg-muted shadow-panel outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-accent-500 md:flex"
+      >
+        <Icon icon={BubbleChatIcon} size={16} strokeWidth={1.8} />
+        Feedback
+      </button>
+      <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} />
 
       {tourOpen && (
         <AppTour

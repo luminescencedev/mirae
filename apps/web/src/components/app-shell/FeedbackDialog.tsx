@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Icon, Textarea, cn } from "@mirae/ui";
 import {
-  BubbleChatIcon,
   Cancel01Icon,
   CheckmarkCircle02Icon,
 } from "@hugeicons/core-free-icons";
@@ -17,10 +16,15 @@ const SENTIMENTS = [
   { key: "bug", label: "Bug", emoji: "🐞" },
 ] as const;
 
-/** Floating beta-feedback widget (bottom-left) — quick sentiment + note,
- *  tagged with the current route for triage. */
-export function FeedbackWidget() {
-  const [open, setOpen] = useState(false);
+/** Beta feedback modal — opened from the account/overflow menus. Quick
+ *  sentiment + note, tagged with the current route for triage. */
+export function FeedbackDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}) {
   const [sentiment, setSentiment] = useState<string | null>(null);
   const [message, setMessage] = useState("");
 
@@ -29,29 +33,50 @@ export function FeedbackWidget() {
       feedbackApi.submit(message.trim(), sentiment, window.location.pathname),
   });
 
-  const close = () => {
-    setOpen(false);
-    // Reset shortly after the panel animates out.
-    setTimeout(() => {
+  // Reset a moment after close so the panel doesn't flicker on the way out.
+  useEffect(() => {
+    if (open) return;
+    const t = setTimeout(() => {
       setMessage("");
       setSentiment(null);
       send.reset();
     }, 250);
-  };
+    return () => clearTimeout(t);
+  }, [open, send]);
+
+  // Close on Escape.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) =>
+      e.key === "Escape" && onOpenChange(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onOpenChange]);
 
   return (
-    <div className="fixed bottom-20 left-4 z-40 flex flex-col items-start gap-3 md:bottom-4 md:left-[calc(16rem+1rem)]">
-      <AnimatePresence>
-        {open && (
+    <AnimatePresence>
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
           <motion.div
-            initial={{ opacity: 0, y: 12, scale: 0.96 }}
+            className="absolute inset-0 bg-black/40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            onClick={() => onOpenChange(false)}
+          />
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Send feedback"
+            initial={{ opacity: 0, y: 16, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.96 }}
+            exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.22, ease: EASE }}
-            className="w-[min(20rem,calc(100vw-2rem))] origin-bottom-left overflow-hidden rounded-2xl border border-border bg-surface shadow-panel"
+            className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-surface shadow-panel"
           >
             {send.isSuccess ? (
-              <div className="flex flex-col items-center gap-2 p-6 text-center">
+              <div className="flex flex-col items-center gap-2 p-8 text-center">
                 <span className="text-emerald-600">
                   <Icon
                     icon={CheckmarkCircle02Icon}
@@ -67,14 +92,14 @@ export function FeedbackWidget() {
                   size="sm"
                   variant="outline"
                   className="mt-1"
-                  onClick={close}
+                  onClick={() => onOpenChange(false)}
                 >
                   Done
                 </Button>
               </div>
             ) : (
               <form
-                className="p-4"
+                className="p-5"
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (message.trim()) send.mutate();
@@ -87,7 +112,7 @@ export function FeedbackWidget() {
                   <button
                     type="button"
                     aria-label="Close"
-                    onClick={close}
+                    onClick={() => onOpenChange(false)}
                     className="grid size-7 place-items-center rounded-md text-fg-subtle transition-colors hover:bg-surface-muted hover:text-fg"
                   >
                     <Icon icon={Cancel01Icon} size={15} />
@@ -136,19 +161,8 @@ export function FeedbackWidget() {
               </form>
             )}
           </motion.div>
-        )}
-      </AnimatePresence>
-
-      <motion.button
-        type="button"
-        whileTap={{ scale: 0.96 }}
-        onClick={() => (open ? close() : setOpen(true))}
-        aria-label="Send feedback"
-        className="flex items-center gap-2 rounded-full border border-border bg-surface py-2 pl-3 pr-4 text-sm font-medium text-fg-muted shadow-panel outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-accent-500"
-      >
-        <Icon icon={BubbleChatIcon} size={16} strokeWidth={1.8} />
-        Feedback
-      </motion.button>
-    </div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 }
