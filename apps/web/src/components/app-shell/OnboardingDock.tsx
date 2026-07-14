@@ -28,6 +28,8 @@ export function OnboardingDock() {
   // inward (never off-screen).
   const boundsRef = useRef<HTMLDivElement>(null);
   const dockRef = useRef<HTMLDivElement>(null);
+  // Set while dragging so the post-drag synthetic click doesn't toggle open.
+  const draggingRef = useRef(false);
   const [place, setPlace] = useState<{ v: "up" | "down"; h: "left" | "right" }>(
     { v: "up", h: "right" },
   );
@@ -106,23 +108,25 @@ export function OnboardingDock() {
         dragConstraints={boundsRef}
         dragMomentum={false}
         dragElastic={0.1}
+        onDragStart={() => {
+          draggingRef.current = true;
+        }}
         onDragEnd={updatePlace}
         data-tour="onboarding-dock"
-        className={cn(
-          "pointer-events-auto absolute bottom-20 right-4 flex flex-col gap-3 md:bottom-4",
-          place.h === "right" ? "items-end" : "items-start",
-          place.v === "down" && "flex-col-reverse",
-        )}
+        className="pointer-events-auto absolute bottom-20 right-4 md:bottom-4"
       >
+        {/* Panel is absolute → opening never resizes/moves the toggle. */}
         <AnimatePresence>
           {open && (
             <motion.div
-              initial={{ opacity: 0, y: 12, scale: 0.96 }}
+              initial={{ opacity: 0, y: 8, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 12, scale: 0.96 }}
+              exit={{ opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: 0.22, ease: EASE }}
               className={cn(
-                "w-[min(19rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-border bg-surface shadow-panel",
+                "absolute w-[min(19rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-border bg-surface shadow-panel",
+                place.v === "up" ? "bottom-full mb-3" : "top-full mt-3",
+                place.h === "right" ? "right-0" : "left-0",
                 ORIGIN[`${place.v}-${place.h}`],
               )}
             >
@@ -224,10 +228,17 @@ export function OnboardingDock() {
           )}
         </AnimatePresence>
 
-        {/* Toggle — always visible, mini progress + count. Draggable handle. */}
+        {/* Toggle — always visible. Draggable handle: hold to move, tap to
+            open; the post-drag click is swallowed. */}
         <motion.button
           type="button"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            if (draggingRef.current) {
+              draggingRef.current = false;
+              return;
+            }
+            setOpen((v) => !v);
+          }}
           whileTap={{ scale: 0.96 }}
           aria-label={open ? "Hide setup" : "Studio setup"}
           className="flex cursor-grab items-center gap-2.5 rounded-full border border-border bg-surface py-2 pl-3.5 pr-4 shadow-panel outline-none focus-visible:ring-2 focus-visible:ring-accent-500 active:cursor-grabbing"
