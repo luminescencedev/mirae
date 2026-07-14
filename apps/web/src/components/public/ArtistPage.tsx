@@ -148,6 +148,8 @@ export function ArtistPage({ handle }: { handle: string }) {
               <img
                 src={current.url}
                 alt={current.altText ?? ""}
+                width={current.width ?? undefined}
+                height={current.height ?? undefined}
                 className="max-h-[82vh] w-full rounded-xl object-contain"
               />
               {lb && lb.assets.length > 1 && (
@@ -405,30 +407,49 @@ function StudioView({
                   <div
                     className={cn(
                       "grid gap-2",
-                      p.assets.length === 1 && ap.portfolioLayout === "editorial"
+                      p.assets.length === 1 &&
+                        ap.portfolioLayout === "editorial"
                         ? "grid-cols-1"
                         : galleryCols,
                     )}
                   >
-                    {p.assets.map((a, ai) => (
-                      <button
-                        key={a.id}
-                        type="button"
-                        onClick={() => onOpen(p.assets, ai)}
-                        className={cn(
-                          "group relative overflow-hidden border border-border/70 bg-surface-muted outline-none focus-visible:ring-2 focus-visible:ring-accent-500",
-                          radiusClass,
-                        )}
-                        style={{ aspectRatio: "4 / 3" }}
-                      >
-                        <img
-                          src={a.url}
-                          alt={a.altText ?? p.title}
-                          loading="lazy"
-                          className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-                        />
-                      </button>
-                    ))}
+                    {p.assets.map((a, ai) => {
+                      // Editorial single image keeps its natural ratio (when
+                      // known) to avoid cropping; grids stay uniform 4:3.
+                      const editorialSingle =
+                        p.assets.length === 1 &&
+                        ap.portfolioLayout === "editorial";
+                      const ratio =
+                        editorialSingle && a.width && a.height
+                          ? `${a.width} / ${a.height}`
+                          : "4 / 3";
+                      return (
+                        <button
+                          key={a.id}
+                          type="button"
+                          onClick={() => onOpen(p.assets, ai)}
+                          className={cn(
+                            "group relative overflow-hidden border border-border/70 bg-surface-muted outline-none focus-visible:ring-2 focus-visible:ring-accent-500",
+                            radiusClass,
+                          )}
+                          style={{ aspectRatio: ratio }}
+                        >
+                          <img
+                            src={a.url}
+                            alt={a.altText ?? p.title}
+                            loading="lazy"
+                            width={a.width ?? undefined}
+                            height={a.height ?? undefined}
+                            className={cn(
+                              "size-full transition-transform duration-500 ease-out group-hover:scale-[1.03]",
+                              editorialSingle
+                                ? "object-contain"
+                                : "object-cover",
+                            )}
+                          />
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </article>

@@ -94,10 +94,11 @@ Radix UI primitives (pin each individually, same release wave):
 
 ## Backend / API (`apps/api` — the Cloudflare Worker)
 
-| Package             | Version |
-| ------------------- | ------- |
-| hono                | 4.12.28 |
-| @hono/zod-validator | 0.8.0   |
+| Package             | Version | Notes                                                                                                                                                                   |
+| ------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| hono                | 4.12.28 |                                                                                                                                                                         |
+| @hono/zod-validator | 0.8.0   |                                                                                                                                                                         |
+| workers-og          | 0.0.27  | Satori + resvg-wasm OG-image rendering in the Worker (branded social cards). Bundles ~1MB wasm; fetches fonts from Google Fonts once per colo (cached). No paid add-on. |
 
 ## Database
 

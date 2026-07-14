@@ -82,3 +82,12 @@ The MVP (Sprints 0–9) + a Sprint 10 audit are shipped and deployed. The next c
 - **Sequencing is deliberate**: identity → portfolio → links → public studio → request flow → appearance → mobile → sharing/SEO → onboarding → client portal → security/beta → beta → ops polish → **billing last** (Sprint 25). Billing (Stripe) comes only after repeated value is validated; it is **not implemented today**.
 - **Locked stack is unchanged**: pnpm+Turborepo, Vite+React+TanStack Router, Hono single Cloudflare Worker, Neon+Drizzle, Better Auth, R2, Resend, Radix-based `@mirae/ui`, light-first visuals, Hugeicons. New work extends this; it does not replace it.
 - **Mobile is first-class** and **public pages are portfolio-first** — treated as design constraints from the start, not later patches (see `MOBILE_PRODUCT_SPEC.md`, `PUBLIC_STUDIO_SPEC.md`).
+
+## 2026-07-14 — Media pipeline: Worker-side wasm, no paid add-on (MEDIA-001)
+
+Sprint 19.6 needed a server-side image path (OG cards + dimensions + responsive variants). Chosen: **Worker-side wasm, zero paid add-on** (user constraint: "no extra cost").
+
+- **OG social cards**: `workers-og` **0.0.27** (Satori → SVG → resvg-wasm → PNG) renders a branded 1200×630 card in the Worker at `/og/studio/:handle`; `og:image` points to it, versioned `?v={updatedAt}` for cache-busting. Fonts (Inter 400/700) fetched from Google Fonts once per colo and cached in `caches.default`; on failure it falls back to the bundled font, then the route falls back to the raw cover/avatar. Adds ~1MB wasm → Worker bundle ~1.1MB gzip (well under the 3MB free / 10MB paid limit).
+- **Image dimensions**: parsed from header bytes (`apps/api/src/lib/image-size.ts`, no dep) on upload — no decode, no add-on.
+- **Rejected for now — Cloudflare Images** (`/cdn-cgi/image/…`): cleanest for responsive variants but is a **paid** add-on. Responsive srcset (MEDIA-004), blur placeholders (MEDIA-003) and project OG cards (MEDIA-006) stay deferred; revisit MEDIA-004 with Cloudflare Images only if/when we accept its cost. Full-size R2 images + `loading="lazy"` + `width`/`height` (no CLS) is the beta baseline.
+- **Not adopted — photon-wasm on-the-fly resize**: no monthly cost but CPU-heavy per request + more wasm; overkill for beta.

@@ -3,3 +3,4 @@ node_modules
 **/.turbo
 **/.wrangler
 pnpm-lock.yaml
+packages/db/drizzle
