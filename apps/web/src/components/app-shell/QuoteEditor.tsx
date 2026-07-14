@@ -20,6 +20,7 @@ const STATUS_LABEL: Record<QuoteStatus, string> = {
   draft: "Draft",
   sent: "Sent",
   accepted: "Accepted",
+  declined: "Declined",
 };
 
 export function QuoteEditor({ commissionId }: { commissionId: string }) {

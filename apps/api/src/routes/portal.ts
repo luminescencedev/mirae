@@ -90,6 +90,38 @@ portalRoutes.get("/:token", async (c) => {
   });
 });
 
+// POST /api/portal/:token/quote/accept — client accepts the sent quote.
+portalRoutes.post("/:token/quote/accept", async (c) => {
+  const db = createDb(c.env.DATABASE_URL);
+  const [commission] = await db
+    .select({ id: commissions.id, artistId: commissions.artistId })
+    .from(commissions)
+    .where(eq(commissions.portalToken, c.req.param("token")))
+    .limit(1);
+  if (!commission) return c.json({ error: "not found" }, 404);
+
+  const [quote] = await db
+    .select({ id: quotes.id, status: quotes.status })
+    .from(quotes)
+    .where(eq(quotes.commissionId, commission.id))
+    .limit(1);
+  if (!quote) return c.json({ error: "No quote to accept." }, 404);
+  if (quote.status !== "sent")
+    return c.json({ error: "This quote can't be accepted." }, 409);
+
+  await db
+    .update(quotes)
+    .set({ status: "accepted", respondedAt: new Date() })
+    .where(eq(quotes.id, quote.id));
+  await db.insert(activityLogs).values({
+    artistId: commission.artistId,
+    commissionId: commission.id,
+    type: "quote",
+    message: "Client accepted the quote",
+  });
+  return c.json({ ok: true });
+});
+
 // POST /api/portal/:token/revisions — client requests a revision round.
 portalRoutes.post("/:token/revisions", async (c) => {
   const db = createDb(c.env.DATABASE_URL);

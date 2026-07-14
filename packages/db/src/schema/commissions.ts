@@ -58,8 +58,9 @@ export const quotes = pgTable("quotes", {
     .notNull()
     .references(() => commissions.id, { onDelete: "cascade" }),
   totalCents: integer("total_cents").notNull().default(0),
-  status: text("status").notNull().default("draft"), // draft | sent | accepted
+  status: text("status").notNull().default("draft"), // draft | sent | accepted | declined
   sentAt: timestamp("sent_at", { withTimezone: true }),
+  respondedAt: timestamp("responded_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

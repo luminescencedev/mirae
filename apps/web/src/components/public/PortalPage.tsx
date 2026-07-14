@@ -173,6 +173,60 @@ function Timeline({ status }: { status: PortalView["commission"]["status"] }) {
   );
 }
 
+/** Quote card — shows the amount and lets the client accept a sent quote. */
+function QuoteCard({
+  token,
+  quote,
+}: {
+  token: string;
+  quote: NonNullable<PortalView["quote"]>;
+}) {
+  const qc = useQueryClient();
+  const accept = useMutation({
+    mutationFn: () => publicApi.acceptQuote(token),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["portal", token] }),
+  });
+  const pending = quote.status === "sent";
+  const badge: Record<string, { label: string; cls: string }> = {
+    sent: { label: "Awaiting your response", cls: "text-accent-700" },
+    accepted: { label: "Accepted", cls: "text-emerald-700" },
+    declined: { label: "Declined", cls: "text-fg-muted" },
+    draft: { label: "Draft", cls: "text-fg-subtle" },
+  };
+  const b = badge[quote.status] ?? badge.draft;
+
+  return (
+    <div className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-fg">Quote</p>
+        <span className={cn("text-xs font-medium", b.cls)}>{b.label}</span>
+      </div>
+      <p className="mt-1 text-2xl font-semibold tabular-nums text-fg">
+        {euro(quote.totalCents)}
+      </p>
+      {pending && (
+        <>
+          {accept.isError && (
+            <p className="mt-2 text-sm text-red-600">
+              {(accept.error as Error).message}
+            </p>
+          )}
+          <div className="mt-4 flex gap-2">
+            <Button
+              size="sm"
+              className="flex-1"
+              disabled={accept.isPending}
+              onClick={() => accept.mutate()}
+            >
+              {accept.isPending ? "Accepting…" : "Accept quote"}
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 const REVISION_META: Record<string, { label: string; cls: string }> = {
   requested: { label: "Requested", cls: "bg-amber-50 text-amber-700" },
   in_progress: { label: "In progress", cls: "bg-accent-50 text-accent-700" },
@@ -588,19 +642,7 @@ export function PortalPage({ token }: { token: string }) {
 
       <Revisions token={token} revisions={data.revisions} />
 
-      {quote && (
-        <div className="mt-3 rounded-xl border border-border bg-surface p-4 shadow-soft">
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-fg">Quote</p>
-            <span className="text-xs capitalize text-fg-muted">
-              {quote.status}
-            </span>
-          </div>
-          <p className="mt-1 text-lg font-semibold tabular-nums text-fg">
-            {euro(quote.totalCents)}
-          </p>
-        </div>
-      )}
+      {quote && <QuoteCard token={token} quote={quote} />}
 
       <Threads token={token} artist={artist} threads={data.threads} />
     </Shell>

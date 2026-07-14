@@ -297,6 +297,10 @@ export const publicApi = {
       headers: jsonHeaders,
       body: JSON.stringify({ note }),
     }).then(json<{ ok: true }>),
+  acceptQuote: (token: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}/quote/accept`, {
+      method: "POST",
+    }).then(json<{ ok: true }>),
   studio: (handle: string) =>
     fetch(`/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}`).then(
       async (res) => {
@@ -486,7 +490,7 @@ export type QuoteItem = {
   quantity: number;
 };
 
-export type QuoteStatus = "draft" | "sent" | "accepted";
+export type QuoteStatus = "draft" | "sent" | "accepted" | "declined";
 
 export type Quote = {
   id: string;
