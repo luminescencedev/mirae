@@ -200,7 +200,7 @@ export function OnboardingDock() {
         aria-label={open ? "Hide setup" : "Studio setup"}
         className="flex items-center gap-2.5 rounded-full border border-border bg-surface py-2 pl-3.5 pr-4 shadow-panel outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
       >
-        <SegmentedBar pct={pct} count={10} className="gap-[2px]" />
+        <ProgressRing pct={pct} />
         <span className="text-sm font-medium tabular-nums text-fg">
           {doneCount}/{total}
         </span>
@@ -215,6 +215,46 @@ const RAMP_TO = [107, 147, 240]; // #6b93f0 (accent-500)
 function rampColor(t: number): string {
   const c = RAMP_FROM.map((a, k) => Math.round(a + (RAMP_TO[k] - a) * t));
   return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+}
+
+// Small gradient progress ring for the collapsed toggle (no % label).
+function ProgressRing({ pct, size = 22 }: { pct: number; size?: number }) {
+  return (
+    <span
+      className="relative grid shrink-0 place-items-center"
+      style={{ width: size, height: size }}
+    >
+      <svg viewBox="0 0 36 36" className="size-full -rotate-90">
+        <defs>
+          <linearGradient id="mirae-dock-ring" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#1e2749" />
+            <stop offset="100%" stopColor="#6b93f0" />
+          </linearGradient>
+        </defs>
+        <circle
+          cx="18"
+          cy="18"
+          r="15"
+          fill="none"
+          className="stroke-surface-muted"
+          strokeWidth="4"
+        />
+        <motion.circle
+          cx="18"
+          cy="18"
+          r="15"
+          fill="none"
+          stroke="url(#mirae-dock-ring)"
+          strokeWidth="4"
+          strokeLinecap="round"
+          pathLength={100}
+          initial={false}
+          animate={{ strokeDasharray: `${pct} 100` }}
+          transition={{ duration: 0.6, ease: EASE }}
+        />
+      </svg>
+    </span>
+  );
 }
 
 function SegmentedBar({
