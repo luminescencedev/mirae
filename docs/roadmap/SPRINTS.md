@@ -682,7 +682,7 @@ Goal: bring the client-facing experience to the quality of the public studio.
 Goal: prepare Mirae for real artists, real clients and real files.
 
 - [x] TRUST-001 Threat-model public upload endpoints
-- [ ] TRUST-002 Add upload quotas
+- [x] TRUST-002 Add upload quotas
 - [ ] TRUST-003 Add upload type and resolution limits
 - [ ] TRUST-004 Add orphan cleanup jobs
 - [ ] TRUST-005 Audit private file access

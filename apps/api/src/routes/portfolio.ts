@@ -10,6 +10,7 @@ import { PROJECT_TYPES, PROJECT_VISIBILITIES } from "@mirae/shared";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
 import { imageSize } from "../lib/image-size.ts";
+import { wouldExceedQuota } from "../lib/quota.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
@@ -305,6 +306,8 @@ portfolioRoutes.post("/projects/:id/assets", async (c) => {
     return c.json({ error: "Unsupported image type." }, 415);
   if (file.size > MAX_UPLOAD_BYTES)
     return c.json({ error: "Image exceeds 10 MB." }, 413);
+  if (await wouldExceedQuota(db, artist.id, file.size))
+    return c.json({ error: "Storage quota exceeded." }, 413);
 
   const key = `artists/${artist.id}/portfolio/${projectId}/${crypto.randomUUID()}`;
   const bytes = await file.arrayBuffer();

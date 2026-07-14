@@ -17,6 +17,7 @@ import {
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
 import { mailLayout, sendEmail } from "../lib/mail.ts";
+import { wouldExceedQuota } from "../lib/quota.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
@@ -441,6 +442,8 @@ commissionsRoutes.post("/:id/files", async (c) => {
   const form = await c.req.formData().catch(() => null);
   const file = form?.get("file");
   if (!(file instanceof File)) return c.json({ error: "No file." }, 400);
+  if (await wouldExceedQuota(db, artist.id, file.size))
+    return c.json({ error: "Storage quota exceeded." }, 413);
 
   const key = `commissions/${commissionId}/${crypto.randomUUID()}-${file.name}`;
   await c.env.FILES.put(key, await file.arrayBuffer(), {
