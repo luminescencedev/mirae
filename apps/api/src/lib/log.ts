@@ -17,6 +17,13 @@ export function log(level: LogLevel, event: string, fields: LogFields = {}) {
   else console.log(line);
 }
 
+// Security audit trail — emit a structured, filterable line for
+// security-relevant actions (account deletion, token rotation/revocation, data
+// export). Tag `audit: true` so these can be isolated in log queries.
+export function audit(event: string, fields: LogFields = {}) {
+  log("info", `audit.${event}`, { audit: true, ...fields });
+}
+
 // Normalize an unknown thrown value into loggable fields.
 export function serializeError(err: unknown) {
   if (err instanceof Error) {

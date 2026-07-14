@@ -694,7 +694,7 @@ Goal: prepare Mirae for real artists, real clients and real files.
 - [x] TRUST-011 Add account deletion
 - [x] TRUST-012 Add privacy policy
 - [x] TRUST-013 Add terms of service
-- [ ] TRUST-014 Add structured audit logs
+- [x] TRUST-014 Add structured audit logs
 - [ ] TRUST-015 Add dependency scanning
 - [ ] TRUST-016 Add secret scanning
 - [ ] TRUST-017 Add critical-path automated tests

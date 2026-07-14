@@ -19,6 +19,7 @@ import { getArtist } from "../lib/session.ts";
 import { mailLayout, sendEmail } from "../lib/mail.ts";
 import { wouldExceedQuota } from "../lib/quota.ts";
 import { newToken } from "../lib/tokens.ts";
+import { audit } from "../lib/log.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
@@ -264,6 +265,7 @@ commissionsRoutes.post("/:id/portal/rotate", async (c) => {
     type: "portal",
     message: "Portal link rotated",
   });
+  audit("portal_rotated", { commissionId });
   return c.json({ token });
 });
 
@@ -289,6 +291,7 @@ commissionsRoutes.post("/:id/portal/revoke", async (c) => {
     type: "portal",
     message: "Portal link revoked",
   });
+  audit("portal_revoked", { commissionId });
   return c.json({ ok: true });
 });
 

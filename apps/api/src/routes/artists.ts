@@ -27,6 +27,7 @@ import {
 } from "@mirae/shared";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist, getUserId } from "../lib/session.ts";
+import { audit } from "../lib/log.ts";
 
 const STATUSES = ["open", "waitlist", "closed"] as const;
 type Status = (typeof STATUSES)[number];
@@ -183,6 +184,7 @@ artistsRoutes.get("/me/export", async (c) => {
     messages: messageRows,
     revisions: revisionRows,
   };
+  audit("data_export", { artistId: id });
   return new Response(JSON.stringify(payload, null, 2), {
     headers: {
       "content-type": "application/json",
@@ -202,6 +204,7 @@ artistsRoutes.delete("/me", async (c) => {
   await db.delete(sessions).where(eq(sessions.userId, artist.userId));
   await db.delete(accounts).where(eq(accounts.userId, artist.userId));
   await db.delete(users).where(eq(users.id, artist.userId));
+  audit("account_deleted", { artistId: artist.id });
   return c.json({ ok: true });
 });
 
