@@ -423,6 +423,12 @@ export const commissionsApi = {
       headers: jsonHeaders,
       body: JSON.stringify({ body }),
     }).then(json<{ ok: true }>),
+  setThreadStatus: (id: string, threadId: string, status: "open" | "resolved") =>
+    fetch(`/api/commissions/${id}/threads/${threadId}`, {
+      method: "PATCH",
+      headers: jsonHeaders,
+      body: JSON.stringify({ status }),
+    }).then(json<{ ok: true }>),
   delivery: (id: string) =>
     fetch(`/api/commissions/${id}/delivery`)
       .then(json<{ delivery: Delivery | null }>)

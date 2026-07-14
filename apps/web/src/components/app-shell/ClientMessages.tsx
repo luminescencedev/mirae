@@ -31,6 +31,15 @@ function Thread({
     },
   });
   const resolved = thread.status === "resolved";
+  const toggle = useMutation({
+    mutationFn: () =>
+      commissionsApi.setThreadStatus(
+        commissionId,
+        thread.id,
+        resolved ? "open" : "resolved",
+      ),
+    onSuccess: () => qc.invalidateQueries({ queryKey: key }),
+  });
 
   return (
     <div className="rounded-lg border border-border bg-surface p-3">
@@ -38,16 +47,20 @@ function Thread({
         <p className="min-w-0 flex-1 truncate text-sm font-medium text-fg">
           {thread.subject || "Conversation"}
         </p>
-        <span
+        <button
+          type="button"
+          onClick={() => toggle.mutate()}
+          disabled={toggle.isPending}
           className={cn(
-            "rounded-full px-2 py-0.5 text-[11px] font-medium",
+            "rounded-full px-2 py-0.5 text-[11px] font-medium transition-colors",
             resolved
-              ? "bg-emerald-50 text-emerald-700"
-              : "bg-accent-50 text-accent-700",
+              ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+              : "bg-accent-50 text-accent-700 hover:bg-accent-100",
           )}
+          title={resolved ? "Reopen thread" : "Mark resolved"}
         >
-          {resolved ? "Resolved" : "Open"}
-        </span>
+          {resolved ? "Resolved" : "Open · resolve"}
+        </button>
       </div>
       <ul className="flex flex-col gap-2">
         {thread.messages.map((m) => {

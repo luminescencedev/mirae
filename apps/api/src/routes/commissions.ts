@@ -563,6 +563,37 @@ commissionsRoutes.post("/:id/threads/:threadId/messages", async (c) => {
   return c.json({ ok: true }, 201);
 });
 
+// PATCH /api/commissions/:id/threads/:threadId — set open/resolved (owner).
+commissionsRoutes.patch("/:id/threads/:threadId", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const raw = (await c.req.json().catch(() => ({}))) as { status?: unknown };
+  const status = String(raw.status ?? "");
+  if (status !== "open" && status !== "resolved")
+    return c.json({ error: "Invalid status." }, 400);
+
+  const res = await db
+    .update(portalThreads)
+    .set({ status, updatedAt: new Date() })
+    .where(
+      and(
+        eq(portalThreads.id, c.req.param("threadId")),
+        eq(portalThreads.commissionId, commissionId),
+      ),
+    )
+    .returning({ id: portalThreads.id });
+  if (res.length === 0) return c.json({ error: "not found" }, 404);
+  return c.json({ ok: true });
+});
+
 // GET /api/commissions/:id/quote — the commission's quote + line items (or null).
 commissionsRoutes.get("/:id/quote", async (c) => {
   const artist = await getArtist(c);
