@@ -706,7 +706,7 @@ Goal: prepare Mirae for real artists, real clients and real files.
 
 Goal: validate the complete experience with working artists before expanding features or charging.
 
-- [ ] BETA-001 Define tester profiles
+- [x] BETA-001 Define tester profiles
 - [ ] BETA-002 Recruit 5–10 artists
 - [ ] BETA-003 Create interview script
 - [ ] BETA-004 Add in-app feedback capture
