@@ -117,7 +117,7 @@ function cardHtml(profile: StudioMeta, avatarUri: string | null): string {
         <span style="display:flex;font-size:28px;font-weight:500;color:#8a93ff;">usemirae.com/@${handle}</span>
       </div>
       ${bio ? `<div style="display:flex;margin-top:18px;max-width:540px;"><span style="display:flex;font-size:31px;font-weight:400;line-height:1.35;color:#64708a;">${bio}</span></div>` : ""}
-      <div style="display:flex;align-items:center;gap:10px;margin-top:32px;margin-left:-3px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-top:32px;margin-left:-8px;">
         <span style="display:flex;font-size:23px;font-weight:500;color:#0f1320;white-space:nowrap;">Powered by</span>
         <img src="${markDataUri("#0f1320")}" width="38" height="19" style="width:38px;height:19px;" />
         <span style="display:flex;font-size:23px;font-weight:700;color:#0f1320;white-space:nowrap;">Mirae</span>
