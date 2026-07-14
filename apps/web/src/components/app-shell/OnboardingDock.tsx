@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
@@ -24,6 +24,31 @@ const EASE = [0.23, 1, 0.32, 1] as const;
 export function OnboardingDock() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
+  // Draggable dock — remember which corner it settled in so the panel opens
+  // inward (never off-screen).
+  const boundsRef = useRef<HTMLDivElement>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
+  // Set while dragging so the post-drag synthetic click doesn't toggle open.
+  const draggingRef = useRef(false);
+  const [place, setPlace] = useState<{ v: "up" | "down"; h: "left" | "right" }>(
+    { v: "up", h: "right" },
+  );
+  const updatePlace = () => {
+    const el = dockRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setPlace({
+      v: r.top + r.height / 2 > window.innerHeight / 2 ? "up" : "down",
+      h: r.left + r.width / 2 > window.innerWidth / 2 ? "right" : "left",
+    });
+  };
+  // Literal classes so Tailwind JIT keeps them.
+  const ORIGIN = {
+    "up-right": "origin-bottom-right",
+    "up-left": "origin-bottom-left",
+    "down-right": "origin-top-right",
+    "down-left": "origin-top-left",
+  } as const;
 
   const profileQ = useQuery({
     queryKey: ["artist", "me"],
@@ -75,134 +100,160 @@ export function OnboardingDock() {
     }
   };
 
+  // Allowed drag box — excludes the top header and bottom tab bar so the dock
+  // can only live in the central area, never over the chrome.
   return (
     <div
-      className="fixed right-4 z-40 flex flex-col items-end gap-3"
-      style={{
-        bottom: "calc(env(safe-area-inset-bottom) + 5rem)",
-      }}
-      data-tour="onboarding-dock"
+      ref={boundsRef}
+      className="pointer-events-none fixed inset-x-3 bottom-20 top-[calc(env(safe-area-inset-top)+3.75rem)] z-40 md:bottom-4"
     >
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 12, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.96 }}
-            transition={{ duration: 0.22, ease: EASE }}
-            className="w-[min(19rem,calc(100vw-2rem))] origin-bottom-right overflow-hidden rounded-2xl border border-border bg-surface shadow-panel"
-          >
-            <div className="relative border-b border-border p-5 text-center">
-              <button
-                type="button"
-                aria-label="Collapse"
-                onClick={() => setOpen(false)}
-                className="absolute right-3 top-3 grid size-7 place-items-center rounded-md text-fg-subtle transition-colors hover:bg-surface-muted hover:text-fg"
-              >
-                <Icon icon={Cancel01Icon} size={15} />
-              </button>
-              <Mark className="mx-auto mb-3 h-5 w-auto text-fg" />
-              <p className="text-base font-semibold tracking-tight text-fg">
-                You're almost there
-              </p>
-              <p className="mx-auto mt-1 max-w-[15rem] text-xs text-fg-subtle">
-                Finish setup, then share your studio.
-              </p>
-              <SegmentedBar pct={pct} className="mt-4 justify-center" />
-              <p className="mt-2 text-xs font-medium text-accent-700">
-                {pct}% complete
-              </p>
-            </div>
+      <motion.div
+        ref={dockRef}
+        drag
+        dragConstraints={boundsRef}
+        dragMomentum={false}
+        dragElastic={0}
+        onDragStart={() => {
+          draggingRef.current = true;
+        }}
+        onDragEnd={updatePlace}
+        data-tour="onboarding-dock"
+        className="pointer-events-auto absolute bottom-0 right-0"
+      >
+        {/* Panel is absolute → opening never resizes/moves the toggle. */}
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.96 }}
+              transition={{ duration: 0.22, ease: EASE }}
+              className={cn(
+                "absolute w-[min(19rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-border bg-surface shadow-panel",
+                place.v === "up" ? "bottom-full mb-3" : "top-full mt-3",
+                place.h === "right" ? "right-0" : "left-0",
+                ORIGIN[`${place.v}-${place.h}`],
+              )}
+            >
+              <div className="relative border-b border-border p-5 text-center">
+                <button
+                  type="button"
+                  aria-label="Collapse"
+                  onClick={() => setOpen(false)}
+                  className="absolute right-3 top-3 grid size-7 place-items-center rounded-md text-fg-subtle transition-colors hover:bg-surface-muted hover:text-fg"
+                >
+                  <Icon icon={Cancel01Icon} size={15} />
+                </button>
+                <Mark className="mx-auto mb-3 h-5 w-auto text-fg" />
+                <p className="text-base font-semibold tracking-tight text-fg">
+                  You're almost there
+                </p>
+                <p className="mx-auto mt-1 max-w-[15rem] text-xs text-fg-subtle">
+                  Finish setup, then share your studio.
+                </p>
+                <SegmentedBar pct={pct} className="mt-4 justify-center" />
+                <p className="mt-2 text-xs font-medium text-accent-700">
+                  {pct}% complete
+                </p>
+              </div>
 
-            <ul className="flex flex-col p-2">
-              {steps.map((s, i) => (
-                <li key={s.label}>
-                  <Link
-                    to="/app/studio-page"
-                    onClick={() => setOpen(false)}
-                    className={cn(
-                      "group flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm outline-none transition-colors hover:bg-surface-muted focus-visible:ring-2 focus-visible:ring-accent-500",
-                    )}
-                  >
-                    <span className="grid size-5 shrink-0 place-items-center">
-                      <AnimatePresence mode="wait" initial={false}>
-                        {s.done ? (
-                          <motion.span
-                            key="done"
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{
-                              type: "spring",
-                              bounce: 0.5,
-                              duration: 0.4,
-                              delay: i * 0.04,
-                            }}
-                            className="text-emerald-600"
-                          >
-                            <Icon
-                              icon={CheckmarkCircle02Icon}
-                              size={20}
-                              strokeWidth={1.8}
-                            />
-                          </motion.span>
-                        ) : (
-                          <span
-                            key="todo"
-                            className="size-4 rounded-full border border-border-strong"
-                          />
-                        )}
-                      </AnimatePresence>
-                    </span>
-                    <span
+              <ul className="flex flex-col p-2">
+                {steps.map((s, i) => (
+                  <li key={s.label}>
+                    <Link
+                      to="/app/studio-page"
+                      onClick={() => setOpen(false)}
                       className={cn(
-                        "flex-1",
-                        s.done
-                          ? "text-fg-muted line-through decoration-fg-subtle/50"
-                          : "text-fg",
+                        "group flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm outline-none transition-colors hover:bg-surface-muted focus-visible:ring-2 focus-visible:ring-accent-500",
                       )}
                     >
-                      {s.label}
-                    </span>
-                    {!s.done && (
-                      <Icon
-                        icon={ArrowRight01Icon}
-                        size={15}
-                        strokeWidth={1.8}
-                        className="text-fg-subtle transition-transform group-hover:translate-x-0.5"
-                      />
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                      <span className="grid size-5 shrink-0 place-items-center">
+                        <AnimatePresence mode="wait" initial={false}>
+                          {s.done ? (
+                            <motion.span
+                              key="done"
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{
+                                type: "spring",
+                                bounce: 0.5,
+                                duration: 0.4,
+                                delay: i * 0.04,
+                              }}
+                              className="text-emerald-600"
+                            >
+                              <Icon
+                                icon={CheckmarkCircle02Icon}
+                                size={20}
+                                strokeWidth={1.8}
+                              />
+                            </motion.span>
+                          ) : (
+                            <span
+                              key="todo"
+                              className="size-4 rounded-full border border-border-strong"
+                            />
+                          )}
+                        </AnimatePresence>
+                      </span>
+                      <span
+                        className={cn(
+                          "flex-1",
+                          s.done
+                            ? "text-fg-muted line-through decoration-fg-subtle/50"
+                            : "text-fg",
+                        )}
+                      >
+                        {s.label}
+                      </span>
+                      {!s.done && (
+                        <Icon
+                          icon={ArrowRight01Icon}
+                          size={15}
+                          strokeWidth={1.8}
+                          className="text-fg-subtle transition-transform group-hover:translate-x-0.5"
+                        />
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
 
-            <div className="border-t border-border p-2">
-              <button
-                type="button"
-                onClick={share}
-                className="flex w-full items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium text-fg outline-none transition-colors hover:bg-surface-muted focus-visible:ring-2 focus-visible:ring-accent-500 active:scale-[0.99]"
-              >
-                <Icon icon={Copy01Icon} size={15} strokeWidth={1.8} />
-                Copy studio link
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div className="border-t border-border p-2">
+                <button
+                  type="button"
+                  onClick={share}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium text-fg outline-none transition-colors hover:bg-surface-muted focus-visible:ring-2 focus-visible:ring-accent-500 active:scale-[0.99]"
+                >
+                  <Icon icon={Copy01Icon} size={15} strokeWidth={1.8} />
+                  Copy studio link
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      {/* Toggle — always visible, mini progress + count */}
-      <motion.button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        whileTap={{ scale: 0.96 }}
-        aria-label={open ? "Hide setup" : "Studio setup"}
-        className="flex items-center gap-2.5 rounded-full border border-border bg-surface py-2 pl-3.5 pr-4 shadow-panel outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
-      >
-        <ProgressRing pct={pct} />
-        <span className="text-sm font-medium tabular-nums text-fg">
-          {doneCount}/{total}
-        </span>
-      </motion.button>
+        {/* Toggle — always visible. Draggable handle: hold to move, tap to
+            open; the post-drag click is swallowed. */}
+        <motion.button
+          type="button"
+          onClick={() => {
+            if (draggingRef.current) {
+              draggingRef.current = false;
+              return;
+            }
+            setOpen((v) => !v);
+          }}
+          whileTap={{ scale: 0.96 }}
+          aria-label={open ? "Hide setup" : "Studio setup"}
+          className="flex cursor-grab items-center gap-2.5 rounded-full border border-border bg-surface py-2 pl-3.5 pr-4 shadow-panel outline-none focus-visible:ring-2 focus-visible:ring-accent-500 active:cursor-grabbing"
+        >
+          <ProgressRing pct={pct} />
+          <span className="text-sm font-medium tabular-nums text-fg">
+            {doneCount}/{total}
+          </span>
+        </motion.button>
+      </motion.div>
     </div>
   );
 }

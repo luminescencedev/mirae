@@ -63,7 +63,7 @@ function RequestRow({
       onClick={onOpen}
       className="flex w-full gap-3 p-4 text-left outline-none transition-colors hover:bg-surface-muted focus-visible:bg-surface-muted"
     >
-      <span className="size-9 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+      <span className="size-9 shrink-0 rounded-lg bg-gradient-to-br from-accent-300 to-accent-500" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="truncate text-sm font-medium text-fg">

@@ -7,7 +7,18 @@ import {
   useReducedMotion,
   motion,
 } from "motion/react";
-import { Badge, Button, Icon, Mark, cn } from "@mirae/ui";
+import {
+  Badge,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Icon,
+  Mark,
+  cn,
+} from "@mirae/ui";
 import {
   DashboardSquare01Icon,
   InboxIcon,
@@ -19,6 +30,7 @@ import {
   SidebarRight01Icon,
   Store01Icon,
   Settings01Icon,
+  UnfoldMoreIcon,
   UserGroupIcon,
 } from "@hugeicons/core-free-icons";
 import type { IconData } from "../mockups/seed.ts";
@@ -30,6 +42,7 @@ import { BottomNav } from "./BottomNav.tsx";
 import { MobileMenu } from "./MobileMenu.tsx";
 import { AppTour, type TourStep } from "./AppTour.tsx";
 import { OnboardingDock } from "./OnboardingDock.tsx";
+import { FeedbackDialog } from "./FeedbackDialog.tsx";
 import { FeedbackWidget } from "./FeedbackWidget.tsx";
 
 const TOUR_KEY = "mirae-tour-done";
@@ -97,7 +110,6 @@ const NAV: { label: string; icon: IconData; to: string }[] = [
   { label: "Clients", icon: UserGroupIcon, to: "/app/clients" },
   { label: "Deliveries", icon: Package01Icon, to: "/app/deliveries" },
   { label: "Studio page", icon: Store01Icon, to: "/app/studio-page" },
-  { label: "Settings", icon: Settings01Icon, to: "/app/settings" },
 ];
 
 function Label({
@@ -194,6 +206,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const collapsed = !open;
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   // First-run guided tour (skippable, shown once).
   const [tourOpen, setTourOpen] = useState(
     () => typeof window !== "undefined" && !localStorage.getItem(TOUR_KEY),
@@ -289,28 +302,57 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           />
         </div>
 
-        <div className="flex h-14 items-center border-t border-border px-4">
-          <span className="grid size-9 shrink-0 place-items-center">
-            <span className="size-8 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
-          </span>
-          <Label collapsed={collapsed} className="min-w-0 flex-1 pl-1">
-            <span className="block truncate text-sm font-medium">
-              {userName}
-            </span>
-            <span className="block truncate text-xs text-fg-subtle">
-              {userEmail || "Studio"}
-            </span>
-          </Label>
-          {!collapsed && (
-            <button
-              onClick={handleSignOut}
-              aria-label="Sign out"
-              title="Sign out"
-              className="ml-1 flex size-8 shrink-0 items-center justify-center rounded-md text-fg-subtle outline-none transition-colors hover:bg-surface-muted hover:text-fg focus-visible:ring-2 focus-visible:ring-accent-500"
-            >
-              <Icon icon={Logout01Icon} size={17} strokeWidth={1.7} />
-            </button>
-          )}
+        <div className="border-t border-border p-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                aria-label="Account menu"
+                className={cn(
+                  "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left outline-none transition-colors hover:bg-surface-muted focus-visible:ring-2 focus-visible:ring-accent-500",
+                  collapsed && "justify-center",
+                )}
+              >
+                <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-accent-300 to-accent-500 text-sm font-semibold text-white">
+                  {(userName || "S").slice(0, 1).toUpperCase()}
+                </span>
+                <Label collapsed={collapsed} className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-medium">
+                    {userName}
+                  </span>
+                  <span className="block truncate text-xs text-fg-subtle">
+                    {userEmail || "Studio"}
+                  </span>
+                </Label>
+                {!collapsed && (
+                  <Icon
+                    icon={UnfoldMoreIcon}
+                    size={16}
+                    strokeWidth={1.8}
+                    className="shrink-0 text-fg-subtle"
+                  />
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" side="top" className="w-56">
+              <DropdownMenuItem asChild>
+                <Link to="/app/studio-page">
+                  <Icon icon={Store01Icon} size={16} strokeWidth={1.7} />
+                  Studio page
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/app/settings">
+                  <Icon icon={Settings01Icon} size={16} strokeWidth={1.7} />
+                  Settings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={handleSignOut}>
+                <Icon icon={Logout01Icon} size={16} strokeWidth={1.7} />
+                Sign out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </aside>
 
@@ -352,6 +394,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               userName={userName}
               userEmail={userEmail}
               onSearch={() => setPaletteOpen(true)}
+              onFeedback={() => setFeedbackOpen(true)}
               onSignOut={handleSignOut}
             />
           </div>
@@ -375,7 +418,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
 
       <OnboardingDock />
+
+      {/* Desktop: anchored popover. Mobile: modal opened from the overflow menu. */}
       <FeedbackWidget />
+      <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} />
 
       {tourOpen && (
         <AppTour

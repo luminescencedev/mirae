@@ -55,7 +55,7 @@ function ClientsView() {
     <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-soft">
       {clients.map((c) => (
         <div key={c.email} className="flex items-center gap-3 px-4 py-3">
-          <span className="size-8 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+          <span className="size-8 shrink-0 rounded-lg bg-gradient-to-br from-accent-300 to-accent-500" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-fg">{c.name}</p>
             <a

@@ -162,7 +162,7 @@ export function OverviewView() {
                     i > 0 && "border-t border-border",
                   )}
                 >
-                  <span className="size-8 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+                  <span className="size-8 shrink-0 rounded-lg bg-gradient-to-br from-accent-300 to-accent-500" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-fg">
                       {r.clientName}
@@ -206,7 +206,7 @@ export function OverviewView() {
                       i > 0 && "border-t border-border",
                     )}
                   >
-                    <span className="size-7 shrink-0 rounded-full bg-gradient-to-br from-accent-300 to-accent-500" />
+                    <span className="size-7 shrink-0 rounded-lg bg-gradient-to-br from-accent-300 to-accent-500" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-fg">
                         {c.title}
