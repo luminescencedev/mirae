@@ -86,9 +86,18 @@ function parse(body: Body) {
   } = {};
   if (typeof body.title === "string") out.title = body.title.trim();
   if (isStatus(body.status)) out.status = body.status;
+  // Money is integer cents ≥ 0 — ignore non-finite / negative input rather than
+  // writing NaN to the column.
+  const cents = (v: unknown): number | undefined => {
+    const n = Number(v);
+    return Number.isFinite(n) && n >= 0 ? Math.round(n) : undefined;
+  };
   if ("priceCents" in body)
-    out.priceCents = body.priceCents == null ? null : Number(body.priceCents);
-  if (body.paidCents != null) out.paidCents = Number(body.paidCents);
+    out.priceCents = body.priceCents == null ? null : cents(body.priceCents);
+  if (body.paidCents != null) {
+    const p = cents(body.paidCents);
+    if (p !== undefined) out.paidCents = p;
+  }
   if ("deadline" in body)
     out.deadline = body.deadline ? new Date(String(body.deadline)) : null;
   return out;

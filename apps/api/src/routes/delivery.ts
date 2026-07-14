@@ -9,10 +9,14 @@ import {
   files,
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
+import { rateLimit } from "../lib/rate-limit.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
 export const deliveryRoutes = new Hono<{ Bindings: Bindings }>();
+
+// Throttle the public, token-scoped delivery surface (reads + ack).
+deliveryRoutes.use("*", rateLimit());
 
 // Resolve a delivery token to its delivery + commission (or null).
 async function resolve(db: ReturnType<typeof createDb>, token: string) {
@@ -104,6 +108,9 @@ deliveryRoutes.get("/:token/files/:fileId", async (c) => {
       and(
         eq(files.id, c.req.param("fileId")),
         eq(files.commissionId, found.commission.id),
+        // Only deliverables are exposed on the delivery page — never leak
+        // reference/wip files through the delivery token.
+        eq(files.kind, "deliverable"),
       ),
     )
     .limit(1);

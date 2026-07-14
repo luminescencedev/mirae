@@ -149,7 +149,7 @@ app.post("/api/waitlist", rateLimit(), async (c) => {
 // Client crash reports from the SPA error boundary + global handlers. Logged
 // as structured JSON; the browser fires these via sendBeacon (no auth), so
 // treat the body as untrusted and clamp field sizes.
-app.post("/api/client-errors", async (c) => {
+app.post("/api/client-errors", rateLimit(), async (c) => {
   const body = (await c.req.json().catch(() => ({}))) as Record<
     string,
     unknown
