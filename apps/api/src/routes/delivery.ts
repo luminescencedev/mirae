@@ -21,7 +21,7 @@ async function resolve(db: ReturnType<typeof createDb>, token: string) {
     .from(deliveries)
     .where(eq(deliveries.token, token))
     .limit(1);
-  if (!delivery) return null;
+  if (!delivery || delivery.revokedAt) return null;
   const [commission] = await db
     .select()
     .from(commissions)
@@ -119,5 +119,6 @@ deliveryRoutes.get("/:token/files/:fileId", async (c) => {
     "content-disposition",
     `attachment; filename="${encodeURIComponent(file.name)}"`,
   );
+  headers.set("x-content-type-options", "nosniff");
   return new Response(object.body, { headers });
 });

@@ -10,6 +10,7 @@ import { PROJECT_TYPES, PROJECT_VISIBILITIES } from "@mirae/shared";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
 import { imageSize } from "../lib/image-size.ts";
+import { wouldExceedQuota } from "../lib/quota.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
@@ -23,6 +24,7 @@ const IMAGE_MIME = new Set([
   "image/avif",
 ]);
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_IMAGE_DIMENSION = 12000; // px per side — decompression-bomb guard
 
 function slugify(input: string): string {
   return (
@@ -305,10 +307,18 @@ portfolioRoutes.post("/projects/:id/assets", async (c) => {
     return c.json({ error: "Unsupported image type." }, 415);
   if (file.size > MAX_UPLOAD_BYTES)
     return c.json({ error: "Image exceeds 10 MB." }, 413);
+  if (await wouldExceedQuota(db, artist.id, file.size))
+    return c.json({ error: "Storage quota exceeded." }, 413);
 
   const key = `artists/${artist.id}/portfolio/${projectId}/${crypto.randomUUID()}`;
   const bytes = await file.arrayBuffer();
   const dims = imageSize(bytes);
+  // Guard against decompression / resolution bombs.
+  if (
+    dims &&
+    (dims.width > MAX_IMAGE_DIMENSION || dims.height > MAX_IMAGE_DIMENSION)
+  )
+    return c.json({ error: "Image is too large (max 12000px per side)." }, 413);
   await c.env.FILES.put(key, bytes, {
     httpMetadata: { contentType: file.type },
   });
@@ -390,6 +400,7 @@ portfolioRoutes.get("/assets/:id/raw", async (c) => {
     headers: {
       "content-type": row.mimeType,
       "cache-control": "public, max-age=31536000, immutable",
+      "x-content-type-options": "nosniff",
     },
   });
 });

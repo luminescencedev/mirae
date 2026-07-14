@@ -17,8 +17,21 @@ import {
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
 import { mailLayout, sendEmail } from "../lib/mail.ts";
+import { wouldExceedQuota } from "../lib/quota.ts";
+import { newToken } from "../lib/tokens.ts";
+import { audit } from "../lib/log.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
+
+const MAX_COMMISSION_FILE_BYTES = 50 * 1024 * 1024; // 50 MB per file
+// Types that can execute script in a browser if served inline.
+const BLOCKED_MIME = new Set([
+  "image/svg+xml",
+  "text/html",
+  "application/xhtml+xml",
+  "text/javascript",
+  "application/javascript",
+]);
 
 // The client email + portal token for a commission (from its originating
 // request), for notification emails.
@@ -219,7 +232,7 @@ commissionsRoutes.post("/:id/portal", async (c) => {
 
   let token = row.portalToken;
   if (!token) {
-    token = crypto.randomUUID().replace(/-/g, "");
+    token = newToken();
     await db
       .update(commissions)
       .set({ portalToken: token })
@@ -241,7 +254,7 @@ commissionsRoutes.post("/:id/portal/rotate", async (c) => {
   );
   if (!commissionId) return c.json({ error: "not found" }, 404);
 
-  const token = crypto.randomUUID().replace(/-/g, "");
+  const token = newToken();
   await db
     .update(commissions)
     .set({ portalToken: token })
@@ -252,6 +265,7 @@ commissionsRoutes.post("/:id/portal/rotate", async (c) => {
     type: "portal",
     message: "Portal link rotated",
   });
+  audit("portal_rotated", { commissionId });
   return c.json({ token });
 });
 
@@ -277,7 +291,47 @@ commissionsRoutes.post("/:id/portal/revoke", async (c) => {
     type: "portal",
     message: "Portal link revoked",
   });
+  audit("portal_revoked", { commissionId });
   return c.json({ ok: true });
+});
+
+// POST /api/commissions/:id/delivery/revoke — disable the delivery link (owner).
+commissionsRoutes.post("/:id/delivery/revoke", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+  await db
+    .update(deliveries)
+    .set({ revokedAt: new Date() })
+    .where(eq(deliveries.commissionId, commissionId));
+  return c.json({ ok: true });
+});
+
+// POST /api/commissions/:id/delivery/rotate — new delivery link (owner).
+commissionsRoutes.post("/:id/delivery/rotate", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+  const token = newToken();
+  const [row] = await db
+    .update(deliveries)
+    .set({ token, revokedAt: null })
+    .where(eq(deliveries.commissionId, commissionId))
+    .returning({ token: deliveries.token });
+  if (!row) return c.json({ error: "no delivery" }, 404);
+  return c.json({ token });
 });
 
 // --- Delivery (one per commission) ----------------------------------------
@@ -336,7 +390,7 @@ commissionsRoutes.post("/:id/delivery", async (c) => {
     return c.json({ delivery: existing });
   }
 
-  const token = crypto.randomUUID().replace(/-/g, "");
+  const token = newToken();
   const [row] = await db
     .insert(deliveries)
     .values({ commissionId, token, message: message ?? null })
@@ -441,6 +495,13 @@ commissionsRoutes.post("/:id/files", async (c) => {
   const form = await c.req.formData().catch(() => null);
   const file = form?.get("file");
   if (!(file instanceof File)) return c.json({ error: "No file." }, 400);
+  if (file.size > MAX_COMMISSION_FILE_BYTES)
+    return c.json({ error: "File exceeds 50 MB." }, 413);
+  // Block active content that could execute if ever served inline.
+  if (BLOCKED_MIME.has(file.type))
+    return c.json({ error: "This file type isn't allowed." }, 415);
+  if (await wouldExceedQuota(db, artist.id, file.size))
+    return c.json({ error: "Storage quota exceeded." }, 413);
 
   const key = `commissions/${commissionId}/${crypto.randomUUID()}-${file.name}`;
   await c.env.FILES.put(key, await file.arrayBuffer(), {

@@ -1,6 +1,23 @@
 import { Hono } from "hono";
-import { eq } from "drizzle-orm";
-import { createDb, artistProfiles } from "@mirae/db";
+import { eq, inArray } from "drizzle-orm";
+import {
+  accounts,
+  artistLinks,
+  artistProfiles,
+  commissionTypes,
+  commissions,
+  createDb,
+  deliveries,
+  files,
+  portalMessages,
+  portalThreads,
+  portfolioAssets,
+  portfolioProjects,
+  quotes,
+  revisionRounds,
+  sessions,
+  users,
+} from "@mirae/db";
 import {
   normalizeAbout,
   normalizeAppearance,
@@ -10,6 +27,7 @@ import {
 } from "@mirae/shared";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist, getUserId } from "../lib/session.ts";
+import { audit } from "../lib/log.ts";
 
 const STATUSES = ["open", "waitlist", "closed"] as const;
 type Status = (typeof STATUSES)[number];
@@ -82,6 +100,114 @@ artistsRoutes.patch("/me", async (c) => {
 });
 
 // Upload profile media (avatar or cover) → R2. Replaces the previous object.
+// GET /api/artists/me/export — full data export for the signed-in artist
+// (GDPR-style portability). Returns a downloadable JSON document.
+artistsRoutes.get("/me/export", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const id = artist.id;
+
+  const [types, projects, links, coms] = await Promise.all([
+    db.select().from(commissionTypes).where(eq(commissionTypes.artistId, id)),
+    db
+      .select()
+      .from(portfolioProjects)
+      .where(eq(portfolioProjects.artistId, id)),
+    db.select().from(artistLinks).where(eq(artistLinks.artistId, id)),
+    db.select().from(commissions).where(eq(commissions.artistId, id)),
+  ]);
+
+  const projectIds = projects.map((p) => p.id);
+  const assets = projectIds.length
+    ? await db
+        .select()
+        .from(portfolioAssets)
+        .where(inArray(portfolioAssets.projectId, projectIds))
+    : [];
+
+  const comIds = coms.map((x) => x.id);
+  let quoteRows: unknown[] = [];
+  let fileRows: unknown[] = [];
+  let deliveryRows: unknown[] = [];
+  let threadRows: { id: string }[] = [];
+  let revisionRows: unknown[] = [];
+  let messageRows: unknown[] = [];
+  if (comIds.length) {
+    [quoteRows, fileRows, deliveryRows, threadRows, revisionRows] =
+      await Promise.all([
+        db.select().from(quotes).where(inArray(quotes.commissionId, comIds)),
+        db
+          .select({
+            id: files.id,
+            commissionId: files.commissionId,
+            kind: files.kind,
+            name: files.name,
+            sizeBytes: files.sizeBytes,
+            createdAt: files.createdAt,
+          })
+          .from(files)
+          .where(inArray(files.commissionId, comIds)),
+        db
+          .select()
+          .from(deliveries)
+          .where(inArray(deliveries.commissionId, comIds)),
+        db
+          .select({ id: portalThreads.id })
+          .from(portalThreads)
+          .where(inArray(portalThreads.commissionId, comIds)),
+        db
+          .select()
+          .from(revisionRounds)
+          .where(inArray(revisionRounds.commissionId, comIds)),
+      ]);
+    const threadIds = threadRows.map((t) => t.id);
+    messageRows = threadIds.length
+      ? await db
+          .select()
+          .from(portalMessages)
+          .where(inArray(portalMessages.threadId, threadIds))
+      : [];
+  }
+
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    profile: artist,
+    commissionTypes: types,
+    portfolio: { projects, assets },
+    links,
+    commissions: coms,
+    quotes: quoteRows,
+    files: fileRows,
+    deliveries: deliveryRows,
+    threads: threadRows,
+    messages: messageRows,
+    revisions: revisionRows,
+  };
+  audit("data_export", { artistId: id });
+  return new Response(JSON.stringify(payload, null, 2), {
+    headers: {
+      "content-type": "application/json",
+      "content-disposition": `attachment; filename="mirae-export.json"`,
+    },
+  });
+});
+
+// DELETE /api/artists/me — permanently delete the account and all data.
+// Deleting the auth user cascades to the artist profile and everything under
+// it (commissions, portfolio, links, quotes, files, threads, …); sessions and
+// accounts are cleared explicitly first.
+artistsRoutes.delete("/me", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  await db.delete(sessions).where(eq(sessions.userId, artist.userId));
+  await db.delete(accounts).where(eq(accounts.userId, artist.userId));
+  await db.delete(users).where(eq(users.id, artist.userId));
+  audit("account_deleted", { artistId: artist.id });
+  return c.json({ ok: true });
+});
+
 for (const kind of ["avatar", "cover"] as const) {
   const column = kind === "avatar" ? "avatarR2Key" : "coverR2Key";
   artistsRoutes.post(`/me/${kind}`, async (c) => {

@@ -182,6 +182,7 @@ commissionTypesRoutes.get("/:id/image", async (c) => {
     headers: {
       "content-type": obj.httpMetadata?.contentType ?? "image/jpeg",
       "cache-control": "public, max-age=3600",
+      "x-content-type-options": "nosniff",
     },
   });
 });

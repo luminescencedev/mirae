@@ -681,26 +681,26 @@ Goal: bring the client-facing experience to the quality of the public studio.
 
 Goal: prepare Mirae for real artists, real clients and real files.
 
-- [ ] TRUST-001 Threat-model public upload endpoints
-- [ ] TRUST-002 Add upload quotas
-- [ ] TRUST-003 Add upload type and resolution limits
-- [ ] TRUST-004 Add orphan cleanup jobs
-- [ ] TRUST-005 Audit private file access
-- [ ] TRUST-006 Add global rate limiting
-- [ ] TRUST-007 Audit Better Auth configuration
-- [ ] TRUST-008 Audit portal-token entropy
-- [ ] TRUST-009 Add token revocation
-- [ ] TRUST-010 Add data export
-- [ ] TRUST-011 Add account deletion
-- [ ] TRUST-012 Add privacy policy
-- [ ] TRUST-013 Add terms of service
-- [ ] TRUST-014 Add structured audit logs
-- [ ] TRUST-015 Add dependency scanning
-- [ ] TRUST-016 Add secret scanning
-- [ ] TRUST-017 Add critical-path automated tests
-- [ ] TRUST-018 Add deploy smoke test
-- [ ] TRUST-019 Add backup and recovery documentation
-- [ ] TRUST-020 Add incident response checklist
+- [x] TRUST-001 Threat-model public upload endpoints
+- [x] TRUST-002 Add upload quotas
+- [x] TRUST-003 Add upload type and resolution limits
+- [x] TRUST-004 Add orphan cleanup jobs
+- [x] TRUST-005 Audit private file access
+- [x] TRUST-006 Add global rate limiting
+- [x] TRUST-007 Audit Better Auth configuration
+- [x] TRUST-008 Audit portal-token entropy
+- [x] TRUST-009 Add token revocation
+- [x] TRUST-010 Add data export
+- [x] TRUST-011 Add account deletion
+- [x] TRUST-012 Add privacy policy
+- [x] TRUST-013 Add terms of service
+- [x] TRUST-014 Add structured audit logs
+- [x] TRUST-015 Add dependency scanning
+- [x] TRUST-016 Add secret scanning
+- [x] TRUST-017 Add critical-path automated tests
+- [x] TRUST-018 Add deploy smoke test
+- [x] TRUST-019 Add backup and recovery documentation
+- [x] TRUST-020 Add incident response checklist
 
 ## Sprint 23 — Closed artist beta
 
