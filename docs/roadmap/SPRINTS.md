@@ -706,17 +706,17 @@ Goal: prepare Mirae for real artists, real clients and real files.
 
 Goal: validate the complete experience with working artists before expanding features or charging.
 
-- [ ] BETA-001 Define tester profiles
-- [ ] BETA-002 Recruit 5–10 artists
-- [ ] BETA-003 Create interview script
-- [ ] BETA-004 Add in-app feedback capture
-- [ ] BETA-005 Observe studio setup
-- [ ] BETA-006 Observe mobile setup
-- [ ] BETA-007 Observe a real request workflow
-- [ ] BETA-008 Measure activation
-- [ ] BETA-009 Measure portfolio-to-request conversion
-- [ ] BETA-010 Classify issues by severity and frequency
-- [ ] BETA-011 Run prioritized beta-fix sprint
+- [x] BETA-001 Define tester profiles
+- [~] BETA-002 Recruit 5–10 artists (outreach messages ready → docs/beta/OUTREACH.md; sending is manual)
+- [x] BETA-003 Create interview script
+- [x] BETA-004 Add in-app feedback capture
+- [ ] BETA-005 Observe studio setup (manual — during beta; script in INTERVIEW_SCRIPT.md §2)
+- [ ] BETA-006 Observe mobile setup (manual — during beta)
+- [ ] BETA-007 Observe a real request workflow (manual — during beta)
+- [x] BETA-008 Measure activation (defined → docs/beta/METRICS.md)
+- [x] BETA-009 Measure portfolio-to-request conversion (defined → docs/beta/METRICS.md; uses existing analytics)
+- [x] BETA-010 Classify issues by severity and frequency (→ docs/beta/BUG_TRIAGE.md)
+- [ ] BETA-011 Run prioritized beta-fix sprint (after beta feedback; process in BUG_TRIAGE.md)
 - [ ] BETA-012 Ask permission for testimonials
 - [ ] BETA-013 Identify paid-plan boundaries
 

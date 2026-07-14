@@ -30,6 +30,7 @@ import { BottomNav } from "./BottomNav.tsx";
 import { MobileMenu } from "./MobileMenu.tsx";
 import { AppTour, type TourStep } from "./AppTour.tsx";
 import { OnboardingDock } from "./OnboardingDock.tsx";
+import { FeedbackWidget } from "./FeedbackWidget.tsx";
 
 const TOUR_KEY = "mirae-tour-done";
 const TOUR_STEPS: TourStep[] = [
@@ -374,6 +375,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
 
       <OnboardingDock />
+      <FeedbackWidget />
 
       {tourOpen && (
         <AppTour
