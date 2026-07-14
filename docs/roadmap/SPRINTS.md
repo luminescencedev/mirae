@@ -663,7 +663,7 @@ Goal: bring the client-facing experience to the quality of the public studio.
 
 - [x] CLIENTUX-001 Redesign client portal shell
 - [x] CLIENTUX-002 Add artist branding
-- [ ] CLIENTUX-003 Improve milestone timeline
+- [x] CLIENTUX-003 Improve milestone timeline
 - [ ] CLIENTUX-004 Add structured feedback threads
 - [ ] CLIENTUX-005 Add revision rounds
 - [ ] CLIENTUX-006 Add artist responses

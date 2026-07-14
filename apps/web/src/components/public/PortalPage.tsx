@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Button, Mark, Skeleton, Textarea, cn } from "@mirae/ui";
+import { Button, Icon, Mark, Skeleton, Textarea, cn } from "@mirae/ui";
+import { Tick02Icon } from "@hugeicons/core-free-icons";
 import { Link } from "@tanstack/react-router";
-import { publicApi } from "../../lib/api.ts";
+import { publicApi, type PortalView } from "../../lib/api.ts";
 import {
   STATUS_META,
   dueLabel,
@@ -100,6 +101,71 @@ function Shell({
         </Link>
       </footer>
     </div>
+  );
+}
+
+/** Vertical connected milestone timeline for the client's view. */
+function Timeline({ status }: { status: PortalView["commission"]["status"] }) {
+  const steps = milestones(status);
+  return (
+    <ol className="relative flex flex-col">
+      {steps.map((m, i) => {
+        const last = i === steps.length - 1;
+        return (
+          <li key={m.label} className="relative flex gap-3.5">
+            {!last && (
+              <span
+                aria-hidden
+                className={cn(
+                  "absolute left-2.75 top-6 h-[calc(100%-1rem)] w-px",
+                  m.state === "done" ? "bg-emerald-400/60" : "bg-border",
+                )}
+              />
+            )}
+            <span
+              className={cn(
+                "relative z-10 grid size-6 shrink-0 place-items-center rounded-full",
+                m.state === "done"
+                  ? "bg-emerald-500 text-white"
+                  : m.state === "active"
+                    ? "bg-accent-500 text-white ring-4 ring-accent-500/15"
+                    : "bg-surface-sunken ring-1 ring-inset ring-border",
+              )}
+            >
+              {m.state === "done" ? (
+                <Icon icon={Tick02Icon} size={13} strokeWidth={2.5} />
+              ) : (
+                <span
+                  className={cn(
+                    "size-1.5 rounded-full",
+                    m.state === "active" ? "bg-white" : "bg-fg-subtle",
+                  )}
+                />
+              )}
+            </span>
+            <div className={cn("flex items-center gap-2", last ? "pb-0" : "pb-5")}>
+              <span
+                className={cn(
+                  "text-sm",
+                  m.state === "active"
+                    ? "font-semibold text-fg"
+                    : m.state === "done"
+                      ? "text-fg-muted"
+                      : "text-fg-subtle",
+                )}
+              >
+                {m.label}
+              </span>
+              {m.state === "active" && (
+                <span className="rounded-full bg-accent-50 px-2 py-0.5 text-[11px] font-medium text-accent-700">
+                  Current
+                </span>
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
@@ -240,42 +306,8 @@ export function PortalPage({ token }: { token: string }) {
       </div>
 
       <div className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft">
-        <p className="mb-3 text-sm font-semibold text-fg">Progress</p>
-        <ol className="flex flex-col gap-0.5">
-          {milestones(commission.status).map((m) => (
-            <li key={m.label} className="flex items-center gap-3 py-1">
-              <span
-                className={cn(
-                  "flex size-4 items-center justify-center rounded-full",
-                  m.state === "active"
-                    ? "bg-accent-500"
-                    : m.state === "done"
-                      ? "bg-emerald-500"
-                      : "bg-surface-sunken ring-1 ring-inset ring-border",
-                )}
-              >
-                <span
-                  className={cn(
-                    "size-1.5 rounded-full",
-                    m.state !== "todo" ? "bg-white" : "bg-fg-subtle",
-                  )}
-                />
-              </span>
-              <span
-                className={cn(
-                  "text-sm",
-                  m.state === "active"
-                    ? "font-medium text-fg"
-                    : m.state === "done"
-                      ? "text-fg-muted"
-                      : "text-fg-subtle",
-                )}
-              >
-                {m.label}
-              </span>
-            </li>
-          ))}
-        </ol>
+        <p className="mb-4 text-sm font-semibold text-fg">Progress</p>
+        <Timeline status={commission.status} />
       </div>
 
       {quote && (
