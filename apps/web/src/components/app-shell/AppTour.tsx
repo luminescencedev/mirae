@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@mirae/ui";
@@ -47,13 +47,12 @@ export function AppTour({
   const step = steps[i];
   const last = i === steps.length - 1;
 
-  // Navigate to the step's route (if any) before measuring.
+  // On every step: navigate (if needed), clear the old spotlight, then poll for
+  // the new target so route/layout changes settle. Keyed on `i` only so both
+  // directions re-measure identically.
   useEffect(() => {
     if (step.to) navigate({ to: step.to });
-  }, [i]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Measure the target — retry briefly so navigation/layout can settle.
-  useLayoutEffect(() => {
+    setRect(null);
     let raf = 0;
     let tries = 0;
     const tick = () => {
@@ -65,12 +64,15 @@ export function AppTour({
             .querySelector(`[data-tour="${step.target}"]`)
             ?.scrollIntoView({ block: "center", behavior: "smooth" });
         }
-      } else if (tries++ < 40) {
+      } else if (tries++ < 60) {
         raf = requestAnimationFrame(tick);
       }
     };
-    tick();
-    const onMove = () => setRect(measure(step.target));
+    raf = requestAnimationFrame(tick);
+    const onMove = () => {
+      const r = measure(step.target);
+      if (r) setRect(r);
+    };
     window.addEventListener("resize", onMove);
     window.addEventListener("scroll", onMove, true);
     return () => {
@@ -78,7 +80,7 @@ export function AppTour({
       window.removeEventListener("resize", onMove);
       window.removeEventListener("scroll", onMove, true);
     };
-  }, [i, step.target]);
+  }, [i]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const finish = () => onClose();
 

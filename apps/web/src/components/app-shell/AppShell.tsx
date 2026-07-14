@@ -28,6 +28,7 @@ import { NotificationsMenu } from "./NotificationsMenu.tsx";
 import { BottomNav } from "./BottomNav.tsx";
 import { MobileMenu } from "./MobileMenu.tsx";
 import { AppTour, type TourStep } from "./AppTour.tsx";
+import { OnboardingDock } from "./OnboardingDock.tsx";
 
 const TOUR_KEY = "mirae-tour-done";
 const TOUR_STEPS: TourStep[] = [
@@ -38,10 +39,11 @@ const TOUR_STEPS: TourStep[] = [
     body: "Your studio at a glance — active work, new requests, earnings. You always land here.",
   },
   {
-    target: "launch-checklist",
+    target: "onboarding-dock",
     to: "/app/overview",
-    title: "Your launch checklist",
-    body: "Finish these steps to go live. Each one takes you straight to where you set it up.",
+    title: "Your setup progress",
+    body: "This ring tracks your studio setup. Open it anytime to see what's left and jump straight there.",
+    place: "top",
   },
   {
     target: "nav-studio-page",
@@ -352,6 +354,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       />
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+
+      <OnboardingDock />
 
       {tourOpen && (
         <AppTour
