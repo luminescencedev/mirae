@@ -61,6 +61,7 @@ export const quotes = pgTable("quotes", {
   status: text("status").notNull().default("draft"), // draft | sent | accepted | declined
   sentAt: timestamp("sent_at", { withTimezone: true }),
   respondedAt: timestamp("responded_at", { withTimezone: true }),
+  declineReason: text("decline_reason"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

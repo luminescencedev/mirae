@@ -209,7 +209,11 @@ export type PortalView = {
     hasAvatar: boolean;
     hasCover: boolean;
   } | null;
-  quote: { totalCents: number; status: QuoteStatus } | null;
+  quote: {
+    totalCents: number;
+    status: QuoteStatus;
+    declineReason: string | null;
+  } | null;
   threads: PortalThread[];
   revisions: {
     allowed: number;
@@ -300,6 +304,12 @@ export const publicApi = {
   acceptQuote: (token: string) =>
     fetch(`/api/portal/${encodeURIComponent(token)}/quote/accept`, {
       method: "POST",
+    }).then(json<{ ok: true }>),
+  declineQuote: (token: string, reason: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}/quote/decline`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ reason }),
     }).then(json<{ ok: true }>),
   studio: (handle: string) =>
     fetch(`/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}`).then(

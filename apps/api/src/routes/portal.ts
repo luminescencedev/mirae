@@ -52,7 +52,11 @@ portalRoutes.get("/:token", async (c) => {
     : null;
 
   const [quote] = await db
-    .select({ totalCents: quotes.totalCents, status: quotes.status })
+    .select({
+      totalCents: quotes.totalCents,
+      status: quotes.status,
+      declineReason: quotes.declineReason,
+    })
     .from(quotes)
     .where(eq(quotes.commissionId, commission.id))
     .limit(1);
@@ -118,6 +122,41 @@ portalRoutes.post("/:token/quote/accept", async (c) => {
     commissionId: commission.id,
     type: "quote",
     message: "Client accepted the quote",
+  });
+  return c.json({ ok: true });
+});
+
+// POST /api/portal/:token/quote/decline — client declines the sent quote.
+portalRoutes.post("/:token/quote/decline", async (c) => {
+  const db = createDb(c.env.DATABASE_URL);
+  const [commission] = await db
+    .select({ id: commissions.id, artistId: commissions.artistId })
+    .from(commissions)
+    .where(eq(commissions.portalToken, c.req.param("token")))
+    .limit(1);
+  if (!commission) return c.json({ error: "not found" }, 404);
+
+  const [quote] = await db
+    .select({ id: quotes.id, status: quotes.status })
+    .from(quotes)
+    .where(eq(quotes.commissionId, commission.id))
+    .limit(1);
+  if (!quote) return c.json({ error: "No quote to decline." }, 404);
+  if (quote.status !== "sent")
+    return c.json({ error: "This quote can't be declined." }, 409);
+
+  const raw = (await c.req.json().catch(() => ({}))) as { reason?: unknown };
+  const reason = String(raw.reason ?? "").trim() || null;
+
+  await db
+    .update(quotes)
+    .set({ status: "declined", respondedAt: new Date(), declineReason: reason })
+    .where(eq(quotes.id, quote.id));
+  await db.insert(activityLogs).values({
+    artistId: commission.artistId,
+    commissionId: commission.id,
+    type: "quote",
+    message: `Client declined the quote${reason ? `: ${reason}` : ""}`,
   });
   return c.json({ ok: true });
 });

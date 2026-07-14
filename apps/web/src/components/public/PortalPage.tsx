@@ -182,9 +182,21 @@ function QuoteCard({
   quote: NonNullable<PortalView["quote"]>;
 }) {
   const qc = useQueryClient();
+  const [declining, setDeclining] = useState(false);
+  const [reason, setReason] = useState("");
+  const invalidate = () =>
+    qc.invalidateQueries({ queryKey: ["portal", token] });
   const accept = useMutation({
     mutationFn: () => publicApi.acceptQuote(token),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["portal", token] }),
+    onSuccess: invalidate,
+  });
+  const decline = useMutation({
+    mutationFn: () => publicApi.declineQuote(token, reason.trim()),
+    onSuccess: () => {
+      setDeclining(false);
+      setReason("");
+      invalidate();
+    },
   });
   const pending = quote.status === "sent";
   const badge: Record<string, { label: string; cls: string }> = {
@@ -204,25 +216,70 @@ function QuoteCard({
       <p className="mt-1 text-2xl font-semibold tabular-nums text-fg">
         {euro(quote.totalCents)}
       </p>
-      {pending && (
-        <>
-          {accept.isError && (
-            <p className="mt-2 text-sm text-red-600">
-              {(accept.error as Error).message}
-            </p>
-          )}
-          <div className="mt-4 flex gap-2">
-            <Button
-              size="sm"
-              className="flex-1"
-              disabled={accept.isPending}
-              onClick={() => accept.mutate()}
-            >
-              {accept.isPending ? "Accepting…" : "Accept quote"}
-            </Button>
-          </div>
-        </>
+      {quote.status === "declined" && quote.declineReason && (
+        <p className="mt-2 text-sm text-fg-muted">“{quote.declineReason}”</p>
       )}
+      {pending &&
+        (declining ? (
+          <form
+            className="mt-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              decline.mutate();
+            }}
+          >
+            <Textarea
+              rows={2}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Reason (optional)"
+              autoFocus
+            />
+            <div className="mt-2 flex gap-2">
+              <Button
+                type="submit"
+                size="sm"
+                variant="outline"
+                disabled={decline.isPending}
+              >
+                {decline.isPending ? "Declining…" : "Confirm decline"}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => setDeclining(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <>
+            {accept.isError && (
+              <p className="mt-2 text-sm text-red-600">
+                {(accept.error as Error).message}
+              </p>
+            )}
+            <div className="mt-4 flex gap-2">
+              <Button
+                size="sm"
+                className="flex-1"
+                disabled={accept.isPending}
+                onClick={() => accept.mutate()}
+              >
+                {accept.isPending ? "Accepting…" : "Accept quote"}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setDeclining(true)}
+              >
+                Decline
+              </Button>
+            </div>
+          </>
+        ))}
     </div>
   );
 }
