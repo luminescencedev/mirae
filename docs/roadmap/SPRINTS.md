@@ -675,7 +675,7 @@ Goal: bring the client-facing experience to the quality of the public studio.
 - [x] CLIENTUX-012 Add token rotation
 - [x] CLIENTUX-013 Add token revocation
 - [x] CLIENTUX-014 Add mobile portal polish
-- [ ] CLIENTUX-015 Add accessibility audit
+- [x] CLIENTUX-015 Add accessibility audit
 
 ## Sprint 22 — Trust, security & beta hardening
 

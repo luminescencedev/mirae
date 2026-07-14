@@ -119,7 +119,11 @@ function Timeline({ status }: { status: PortalView["commission"]["status"] }) {
       {steps.map((m, i) => {
         const last = i === steps.length - 1;
         return (
-          <li key={m.label} className="relative flex gap-3.5">
+          <li
+            key={m.label}
+            className="relative flex gap-3.5"
+            aria-current={m.state === "active" ? "step" : undefined}
+          >
             {!last && (
               <span
                 aria-hidden
@@ -163,8 +167,18 @@ function Timeline({ status }: { status: PortalView["commission"]["status"] }) {
               >
                 {m.label}
               </span>
+              <span className="sr-only">
+                {m.state === "done"
+                  ? "(completed)"
+                  : m.state === "active"
+                    ? "(current step)"
+                    : "(upcoming)"}
+              </span>
               {m.state === "active" && (
-                <span className="rounded-full bg-accent-50 px-2 py-0.5 text-[11px] font-medium text-accent-700">
+                <span
+                  aria-hidden
+                  className="rounded-full bg-accent-50 px-2 py-0.5 text-[11px] font-medium text-accent-700"
+                >
                   Current
                 </span>
               )}
@@ -213,7 +227,7 @@ function QuoteCard({
   return (
     <div className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-fg">Quote</p>
+        <h2 className="text-sm font-semibold text-fg">Quote</h2>
         <span className={cn("text-xs font-medium", b.cls)}>{b.label}</span>
       </div>
       <p className="mt-1 text-2xl font-semibold tabular-nums text-fg">
@@ -260,7 +274,7 @@ function QuoteCard({
         ) : (
           <>
             {accept.isError && (
-              <p className="mt-2 text-sm text-red-600">
+              <p role="alert" className="mt-2 text-sm text-red-600">
                 {(accept.error as Error).message}
               </p>
             )}
@@ -319,7 +333,7 @@ function Revisions({
   return (
     <div className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft">
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-sm font-semibold text-fg">Revisions</p>
+        <h2 className="text-sm font-semibold text-fg">Revisions</h2>
         <span className="text-xs text-fg-subtle">
           {unlimited
             ? `${revisions.used} used`
@@ -376,7 +390,7 @@ function Revisions({
             autoFocus
           />
           {req.isError && (
-            <p className="mt-2 text-sm text-red-600">
+            <p role="alert" className="mt-2 text-sm text-red-600">
               {(req.error as Error).message}
             </p>
           )}
@@ -562,7 +576,7 @@ function NewThread({ token }: { token: string }) {
         autoFocus
       />
       {create.isError && (
-        <p className="mt-2 text-sm text-red-600">
+        <p role="alert" className="mt-2 text-sm text-red-600">
           {(create.error as Error).message}
         </p>
       )}
@@ -619,6 +633,9 @@ export function PortalPage({ token }: { token: string }) {
   if (isLoading) {
     return (
       <Shell>
+        <span className="sr-only" role="status">
+          Loading your commission…
+        </span>
         <Skeleton className="h-7 w-40" />
         <Skeleton className="mt-2 h-9 w-64" />
         <Skeleton className="mt-4 h-7 w-32 rounded-full" />
@@ -696,7 +713,7 @@ export function PortalPage({ token }: { token: string }) {
       </div>
 
       <div className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft">
-        <p className="mb-4 text-sm font-semibold text-fg">Progress</p>
+        <h2 className="mb-4 text-sm font-semibold text-fg">Progress</h2>
         <Timeline status={commission.status} />
       </div>
 
@@ -704,7 +721,7 @@ export function PortalPage({ token }: { token: string }) {
 
       {data.references.length > 0 && (
         <div className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft">
-          <p className="mb-3 text-sm font-semibold text-fg">References</p>
+          <h2 className="mb-3 text-sm font-semibold text-fg">References</h2>
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
             {data.references.map((r) => (
               <a
@@ -713,7 +730,8 @@ export function PortalPage({ token }: { token: string }) {
                 target="_blank"
                 rel="noreferrer"
                 title={r.name}
-                className="group aspect-square overflow-hidden rounded-lg border border-border bg-surface-muted"
+                aria-label={`View reference: ${r.name}`}
+                className="group aspect-square overflow-hidden rounded-lg border border-border bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
               >
                 <img
                   src={`/api/portal/${encodeURIComponent(token)}/files/${r.id}`}
