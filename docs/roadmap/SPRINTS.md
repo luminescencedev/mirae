@@ -691,7 +691,7 @@ Goal: prepare Mirae for real artists, real clients and real files.
 - [x] TRUST-008 Audit portal-token entropy
 - [x] TRUST-009 Add token revocation
 - [x] TRUST-010 Add data export
-- [ ] TRUST-011 Add account deletion
+- [x] TRUST-011 Add account deletion
 - [ ] TRUST-012 Add privacy policy
 - [ ] TRUST-013 Add terms of service
 - [ ] TRUST-014 Add structured audit logs

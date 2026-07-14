@@ -86,6 +86,8 @@ export const artistApi = {
       body: fd,
     }).then(json<{ profile: ArtistProfile }>);
   },
+  deleteAccount: () =>
+    fetch("/api/artists/me", { method: "DELETE" }).then(json<{ ok: true }>),
 };
 
 export type PublicProfile = {

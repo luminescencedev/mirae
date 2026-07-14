@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { eq, inArray } from "drizzle-orm";
 import {
+  accounts,
   artistLinks,
   artistProfiles,
   commissionTypes,
@@ -14,6 +15,8 @@ import {
   portfolioProjects,
   quotes,
   revisionRounds,
+  sessions,
+  users,
 } from "@mirae/db";
 import {
   normalizeAbout,
@@ -186,6 +189,20 @@ artistsRoutes.get("/me/export", async (c) => {
       "content-disposition": `attachment; filename="mirae-export.json"`,
     },
   });
+});
+
+// DELETE /api/artists/me — permanently delete the account and all data.
+// Deleting the auth user cascades to the artist profile and everything under
+// it (commissions, portfolio, links, quotes, files, threads, …); sessions and
+// accounts are cleared explicitly first.
+artistsRoutes.delete("/me", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  await db.delete(sessions).where(eq(sessions.userId, artist.userId));
+  await db.delete(accounts).where(eq(accounts.userId, artist.userId));
+  await db.delete(users).where(eq(users.id, artist.userId));
+  return c.json({ ok: true });
 });
 
 for (const kind of ["avatar", "cover"] as const) {
