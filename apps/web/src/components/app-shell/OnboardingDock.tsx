@@ -100,20 +100,25 @@ export function OnboardingDock() {
     }
   };
 
+  // Allowed drag box — excludes the top header and bottom tab bar so the dock
+  // can only live in the central area, never over the chrome.
   return (
-    <div ref={boundsRef} className="pointer-events-none fixed inset-0 z-40">
+    <div
+      ref={boundsRef}
+      className="pointer-events-none fixed inset-x-3 bottom-20 top-[calc(env(safe-area-inset-top)+3.75rem)] z-40 md:bottom-4"
+    >
       <motion.div
         ref={dockRef}
         drag
         dragConstraints={boundsRef}
         dragMomentum={false}
-        dragElastic={0.1}
+        dragElastic={0}
         onDragStart={() => {
           draggingRef.current = true;
         }}
         onDragEnd={updatePlace}
         data-tour="onboarding-dock"
-        className="pointer-events-auto absolute bottom-20 right-4 md:bottom-4"
+        className="pointer-events-auto absolute bottom-0 right-0"
       >
         {/* Panel is absolute → opening never resizes/moves the toggle. */}
         <AnimatePresence>
