@@ -410,6 +410,19 @@ export const commissionsApi = {
     fetch(`/api/commissions/${id}/portal`, { method: "POST" })
       .then(json<{ token: string }>)
       .then((d) => d.token),
+  threads: (id: string) =>
+    fetch(`/api/commissions/${id}/threads`).then(
+      json<{
+        threads: PortalThread[];
+        revisions: PortalView["revisions"]["rounds"];
+      }>,
+    ),
+  replyThread: (id: string, threadId: string, body: string) =>
+    fetch(`/api/commissions/${id}/threads/${threadId}/messages`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ body }),
+    }).then(json<{ ok: true }>),
   delivery: (id: string) =>
     fetch(`/api/commissions/${id}/delivery`)
       .then(json<{ delivery: Delivery | null }>)

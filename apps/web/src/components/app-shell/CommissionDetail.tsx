@@ -18,6 +18,7 @@ import {
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { QuoteEditor } from "./QuoteEditor.tsx";
 import { DeliverySection } from "./DeliverySection.tsx";
+import { ClientMessages } from "./ClientMessages.tsx";
 import {
   commissionsApi,
   type CommissionStatus,
@@ -274,6 +275,8 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
         </div>
 
         <DeliverySection commissionId={item.id} />
+
+        <ClientMessages commissionId={item.id} />
 
         <div>
           <p className="mb-3 text-sm font-semibold">Activity</p>
