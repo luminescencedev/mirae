@@ -18,6 +18,7 @@ import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
 import { mailLayout, sendEmail } from "../lib/mail.ts";
 import { wouldExceedQuota } from "../lib/quota.ts";
+import { newToken } from "../lib/tokens.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
@@ -230,7 +231,7 @@ commissionsRoutes.post("/:id/portal", async (c) => {
 
   let token = row.portalToken;
   if (!token) {
-    token = crypto.randomUUID().replace(/-/g, "");
+    token = newToken();
     await db
       .update(commissions)
       .set({ portalToken: token })
@@ -252,7 +253,7 @@ commissionsRoutes.post("/:id/portal/rotate", async (c) => {
   );
   if (!commissionId) return c.json({ error: "not found" }, 404);
 
-  const token = crypto.randomUUID().replace(/-/g, "");
+  const token = newToken();
   await db
     .update(commissions)
     .set({ portalToken: token })
@@ -347,7 +348,7 @@ commissionsRoutes.post("/:id/delivery", async (c) => {
     return c.json({ delivery: existing });
   }
 
-  const token = crypto.randomUUID().replace(/-/g, "");
+  const token = newToken();
   const [row] = await db
     .insert(deliveries)
     .values({ commissionId, token, message: message ?? null })
