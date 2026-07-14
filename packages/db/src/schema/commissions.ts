@@ -40,6 +40,8 @@ export const commissions = pgTable("commissions", {
   paidCents: integer("paid_cents").notNull().default(0),
   deadline: timestamp("deadline", { withTimezone: true }),
   portalToken: text("portal_token").unique(),
+  // How many revision rounds the client is entitled to (0 = unlimited/none set).
+  revisionsAllowed: integer("revisions_allowed").notNull().default(2),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -56,8 +58,10 @@ export const quotes = pgTable("quotes", {
     .notNull()
     .references(() => commissions.id, { onDelete: "cascade" }),
   totalCents: integer("total_cents").notNull().default(0),
-  status: text("status").notNull().default("draft"), // draft | sent | accepted
+  status: text("status").notNull().default("draft"), // draft | sent | accepted | declined
   sentAt: timestamp("sent_at", { withTimezone: true }),
+  respondedAt: timestamp("responded_at", { withTimezone: true }),
+  declineReason: text("decline_reason"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -98,6 +102,7 @@ export const deliveries = pgTable("deliveries", {
   token: text("token").notNull().unique(),
   message: text("message"),
   deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+  acknowledgedAt: timestamp("acknowledged_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -110,6 +115,51 @@ export const portalFeedback = pgTable("portal_feedback", {
     .notNull()
     .references(() => commissions.id, { onDelete: "cascade" }),
   message: text("message").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+// Structured feedback threads between the client (portal) and the artist
+// (dashboard). Each thread has a status and an ordered list of messages.
+export const portalThreads = pgTable("portal_threads", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  commissionId: uuid("commission_id")
+    .notNull()
+    .references(() => commissions.id, { onDelete: "cascade" }),
+  subject: text("subject"),
+  status: text("status").notNull().default("open"), // open | resolved
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+export const portalMessages = pgTable("portal_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  threadId: uuid("thread_id")
+    .notNull()
+    .references(() => portalThreads.id, { onDelete: "cascade" }),
+  authorRole: text("author_role").notNull(), // client | artist
+  body: text("body").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+// Revision rounds requested by the client from the portal.
+export const revisionRounds = pgTable("revision_rounds", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  commissionId: uuid("commission_id")
+    .notNull()
+    .references(() => commissions.id, { onDelete: "cascade" }),
+  // 1-based round number within the commission.
+  roundNumber: integer("round_number").notNull(),
+  status: text("status").notNull().default("requested"), // requested | in_progress | delivered
+  note: text("note"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

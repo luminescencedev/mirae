@@ -18,6 +18,7 @@ import {
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { QuoteEditor } from "./QuoteEditor.tsx";
 import { DeliverySection } from "./DeliverySection.tsx";
+import { ClientMessages } from "./ClientMessages.tsx";
 import {
   commissionsApi,
   type CommissionStatus,
@@ -95,6 +96,20 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
   const genPortal = useMutation({
     mutationFn: () => commissionsApi.generatePortal(item.id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["commissions"] }),
+  });
+  const rotatePortal = useMutation({
+    mutationFn: () => commissionsApi.rotatePortal(item.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["commissions"] });
+      toast({ title: "Portal link rotated", variant: "success" });
+    },
+  });
+  const revokePortal = useMutation({
+    mutationFn: () => commissionsApi.revokePortal(item.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["commissions"] });
+      toast({ title: "Portal link revoked", variant: "success" });
+    },
   });
 
   const portalUrl = item.portalToken
@@ -196,20 +211,41 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
         <div>
           <p className="mb-3 text-sm font-semibold">Client portal</p>
           {portalUrl ? (
-            <div className="flex items-center gap-2">
-              <input
-                readOnly
-                value={portalUrl}
-                onFocus={(e) => e.currentTarget.select()}
-                className="min-w-0 flex-1 rounded-md border border-border bg-surface-muted px-2.5 py-1.5 text-xs text-fg-muted outline-none"
-              />
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => navigator.clipboard?.writeText(portalUrl)}
-              >
-                Copy
-              </Button>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <input
+                  readOnly
+                  value={portalUrl}
+                  onFocus={(e) => e.currentTarget.select()}
+                  className="min-w-0 flex-1 rounded-md border border-border bg-surface-muted px-2.5 py-1.5 text-xs text-fg-muted outline-none"
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => navigator.clipboard?.writeText(portalUrl)}
+                >
+                  Copy
+                </Button>
+              </div>
+              <div className="flex items-center gap-3 text-xs">
+                <button
+                  type="button"
+                  disabled={rotatePortal.isPending}
+                  onClick={() => rotatePortal.mutate()}
+                  className="font-medium text-fg-muted hover:text-fg disabled:opacity-50"
+                >
+                  Rotate link
+                </button>
+                <span className="text-border-strong">·</span>
+                <button
+                  type="button"
+                  disabled={revokePortal.isPending}
+                  onClick={() => revokePortal.mutate()}
+                  className="font-medium text-red-600 hover:text-red-700 disabled:opacity-50"
+                >
+                  Revoke
+                </button>
+              </div>
             </div>
           ) : (
             <Button
@@ -274,6 +310,8 @@ export function CommissionDetail({ item }: { item: QueueCommission }) {
         </div>
 
         <DeliverySection commissionId={item.id} />
+
+        <ClientMessages commissionId={item.id} />
 
         <div>
           <p className="mb-3 text-sm font-semibold">Activity</p>

@@ -661,21 +661,21 @@ to add/trim.
 
 Goal: bring the client-facing experience to the quality of the public studio.
 
-- [ ] CLIENTUX-001 Redesign client portal shell
-- [ ] CLIENTUX-002 Add artist branding
-- [ ] CLIENTUX-003 Improve milestone timeline
-- [ ] CLIENTUX-004 Add structured feedback threads
-- [ ] CLIENTUX-005 Add revision rounds
-- [ ] CLIENTUX-006 Add artist responses
-- [ ] CLIENTUX-007 Add thread open and resolved states
-- [ ] CLIENTUX-008 Add quote acceptance
-- [ ] CLIENTUX-009 Add quote decline with note
-- [ ] CLIENTUX-010 Add delivery acknowledgement
-- [ ] CLIENTUX-011 Add secure reference gallery
-- [ ] CLIENTUX-012 Add token rotation
-- [ ] CLIENTUX-013 Add token revocation
-- [ ] CLIENTUX-014 Add mobile portal polish
-- [ ] CLIENTUX-015 Add accessibility audit
+- [x] CLIENTUX-001 Redesign client portal shell
+- [x] CLIENTUX-002 Add artist branding
+- [x] CLIENTUX-003 Improve milestone timeline
+- [x] CLIENTUX-004 Add structured feedback threads
+- [x] CLIENTUX-005 Add revision rounds
+- [x] CLIENTUX-006 Add artist responses
+- [x] CLIENTUX-007 Add thread open and resolved states
+- [x] CLIENTUX-008 Add quote acceptance
+- [x] CLIENTUX-009 Add quote decline with note
+- [x] CLIENTUX-010 Add delivery acknowledgement
+- [x] CLIENTUX-011 Add secure reference gallery
+- [x] CLIENTUX-012 Add token rotation
+- [x] CLIENTUX-013 Add token revocation
+- [x] CLIENTUX-014 Add mobile portal polish
+- [x] CLIENTUX-015 Add accessibility audit
 
 ## Sprint 22 — Trust, security & beta hardening
 

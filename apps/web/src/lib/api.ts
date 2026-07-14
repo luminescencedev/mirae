@@ -148,10 +148,7 @@ export const trackLinkClick = (id: string) => {
 };
 
 export type StudioEventType =
-  | "view"
-  | "link_click"
-  | "request_start"
-  | "request_submit";
+  "view" | "link_click" | "request_start" | "request_submit";
 
 // Fire-and-forget privacy-friendly studio event (no cookies, no PII).
 export const trackStudioEvent = (
@@ -202,8 +199,46 @@ export type PortalView = {
     priceCents: number | null;
     paidCents: number;
   };
-  artist: { displayName: string; handle: string } | null;
-  quote: { totalCents: number; status: QuoteStatus } | null;
+  artist: {
+    displayName: string;
+    handle: string;
+    tagline: string | null;
+    hasAvatar: boolean;
+    hasCover: boolean;
+  } | null;
+  quote: {
+    totalCents: number;
+    status: QuoteStatus;
+    declineReason: string | null;
+  } | null;
+  threads: PortalThread[];
+  revisions: {
+    allowed: number;
+    used: number;
+    rounds: {
+      id: string;
+      roundNumber: number;
+      status: "requested" | "in_progress" | "delivered";
+      note: string | null;
+      createdAt: string;
+    }[];
+  };
+  references: { id: string; name: string; sizeBytes: number | null }[];
+};
+
+export type PortalMessage = {
+  id: string;
+  authorRole: "client" | "artist";
+  body: string;
+  createdAt: string;
+};
+
+export type PortalThread = {
+  id: string;
+  subject: string | null;
+  status: "open" | "resolved";
+  createdAt: string;
+  messages: PortalMessage[];
 };
 
 export type DeliveryFile = {
@@ -214,7 +249,11 @@ export type DeliveryFile = {
 };
 
 export type DeliveryView = {
-  delivery: { message: string | null; deliveredAt: string | null };
+  delivery: {
+    message: string | null;
+    deliveredAt: string | null;
+    acknowledgedAt: string | null;
+  };
   commission: { title: string };
   artist: { displayName: string } | null;
   files: DeliveryFile[];
@@ -246,6 +285,37 @@ export const publicApi = {
       method: "POST",
       headers: jsonHeaders,
       body: JSON.stringify({ message }),
+    }).then(json<{ ok: true }>),
+  createThread: (token: string, subject: string, body: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}/threads`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ subject, body }),
+    }).then(json<{ ok: true; threadId: string }>),
+  replyThread: (token: string, threadId: string, body: string) =>
+    fetch(
+      `/api/portal/${encodeURIComponent(token)}/threads/${threadId}/messages`,
+      { method: "POST", headers: jsonHeaders, body: JSON.stringify({ body }) },
+    ).then(json<{ ok: true }>),
+  requestRevision: (token: string, note: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}/revisions`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ note }),
+    }).then(json<{ ok: true }>),
+  acceptQuote: (token: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}/quote/accept`, {
+      method: "POST",
+    }).then(json<{ ok: true }>),
+  declineQuote: (token: string, reason: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}/quote/decline`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ reason }),
+    }).then(json<{ ok: true }>),
+  ackDelivery: (token: string) =>
+    fetch(`/api/delivery/${encodeURIComponent(token)}/ack`, {
+      method: "POST",
     }).then(json<{ ok: true }>),
   studio: (handle: string) =>
     fetch(`/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}`).then(
@@ -360,6 +430,37 @@ export const commissionsApi = {
     fetch(`/api/commissions/${id}/portal`, { method: "POST" })
       .then(json<{ token: string }>)
       .then((d) => d.token),
+  rotatePortal: (id: string) =>
+    fetch(`/api/commissions/${id}/portal/rotate`, { method: "POST" })
+      .then(json<{ token: string }>)
+      .then((d) => d.token),
+  revokePortal: (id: string) =>
+    fetch(`/api/commissions/${id}/portal/revoke`, { method: "POST" }).then(
+      json<{ ok: true }>,
+    ),
+  threads: (id: string) =>
+    fetch(`/api/commissions/${id}/threads`).then(
+      json<{
+        threads: PortalThread[];
+        revisions: PortalView["revisions"]["rounds"];
+      }>,
+    ),
+  replyThread: (id: string, threadId: string, body: string) =>
+    fetch(`/api/commissions/${id}/threads/${threadId}/messages`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ body }),
+    }).then(json<{ ok: true }>),
+  setThreadStatus: (
+    id: string,
+    threadId: string,
+    status: "open" | "resolved",
+  ) =>
+    fetch(`/api/commissions/${id}/threads/${threadId}`, {
+      method: "PATCH",
+      headers: jsonHeaders,
+      body: JSON.stringify({ status }),
+    }).then(json<{ ok: true }>),
   delivery: (id: string) =>
     fetch(`/api/commissions/${id}/delivery`)
       .then(json<{ delivery: Delivery | null }>)
@@ -417,7 +518,7 @@ export type QuoteItem = {
   quantity: number;
 };
 
-export type QuoteStatus = "draft" | "sent" | "accepted";
+export type QuoteStatus = "draft" | "sent" | "accepted" | "declined";
 
 export type Quote = {
   id: string;

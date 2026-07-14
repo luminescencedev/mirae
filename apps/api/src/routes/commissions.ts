@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import {
   activityLogs,
   commissionRequests,
@@ -8,8 +8,11 @@ import {
   createDb,
   deliveries,
   files,
+  portalMessages,
+  portalThreads,
   quoteItems,
   quotes,
+  revisionRounds,
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
@@ -223,6 +226,58 @@ commissionsRoutes.post("/:id/portal", async (c) => {
       .where(eq(commissions.id, row.id));
   }
   return c.json({ token });
+});
+
+// POST /api/commissions/:id/portal/rotate — issue a fresh token, invalidating
+// the previous portal link (owner).
+commissionsRoutes.post("/:id/portal/rotate", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const token = crypto.randomUUID().replace(/-/g, "");
+  await db
+    .update(commissions)
+    .set({ portalToken: token })
+    .where(eq(commissions.id, commissionId));
+  await db.insert(activityLogs).values({
+    artistId: artist.id,
+    commissionId,
+    type: "portal",
+    message: "Portal link rotated",
+  });
+  return c.json({ token });
+});
+
+// POST /api/commissions/:id/portal/revoke — disable the portal link (owner).
+commissionsRoutes.post("/:id/portal/revoke", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  await db
+    .update(commissions)
+    .set({ portalToken: null })
+    .where(eq(commissions.id, commissionId));
+  await db.insert(activityLogs).values({
+    artistId: artist.id,
+    commissionId,
+    type: "portal",
+    message: "Portal link revoked",
+  });
+  return c.json({ ok: true });
 });
 
 // --- Delivery (one per commission) ----------------------------------------
@@ -460,6 +515,136 @@ async function ownedCommissionId(
     .limit(1);
   return row?.id ?? null;
 }
+
+// GET /api/commissions/:id/threads — feedback threads + revisions (owner).
+commissionsRoutes.get("/:id/threads", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const threadRows = await db
+    .select()
+    .from(portalThreads)
+    .where(eq(portalThreads.commissionId, commissionId))
+    .orderBy(desc(portalThreads.updatedAt));
+  const msgs = threadRows.length
+    ? await db
+        .select()
+        .from(portalMessages)
+        .where(
+          inArray(
+            portalMessages.threadId,
+            threadRows.map((t) => t.id),
+          ),
+        )
+        .orderBy(asc(portalMessages.createdAt))
+    : [];
+  const rounds = await db
+    .select()
+    .from(revisionRounds)
+    .where(eq(revisionRounds.commissionId, commissionId))
+    .orderBy(asc(revisionRounds.roundNumber));
+
+  return c.json({
+    threads: threadRows.map((t) => ({
+      id: t.id,
+      subject: t.subject,
+      status: t.status,
+      createdAt: t.createdAt,
+      messages: msgs
+        .filter((m) => m.threadId === t.id)
+        .map((m) => ({
+          id: m.id,
+          authorRole: m.authorRole,
+          body: m.body,
+          createdAt: m.createdAt,
+        })),
+    })),
+    revisions: rounds.map((r) => ({
+      id: r.id,
+      roundNumber: r.roundNumber,
+      status: r.status,
+      note: r.note,
+      createdAt: r.createdAt,
+    })),
+  });
+});
+
+// POST /api/commissions/:id/threads/:threadId/messages — artist reply (owner).
+commissionsRoutes.post("/:id/threads/:threadId/messages", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const threadId = c.req.param("threadId");
+  const [thread] = await db
+    .select({ id: portalThreads.id })
+    .from(portalThreads)
+    .where(
+      and(
+        eq(portalThreads.id, threadId),
+        eq(portalThreads.commissionId, commissionId),
+      ),
+    )
+    .limit(1);
+  if (!thread) return c.json({ error: "not found" }, 404);
+
+  const raw = (await c.req.json().catch(() => ({}))) as { body?: unknown };
+  const message = String(raw.body ?? "").trim();
+  if (!message) return c.json({ error: "Message is required." }, 400);
+
+  await db
+    .insert(portalMessages)
+    .values({ threadId, authorRole: "artist", body: message });
+  await db
+    .update(portalThreads)
+    .set({ updatedAt: new Date() })
+    .where(eq(portalThreads.id, threadId));
+  return c.json({ ok: true }, 201);
+});
+
+// PATCH /api/commissions/:id/threads/:threadId — set open/resolved (owner).
+commissionsRoutes.patch("/:id/threads/:threadId", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(
+    db,
+    c.req.param("id"),
+    artist.id,
+  );
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+
+  const raw = (await c.req.json().catch(() => ({}))) as { status?: unknown };
+  const status = String(raw.status ?? "");
+  if (status !== "open" && status !== "resolved")
+    return c.json({ error: "Invalid status." }, 400);
+
+  const res = await db
+    .update(portalThreads)
+    .set({ status, updatedAt: new Date() })
+    .where(
+      and(
+        eq(portalThreads.id, c.req.param("threadId")),
+        eq(portalThreads.commissionId, commissionId),
+      ),
+    )
+    .returning({ id: portalThreads.id });
+  if (res.length === 0) return c.json({ error: "not found" }, 404);
+  return c.json({ ok: true });
+});
 
 // GET /api/commissions/:id/quote — the commission's quote + line items (or null).
 commissionsRoutes.get("/:id/quote", async (c) => {

@@ -1,0 +1,1 @@
+ALTER TABLE "deliveries" ADD COLUMN "acknowledged_at" timestamp with time zone;

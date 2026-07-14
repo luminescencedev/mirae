@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { and, eq } from "drizzle-orm";
 import {
+  activityLogs,
   artistProfiles,
   commissions,
   createDb,
@@ -59,11 +60,34 @@ deliveryRoutes.get("/:token", async (c) => {
     delivery: {
       message: delivery.message,
       deliveredAt: delivery.deliveredAt,
+      acknowledgedAt: delivery.acknowledgedAt,
     },
     commission: { title: commission.title },
     artist: artist ?? null,
     files: fileRows,
   });
+});
+
+// POST /api/delivery/:token/ack — client acknowledges receipt (PUBLIC).
+deliveryRoutes.post("/:token/ack", async (c) => {
+  const db = createDb(c.env.DATABASE_URL);
+  const found = await resolve(db, c.req.param("token"));
+  if (!found) return c.json({ error: "not found" }, 404);
+  const { delivery, commission } = found;
+
+  if (!delivery.acknowledgedAt) {
+    await db
+      .update(deliveries)
+      .set({ acknowledgedAt: new Date() })
+      .where(eq(deliveries.id, delivery.id));
+    await db.insert(activityLogs).values({
+      artistId: commission.artistId,
+      commissionId: commission.id,
+      type: "delivery",
+      message: "Client acknowledged the delivery",
+    });
+  }
+  return c.json({ ok: true });
 });
 
 // GET /api/delivery/:token/files/:fileId — stream a deliverable from R2
