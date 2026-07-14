@@ -707,7 +707,7 @@ Goal: prepare Mirae for real artists, real clients and real files.
 Goal: validate the complete experience with working artists before expanding features or charging.
 
 - [x] BETA-001 Define tester profiles
-- [ ] BETA-002 Recruit 5–10 artists
+- [~] BETA-002 Recruit 5–10 artists (outreach messages ready → docs/beta/OUTREACH.md; sending is manual)
 - [ ] BETA-003 Create interview script
 - [ ] BETA-004 Add in-app feedback capture
 - [ ] BETA-005 Observe studio setup
