@@ -108,17 +108,19 @@ function cardHtml(profile: StudioMeta, avatarUri: string | null): string {
   <div style="display:flex;width:1200px;height:630px;background:linear-gradient(150deg,#ffffff 0%,#eef2fb 100%);font-family:'Inter';">
     <div style="display:flex;position:absolute;top:0;right:0;width:640px;height:420px;background:radial-gradient(60% 70% at 80% 12%, rgba(126,160,255,0.28) 0%, rgba(126,160,255,0) 100%);"></div>
 
-    <div style="display:flex;flex-direction:column;justify-content:center;flex:1;padding:0 64px;">
+    <div style="display:flex;flex-direction:column;justify-content:center;flex:1;padding-left:72px;padding-right:40px;">
       <div style="display:flex;align-items:center;gap:16px;">
-        <span style="font-size:64px;font-weight:700;letter-spacing:-1.5px;line-height:1;color:#0f1320;white-space:nowrap;">${name}</span>
+        <span style="display:flex;font-size:64px;font-weight:700;line-height:1;color:#0f1320;white-space:nowrap;margin-left:-18px;">${name}</span>
         ${statusDot}
       </div>
-      <span style="font-size:28px;font-weight:500;color:#8a93ff;margin-top:12px;">usemirae.com/@${handle}</span>
-      ${bio ? `<span style="display:flex;font-size:31px;font-weight:400;line-height:1.35;color:#64708a;margin-top:20px;max-width:560px;">${bio}</span>` : ""}
-      <div style="display:flex;align-items:center;gap:10px;margin-top:34px;">
-        <span style="font-size:23px;font-weight:500;color:#0f1320;white-space:nowrap;">Powered by</span>
+      <div style="display:flex;margin-top:14px;">
+        <span style="display:flex;font-size:28px;font-weight:500;color:#8a93ff;">usemirae.com/@${handle}</span>
+      </div>
+      ${bio ? `<div style="display:flex;margin-top:18px;max-width:540px;"><span style="display:flex;font-size:31px;font-weight:400;line-height:1.35;color:#64708a;">${bio}</span></div>` : ""}
+      <div style="display:flex;align-items:center;gap:10px;margin-top:32px;">
+        <span style="display:flex;font-size:23px;font-weight:500;color:#0f1320;white-space:nowrap;">Powered by</span>
         <img src="${markDataUri("#0f1320")}" width="38" height="19" style="width:38px;height:19px;" />
-        <span style="font-size:23px;font-weight:700;letter-spacing:-0.3px;color:#0f1320;white-space:nowrap;">Mirae</span>
+        <span style="display:flex;font-size:23px;font-weight:700;color:#0f1320;white-space:nowrap;">Mirae</span>
       </div>
     </div>
 
