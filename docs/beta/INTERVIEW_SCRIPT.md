@@ -44,7 +44,7 @@ unless you're fully stuck." Then watch silently. Note every hesitation.
 
 - If this existed and worked perfectly, would it replace what you do today? What
   would still be missing?
-- What would make you *not* use it?
+- What would make you _not_ use it?
 - Would you pay for this? (Don't lead.) What would feel fair? For what exactly?
 - What's the one thing you'd fix first?
 

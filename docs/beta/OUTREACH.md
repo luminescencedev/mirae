@@ -55,7 +55,7 @@ Copy-paste messages to approach digital artists for the closed beta. Fill the
 >
 > I've followed your work for a while — [compliment] — and you're exactly the kind of artist I'm building for.
 >
-> I'm working on **Mirae**, a workspace that turns commission chaos into one calm flow: a public studio page + request form, quotes, a queue, revision rounds, and a client portal for delivery. It's *Calendly, not VGen* — it doesn't find clients or take a cut of your revenue; it just organizes the audience you already have.
+> I'm working on **Mirae**, a workspace that turns commission chaos into one calm flow: a public studio page + request form, quotes, a queue, revision rounds, and a client portal for delivery. It's _Calendly, not VGen_ — it doesn't find clients or take a cut of your revenue; it just organizes the audience you already have.
 >
 > I'm running a small private beta and would love your feedback. It's completely free, it's early (so some rough edges), and the ask is light: ~30 min to set up your studio, and a short chat afterward about what worked and what didn't. Bonus if you have a live commission you could run through it.
 >
@@ -72,7 +72,7 @@ Copy-paste messages to approach digital artists for the closed beta. Fill the
 >
 > Je suis ton travail depuis un moment — [compliment] — et tu es exactement le genre d'artiste pour qui je construis.
 >
-> Je développe **Mirae**, un espace qui transforme le chaos des commissions en un flux calme : une page studio publique + formulaire de demande, des devis, une file d'attente, des tours de révision, et un portail client pour la livraison. C'est *Calendly, pas VGen* — ça ne trouve pas de clients et ne prend aucune commission sur tes revenus ; ça organise l'audience que tu as déjà.
+> Je développe **Mirae**, un espace qui transforme le chaos des commissions en un flux calme : une page studio publique + formulaire de demande, des devis, une file d'attente, des tours de révision, et un portail client pour la livraison. C'est _Calendly, pas VGen_ — ça ne trouve pas de clients et ne prend aucune commission sur tes revenus ; ça organise l'audience que tu as déjà.
 >
 > Je lance une petite beta privée et ton retour m'intéresse beaucoup. C'est gratuit, c'est tôt (donc quelques imperfections), et la demande est légère : ~30 min pour configurer ton studio, puis un court échange sur ce qui marche ou pas. Bonus si tu as une commission en cours à faire passer dedans.
 >

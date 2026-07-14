@@ -56,13 +56,22 @@ export function FeedbackWidget() {
             {send.isSuccess ? (
               <div className="flex flex-col items-center gap-2 p-6 text-center">
                 <span className="text-emerald-600">
-                  <Icon icon={CheckmarkCircle02Icon} size={28} strokeWidth={1.8} />
+                  <Icon
+                    icon={CheckmarkCircle02Icon}
+                    size={28}
+                    strokeWidth={1.8}
+                  />
                 </span>
                 <p className="text-sm font-medium text-fg">Thank you!</p>
                 <p className="text-xs text-fg-subtle">
                   Your feedback helps shape the beta.
                 </p>
-                <Button size="sm" variant="outline" className="mt-1" onClick={close}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="mt-1"
+                  onClick={close}
+                >
                   Done
                 </Button>
               </div>

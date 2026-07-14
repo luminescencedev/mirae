@@ -19,13 +19,13 @@ portal — with real artists and, ideally, real clients.
 
 ## Segments to cover (aim for a spread)
 
-| Segment | Why include |
-| --- | --- |
-| Illustrator / character artist | Core use case; portfolio-first matters most |
+| Segment                              | Why include                                          |
+| ------------------------------------ | ---------------------------------------------------- |
+| Illustrator / character artist       | Core use case; portfolio-first matters most          |
 | VTuber / emote / Twitch asset artist | Heavy request volume, revision-heavy, Discord-native |
-| Reference-sheet / ych artist | Fixed-price "Fiverr-like" request flow is central |
-| Concept / editorial | Higher price points, quote + milestone flow |
-| Newer artist opening commissions | Tests onboarding + studio setup from zero |
+| Reference-sheet / ych artist         | Fixed-price "Fiverr-like" request flow is central    |
+| Concept / editorial                  | Higher price points, quote + milestone flow          |
+| Newer artist opening commissions     | Tests onboarding + studio setup from zero            |
 
 ## Explicitly out of scope for this beta
 

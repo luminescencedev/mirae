@@ -16,11 +16,11 @@ How we log, classify and prioritize everything that surfaces during the beta
 
 **Severity**
 
-| Sev | Meaning |
-| --- | --- |
-| S1 | Blocks the core loop (can't set up, can't receive/handle a request, can't deliver) or data loss / security |
-| S2 | Major friction, has a workaround; or a feature testers repeatedly expect |
-| S3 | Minor UX/polish/copy |
+| Sev | Meaning                                                                                                    |
+| --- | ---------------------------------------------------------------------------------------------------------- |
+| S1  | Blocks the core loop (can't set up, can't receive/handle a request, can't deliver) or data loss / security |
+| S2  | Major friction, has a workaround; or a feature testers repeatedly expect                                   |
+| S3  | Minor UX/polish/copy                                                                                       |
 
 **Frequency:** how many distinct testers hit it (1, 2, 3+). Frequency ✕ severity
 drives priority — an S2 hit by 4 testers outranks an S1 hit by 1 in a corner case.

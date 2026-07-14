@@ -22,6 +22,7 @@ portfolio + links (the dock already computes `doneCount/total`). Activated =
 checklist complete.
 
 **Targets (directional, not pass/fail):**
+
 - Setup completion: aim for most invited artists to reach activated within their
   first session (~30 min).
 - Time-to-activate: note it per artist (from signup → checklist complete).
@@ -52,15 +53,15 @@ on which step leaks.
 
 ## What to capture per artist (beta scorecard)
 
-| Field | Source |
-| --- | --- |
-| Activated? (y/n) + time-to-activate | onboarding checklist |
-| Views / unique | analytics |
-| view→start / start→submit | analytics events |
-| Requests received | requests inbox |
-| Ran a real commission end-to-end? | observation |
-| Would-use / would-pay signal | interview |
-| Top friction points | interview + feedback widget |
+| Field                               | Source                      |
+| ----------------------------------- | --------------------------- |
+| Activated? (y/n) + time-to-activate | onboarding checklist        |
+| Views / unique                      | analytics                   |
+| view→start / start→submit           | analytics events            |
+| Requests received                   | requests inbox              |
+| Ran a real commission end-to-end?   | observation                 |
+| Would-use / would-pay signal        | interview                   |
+| Top friction points                 | interview + feedback widget |
 
 ## Caveats
 
