@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Reorder, useDragControls } from "motion/react";
+import { AnimatePresence, Reorder, motion, useDragControls } from "motion/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertDialog,
@@ -292,7 +292,7 @@ function LinkRow({
           label={expanded ? "Hide options" : "More options"}
           icon={ArrowDown01Icon}
           onClick={() => setExpanded((v) => !v)}
-          className={expanded ? "rotate-180" : ""}
+          className={cn("transition-transform", expanded && "rotate-180")}
         />
         <AlertDialog>
           <AlertDialogTrigger asChild>
@@ -338,8 +338,16 @@ function LinkRow({
       />
 
       {/* Advanced — collapsed by default so the list stays compact */}
-      {expanded && (
-        <div className="flex flex-col gap-2 border-t border-border pt-2">
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="flex flex-col gap-2 border-t border-border pt-2">
           <div className="grid grid-cols-3 gap-2">
             <Select
               value={link.platform ?? "custom"}
@@ -401,9 +409,11 @@ function LinkRow({
               disabled={!onMoveDown}
             />
             <span className="text-xs text-fg-subtle">Platform · type · card style</span>
+            </div>
           </div>
-        </div>
-      )}
+        </motion.div>
+        )}
+      </AnimatePresence>
     </Reorder.Item>
   );
 }
