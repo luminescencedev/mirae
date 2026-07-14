@@ -661,7 +661,7 @@ to add/trim.
 
 Goal: bring the client-facing experience to the quality of the public studio.
 
-- [ ] CLIENTUX-001 Redesign client portal shell
+- [x] CLIENTUX-001 Redesign client portal shell
 - [ ] CLIENTUX-002 Add artist branding
 - [ ] CLIENTUX-003 Improve milestone timeline
 - [ ] CLIENTUX-004 Add structured feedback threads
