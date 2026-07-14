@@ -299,11 +299,11 @@ Goal: backend foundation for real artist work, profile imagery and public media.
 - [x] PORTFOLIO-009 Add project asset upload API
 - [x] PORTFOLIO-010 Add direct or controlled R2 upload flow
 - [x] PORTFOLIO-011 Add MIME and size validation
-- [ ] PORTFOLIO-012 Add image dimension metadata
+- [ ] PORTFOLIO-012 Add image dimension metadata (deferred → media-pipeline; = DEBT-017)
 - [x] PORTFOLIO-013 Add asset deletion
 - [x] PORTFOLIO-014 Add orphan asset cleanup
 - [x] PORTFOLIO-015 Extend public studio response
-- [ ] PORTFOLIO-016 Add migration and demo seed
+- [x] PORTFOLIO-016 Add migration and demo seed (done in Sprint 17.5 / DEBT-018)
 
 ## Sprint 13 — Portfolio manager
 
@@ -313,16 +313,16 @@ Goal: a visual, fast, touch-friendly portfolio management experience. **Core shi
 - [x] PORTUI-002 Build upload dropzone
 - [x] PORTUI-003 Build multi-image project creation
 - [x] PORTUI-004 Build project editor
-- [ ] PORTUI-005 Add drag-and-drop project ordering
+- [x] PORTUI-005 Add drag-and-drop project ordering (Sprint 17.5 / DEBT-004)
 - [x] PORTUI-006 Add touch-friendly reordering
-- [ ] PORTUI-007 Add asset ordering
-- [ ] PORTUI-008 Add project cover selection
+- [x] PORTUI-007 Add asset ordering (Sprint 17.5 / DEBT-005)
+- [x] PORTUI-008 Add project cover selection (Sprint 17.5 / DEBT-001)
 - [x] PORTUI-009 Add title and description fields
-- [ ] PORTUI-010 Add alt-text editing
+- [x] PORTUI-010 Add alt-text editing (Sprint 17.5 / DEBT-002)
 - [x] PORTUI-011 Add draft and publish controls
 - [x] PORTUI-012 Add featured project control
 - [x] PORTUI-013 Add upload progress
-- [ ] PORTUI-014 Add retry and failure states
+- [x] PORTUI-014 Add retry and failure states (Sprint 17.5 / DEBT-003)
 - [x] PORTUI-015 Add destructive confirmation
 - [x] PORTUI-016 Add polished empty states
 - [x] PORTUI-017 Add mobile upload from gallery or camera
@@ -340,12 +340,12 @@ Goal: an artist-specific link-in-bio hub that stays portfolio-first. **Data + AP
 - [x] LINKS-007 Add featured state
 - [x] LINKS-008 Add display style field
 - [x] LINKS-009 Build link manager
-- [ ] LINKS-010 Add drag-and-drop ordering
+- [x] LINKS-010 Add drag-and-drop ordering (Sprint 17.5 / DEBT-006)
 - [x] LINKS-011 Add URL validation and normalization
-- [ ] LINKS-012 Add platform icon mapping
-- [ ] LINKS-013 Add simple link card
-- [ ] LINKS-014 Add featured link card
-- [ ] LINKS-015 Add media link card
+- [x] LINKS-012 Add platform icon mapping (Sprint 17.5 / DEBT-008)
+- [x] LINKS-013 Add simple link card (Sprint 17.5 / DEBT-009)
+- [x] LINKS-014 Add featured link card (Sprint 17.5 / DEBT-009)
+- [x] LINKS-015 Add media link card (Sprint 17.5 / DEBT-009 — falls back to card until link images land)
 - [x] LINKS-016 Add click analytics
 - [x] LINKS-017 Add mobile preview (Sprint 18 / MOBILE-022)
 
@@ -364,15 +364,15 @@ Goal: replace the functional profile card with a portfolio-first artist homepage
 - [x] STUDIO-009 Build artwork lightbox
 - [x] STUDIO-010 Build project detail experience
 - [x] STUDIO-011 Redesign commission type cards
-- [ ] STUDIO-012 Add commission representative images
+- [x] STUDIO-012 Add commission representative images (Sprint 17.5 / DEBT-010)
 - [x] STUDIO-013 Add persistent mobile commission CTA (Sprint 18 / MOBILE-023)
-- [ ] STUDIO-014 Add artist about section
-- [ ] STUDIO-015 Add optional FAQ section
+- [x] STUDIO-014 Add artist about section (Sprint 17.5 / DEBT-011)
+- [x] STUDIO-015 Add optional FAQ section (Sprint 17.5 / DEBT-012)
 - [x] STUDIO-016 Add Mirae-branded footer
 - [x] STUDIO-017 Add loading skeleton
 - [x] STUDIO-018 Add not-found and empty states
-- [ ] STUDIO-019 Add responsive image sizes
-- [ ] STUDIO-020 Add accessibility audit
+- [ ] STUDIO-019 Add responsive image sizes (deferred → media-pipeline; = DEBT-013)
+- [ ] STUDIO-020 Add accessibility audit (deferred → Sprint 22 trust/a11y)
 - [x] STUDIO-021 Add reduced-motion behavior
 
 ## Sprint 16 — Integrated commission request flow
@@ -409,7 +409,7 @@ Goal: meaningful artist expression through curated customization.
 - [x] CUSTOM-005 Add portfolio layout options
 - [x] CUSTOM-006 Add image-radius presets
 - [x] CUSTOM-007 Add section visibility controls
-- [ ] CUSTOM-008 Add section ordering (deferred)
+- [x] CUSTOM-008 Add section ordering (Sprint 17.5 / DEBT-007)
 - [x] CUSTOM-009 Build desktop split preview
 - [x] CUSTOM-010 Build mobile Edit and Preview tabs (Sprint 18 / MOBILE-022)
 - [ ] CUSTOM-011 Add unsaved-change detection (deferred)
