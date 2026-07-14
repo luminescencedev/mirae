@@ -53,9 +53,10 @@ export function AppTour({
   useEffect(() => {
     if (step.to) navigate({ to: step.to });
     setRect(null);
-    let raf = 0;
+    // Poll for the target — a route change may lazy-load the chunk + fetch data,
+    // so keep looking for up to ~5s (not just a few frames).
     let tries = 0;
-    const tick = () => {
+    const id = setInterval(() => {
       const r = measure(step.target);
       if (r) {
         setRect(r);
@@ -64,11 +65,11 @@ export function AppTour({
             .querySelector(`[data-tour="${step.target}"]`)
             ?.scrollIntoView({ block: "center", behavior: "smooth" });
         }
-      } else if (tries++ < 60) {
-        raf = requestAnimationFrame(tick);
+        clearInterval(id);
+      } else if (++tries > 60) {
+        clearInterval(id);
       }
-    };
-    raf = requestAnimationFrame(tick);
+    }, 80);
     const onMove = () => {
       const r = measure(step.target);
       if (r) setRect(r);
@@ -76,7 +77,7 @@ export function AppTour({
     window.addEventListener("resize", onMove);
     window.addEventListener("scroll", onMove, true);
     return () => {
-      cancelAnimationFrame(raf);
+      clearInterval(id);
       window.removeEventListener("resize", onMove);
       window.removeEventListener("scroll", onMove, true);
     };

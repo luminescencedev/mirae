@@ -91,16 +91,7 @@ export function OnboardingDock() {
             transition={{ duration: 0.22, ease: EASE }}
             className="w-[min(19rem,calc(100vw-2rem))] origin-bottom-right overflow-hidden rounded-2xl border border-border bg-surface shadow-panel"
           >
-            <div className="flex items-center gap-3 border-b border-border p-4">
-              <ProgressRing pct={pct} />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold tracking-tight text-fg">
-                  Set up your studio
-                </p>
-                <p className="text-xs text-fg-subtle">
-                  {doneCount} of {total} done
-                </p>
-              </div>
+            <div className="relative border-b border-border p-5 text-center">
               <button
                 type="button"
                 aria-label="Dismiss"
@@ -108,10 +99,20 @@ export function OnboardingDock() {
                   localStorage.setItem(DISMISS_KEY, "1");
                   setDismissed(true);
                 }}
-                className="grid size-7 shrink-0 place-items-center rounded-md text-fg-subtle transition-colors hover:bg-surface-muted hover:text-fg"
+                className="absolute right-3 top-3 grid size-7 place-items-center rounded-md text-fg-subtle transition-colors hover:bg-surface-muted hover:text-fg"
               >
                 <Icon icon={Cancel01Icon} size={15} />
               </button>
+              <p className="text-base font-semibold tracking-tight text-fg">
+                You're almost there
+              </p>
+              <p className="mx-auto mt-1 max-w-[15rem] text-xs text-fg-subtle">
+                Finish setup, then share your studio.
+              </p>
+              <SegmentedBar pct={pct} className="mt-4 justify-center" />
+              <p className="mt-2 text-xs font-medium text-accent-700">
+                {pct}% complete
+              </p>
             </div>
 
             <ul className="flex flex-col p-2">
@@ -190,61 +191,45 @@ export function OnboardingDock() {
         )}
       </AnimatePresence>
 
-      {/* Toggle — the progress ring, always visible */}
+      {/* Toggle — always visible, mini progress + count */}
       <motion.button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        whileTap={{ scale: 0.95 }}
+        whileTap={{ scale: 0.96 }}
         aria-label={open ? "Hide setup" : "Studio setup"}
-        className="flex items-center gap-2 rounded-full border border-border bg-surface py-1.5 pl-1.5 pr-3 shadow-panel outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+        className="flex items-center gap-2.5 rounded-full border border-border bg-surface py-2 pl-3.5 pr-4 shadow-panel outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
       >
-        <ProgressRing pct={pct} small />
-        <span className="text-sm font-medium text-fg">
-          Setup {doneCount}/{total}
+        <SegmentedBar pct={pct} count={10} className="gap-[2px]" />
+        <span className="text-sm font-medium tabular-nums text-fg">
+          {doneCount}/{total}
         </span>
       </motion.button>
     </div>
   );
 }
 
-function ProgressRing({ pct, small }: { pct: number; small?: boolean }) {
-  const size = small ? 32 : 40;
+function SegmentedBar({
+  pct,
+  count = 28,
+  className,
+}: {
+  pct: number;
+  count?: number;
+  className?: string;
+}) {
+  const filled = Math.round((pct / 100) * count);
   return (
-    <span
-      className="relative grid shrink-0 place-items-center"
-      style={{ width: size, height: size }}
-    >
-      <svg viewBox="0 0 36 36" className="size-full -rotate-90">
-        <circle
-          cx="18"
-          cy="18"
-          r="16"
-          fill="none"
-          className="stroke-surface-muted"
-          strokeWidth="3.5"
+    <div className={cn("flex items-center gap-[3px]", className)}>
+      {Array.from({ length: count }).map((_, i) => (
+        <span
+          key={i}
+          className={cn(
+            "h-4 w-[3px] rounded-full transition-colors duration-300 ease-out",
+            i < filled ? "bg-accent-500" : "bg-surface-muted",
+          )}
+          style={{ transitionDelay: `${i * 15}ms` }}
         />
-        <motion.circle
-          cx="18"
-          cy="18"
-          r="16"
-          fill="none"
-          className="stroke-emerald-500"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          pathLength={100}
-          initial={false}
-          animate={{ strokeDasharray: `${pct} 100` }}
-          transition={{ duration: 0.6, ease: EASE }}
-        />
-      </svg>
-      <span
-        className={cn(
-          "absolute font-semibold tabular-nums text-fg",
-          small ? "text-[10px]" : "text-xs",
-        )}
-      >
-        {pct}%
-      </span>
-    </span>
+      ))}
+    </div>
   );
 }
