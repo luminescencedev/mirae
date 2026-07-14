@@ -697,7 +697,7 @@ Goal: prepare Mirae for real artists, real clients and real files.
 - [x] TRUST-014 Add structured audit logs
 - [x] TRUST-015 Add dependency scanning
 - [x] TRUST-016 Add secret scanning
-- [ ] TRUST-017 Add critical-path automated tests
+- [x] TRUST-017 Add critical-path automated tests
 - [ ] TRUST-018 Add deploy smoke test
 - [ ] TRUST-019 Add backup and recovery documentation
 - [ ] TRUST-020 Add incident response checklist
