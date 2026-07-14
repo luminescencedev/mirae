@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@mirae/config": "workspace:*",
-    "@types/node": "24.13.3",
+    "@types/node": "26.1.1",
     "drizzle-kit": "0.31.10",
     "typescript": "6.0.3"
   }
