@@ -34,9 +34,8 @@ bucket_name = "mirae-files"
 
 # Rate limiting (see src/lib/rate-limit.ts). 20 requests / 60s per (path, IP)
 # on the public write + token-scoped surfaces. period must be 10 or 60.
-[[unsafe.bindings]]
+[[ratelimits]]
 name = "RATE_LIMITER"
-type = "ratelimit"
 namespace_id = "1001"
 simple = { limit = 20, period = 60 }
 
