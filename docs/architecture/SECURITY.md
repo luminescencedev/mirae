@@ -99,6 +99,15 @@ simple = { limit = 20, period = 60 }
 Auth endpoints are covered separately by Better Auth's own rate limiting
 (TRUST-007).
 
+## Better Auth audit (TRUST-007)
+
+- Secret + baseURL + trustedOrigins from env (no hardcoding).
+- Cookies: httpOnly, `sameSite=lax`, `secure` over HTTPS (auto-off on local http).
+- Sessions: 30-day rolling, refreshed ≤ once/day.
+- Passwords: 10–128 chars.
+- Built-in rate limiting enabled (20 req / 60 s) on auth endpoints.
+- Drizzle adapter over Neon; email+password only (no social yet).
+
 ## Operational
 
 - **Backups & recovery** — see [`OPERATIONS.md`](./OPERATIONS.md) (TRUST-019).
