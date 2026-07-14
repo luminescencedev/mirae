@@ -692,7 +692,7 @@ Goal: prepare Mirae for real artists, real clients and real files.
 - [x] TRUST-009 Add token revocation
 - [x] TRUST-010 Add data export
 - [x] TRUST-011 Add account deletion
-- [ ] TRUST-012 Add privacy policy
+- [x] TRUST-012 Add privacy policy
 - [ ] TRUST-013 Add terms of service
 - [ ] TRUST-014 Add structured audit logs
 - [ ] TRUST-015 Add dependency scanning
