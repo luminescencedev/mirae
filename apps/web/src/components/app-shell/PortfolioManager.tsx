@@ -28,8 +28,6 @@ import {
 } from "@mirae/ui";
 import {
   Add01Icon,
-  ArrowDown01Icon,
-  ArrowUp01Icon,
   Delete02Icon,
   DragDropVerticalIcon,
   Image01Icon,
@@ -103,15 +101,6 @@ export function PortfolioManager() {
   orderRef.current = order;
   const commit = () => reorder.mutate(orderRef.current.map((p) => p.id));
 
-  const move = (index: number, dir: -1 | 1) => {
-    const next = [...order];
-    const target = index + dir;
-    if (target < 0 || target >= next.length) return;
-    [next[index], next[target]] = [next[target], next[index]];
-    setOrder(next);
-    reorder.mutate(next.map((p) => p.id));
-  };
-
   return (
     <section className="flex flex-col gap-4">
       <p className="text-sm text-fg-subtle">
@@ -177,14 +166,12 @@ export function PortfolioManager() {
           onReorder={setOrder}
           className="flex flex-col gap-4"
         >
-          {order.map((project, i) => (
+          {order.map((project) => (
             <ProjectCard
               key={project.id}
               project={project}
               onChanged={invalidate}
               onCommit={commit}
-              onMoveUp={i > 0 ? () => move(i, -1) : undefined}
-              onMoveDown={i < order.length - 1 ? () => move(i, 1) : undefined}
             />
           ))}
         </Reorder.Group>
@@ -197,14 +184,10 @@ function ProjectCard({
   project,
   onChanged,
   onCommit,
-  onMoveUp,
-  onMoveDown,
 }: {
   project: PortfolioProject;
   onChanged: () => void;
   onCommit: () => void;
-  onMoveUp?: () => void;
-  onMoveDown?: () => void;
 }) {
   const dragControls = useDragControls();
   const [dragging, setDragging] = useState(false);
@@ -287,87 +270,39 @@ function ProjectCard({
       )}
     >
       {/* Header */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-border p-3">
-        <button
-          type="button"
-          aria-label="Drag to reorder"
-          title="Drag to reorder"
-          onPointerDown={(e) => {
-            setDragging(true);
-            dragControls.start(e);
-          }}
-          className="grid size-8 shrink-0 cursor-grab touch-none place-items-center rounded-md text-fg-subtle hover:bg-surface-muted hover:text-fg active:cursor-grabbing"
-        >
-          <Icon icon={DragDropVerticalIcon} size={16} />
-        </button>
-        <Input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          onBlur={() => {
-            if (title.trim() && title.trim() !== project.title)
-              patch.mutate({ title: title.trim() });
-          }}
-          className="h-9 min-w-40 flex-1"
-        />
-
-        <Select
-          value={project.projectType}
-          onValueChange={(v) => patch.mutate({ projectType: v as ProjectType })}
-        >
-          <SelectTrigger className="w-44">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(TYPE_LABELS).map(([v, label]) => (
-              <SelectItem key={v} value={v}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={project.visibility}
-          onValueChange={(v) =>
-            patch.mutate({ visibility: v as ProjectVisibility })
-          }
-        >
-          <SelectTrigger className="w-32">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(VISIBILITY_LABELS).map(([v, label]) => (
-              <SelectItem key={v} value={v}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {published && (
-          <Badge variant={project.featured ? "accent" : "outline"}>
-            {project.featured ? "Featured" : "Live"}
-          </Badge>
-        )}
-
-        <div className="ml-auto flex items-center gap-1">
+      <div className="flex flex-col gap-2 border-b border-border p-3">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label="Drag to reorder"
+            title="Drag to reorder"
+            onPointerDown={(e) => {
+              setDragging(true);
+              dragControls.start(e);
+            }}
+            className="grid size-8 shrink-0 cursor-grab touch-none place-items-center rounded-md text-fg-subtle hover:bg-surface-muted hover:text-fg active:cursor-grabbing"
+          >
+            <Icon icon={DragDropVerticalIcon} size={16} />
+          </button>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            onBlur={() => {
+              if (title.trim() && title.trim() !== project.title)
+                patch.mutate({ title: title.trim() });
+            }}
+            className="h-8 min-w-0 flex-1"
+          />
+          {published && project.featured && (
+            <Badge variant="accent" className="hidden sm:inline-flex">
+              Featured
+            </Badge>
+          )}
           <IconButton
             label={project.featured ? "Unfeature" : "Feature"}
             active={project.featured}
             onClick={() => patch.mutate({ featured: !project.featured })}
             icon={StarIcon}
-          />
-          <IconButton
-            label="Move up"
-            onClick={onMoveUp}
-            disabled={!onMoveUp}
-            icon={ArrowUp01Icon}
-          />
-          <IconButton
-            label="Move down"
-            onClick={onMoveDown}
-            disabled={!onMoveDown}
-            icon={ArrowDown01Icon}
           />
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -375,7 +310,7 @@ function ProjectCard({
                 type="button"
                 aria-label="Delete project"
                 title="Delete project"
-                className="grid size-8 place-items-center rounded-md text-fg-subtle outline-none transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:ring-2 focus-visible:ring-accent-500"
+                className="grid size-8 shrink-0 place-items-center rounded-md text-fg-subtle outline-none transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:ring-2 focus-visible:ring-accent-500"
               >
                 <Icon icon={Delete02Icon} size={16} />
               </button>
@@ -400,6 +335,43 @@ function ProjectCard({
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Select
+            value={project.projectType}
+            onValueChange={(v) =>
+              patch.mutate({ projectType: v as ProjectType })
+            }
+          >
+            <SelectTrigger className="h-8">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(TYPE_LABELS).map(([v, label]) => (
+                <SelectItem key={v} value={v}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={project.visibility}
+            onValueChange={(v) =>
+              patch.mutate({ visibility: v as ProjectVisibility })
+            }
+          >
+            <SelectTrigger className="h-8">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(VISIBILITY_LABELS).map(([v, label]) => (
+                <SelectItem key={v} value={v}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
