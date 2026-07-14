@@ -81,6 +81,24 @@ attachments; active-content MIME is blocked at commission-file upload.
 - ~~Commission file upload accepts any MIME~~ → blocked svg/html/js + 50 MB cap (TRUST-003).
 - ~~Portal reference stream inline~~ → `nosniff` + upload-time MIME block (TRUST-005).
 
+## Rate limiting (TRUST-006)
+
+`rateLimit()` middleware (binding-optional) guards the public write surfaces
+(request intake, waitlist). It uses Cloudflare's native rate-limit binding when
+present and no-ops otherwise. **To activate in production**, add to
+`apps/api/wrangler.toml` and redeploy:
+
+```toml
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 20, period = 60 }
+```
+
+Auth endpoints are covered separately by Better Auth's own rate limiting
+(TRUST-007).
+
 ## Operational
 
 - **Backups & recovery** — see [`OPERATIONS.md`](./OPERATIONS.md) (TRUST-019).

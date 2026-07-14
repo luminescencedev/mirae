@@ -686,7 +686,7 @@ Goal: prepare Mirae for real artists, real clients and real files.
 - [x] TRUST-003 Add upload type and resolution limits
 - [x] TRUST-004 Add orphan cleanup jobs
 - [x] TRUST-005 Audit private file access
-- [ ] TRUST-006 Add global rate limiting
+- [x] TRUST-006 Add global rate limiting
 - [ ] TRUST-007 Audit Better Auth configuration
 - [ ] TRUST-008 Audit portal-token entropy
 - [ ] TRUST-009 Add token revocation

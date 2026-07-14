@@ -16,6 +16,7 @@ import { analyticsRoutes } from "./routes/analytics.ts";
 import { injectStudioMeta } from "./lib/og.ts";
 import { studioOgResponse } from "./lib/og-card.ts";
 import { sweepOrphans } from "./lib/cleanup.ts";
+import { rateLimit } from "./lib/rate-limit.ts";
 import { log, serializeError } from "./lib/log.ts";
 
 type Bindings = AuthEnv & {
@@ -132,7 +133,7 @@ app.on(["GET", "POST"], "/api/auth/*", (c) =>
 );
 
 // Public waitlist capture (landing page, no auth).
-app.post("/api/waitlist", async (c) => {
+app.post("/api/waitlist", rateLimit(), async (c) => {
   const body = (await c.req.json().catch(() => ({}))) as { email?: unknown };
   const email = String(body.email ?? "")
     .trim()

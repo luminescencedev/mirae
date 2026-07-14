@@ -13,6 +13,7 @@ import {
 } from "@mirae/db";
 import { normalizeAppearance, normalizeFaq } from "@mirae/shared";
 import { type AuthEnv } from "../auth.ts";
+import { rateLimit } from "../lib/rate-limit.ts";
 import { mailLayout, sendEmail } from "../lib/mail.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
@@ -196,8 +197,11 @@ studioRoutes.get("/:handle/:kind{avatar|cover}", async (c) => {
 
 // POST /api/studio/:handle/requests — submit a commission request (PUBLIC, no
 // account needed). Creates a commission_requests row for the studio.
-studioRoutes.post("/:handle/requests", async (c) => {
-  const handle = c.req.param("handle").replace(/^@/, "").trim().toLowerCase();
+studioRoutes.post("/:handle/requests", rateLimit(), async (c) => {
+  const handle = (c.req.param("handle") ?? "")
+    .replace(/^@/, "")
+    .trim()
+    .toLowerCase();
   if (!handle) return c.json({ error: "not found" }, 404);
 
   const body = (await c.req.json().catch(() => ({}))) as {
