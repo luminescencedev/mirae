@@ -61,10 +61,25 @@ hardening). Pairs with `DECISIONS.md` (locked architecture) and `ARCHITECTURE.md
 11. **No forensic trail** — → **TRUST-014** structured audit logs for security
     events (auth, deletion, token rotation/revocation).
 
-## Known gaps (open until fixed)
+## File-access audit (TRUST-005)
 
-- Commission file upload accepts any MIME with no allowlist (TRUST-003).
-- Portal reference stream serves user content inline, not as an attachment (TRUST-005).
+Every R2-serving endpoint was reviewed for authorization + safe headers:
+
+| Endpoint | Gate | Headers |
+| --- | --- | --- |
+| `GET /api/delivery/:token/files/:id` | delivery token + commission match | `attachment` + `nosniff` |
+| `GET /api/portal/:token/files/:id` | portal token + commission match + `reference` kind only | `nosniff` (references can't be svg/html — blocked at upload) |
+| `GET /api/studio/:handle/{avatar,cover}` | public by design | `nosniff` |
+| `GET /api/commission-types/:id/image` | public by design | `nosniff` |
+| `GET portfolio asset` | public by design | `nosniff` |
+
+All streams now send `X-Content-Type-Options: nosniff`; deliverables download as
+attachments; active-content MIME is blocked at commission-file upload.
+
+## Closed gaps
+
+- ~~Commission file upload accepts any MIME~~ → blocked svg/html/js + 50 MB cap (TRUST-003).
+- ~~Portal reference stream inline~~ → `nosniff` + upload-time MIME block (TRUST-005).
 
 ## Operational
 

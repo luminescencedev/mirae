@@ -119,5 +119,6 @@ deliveryRoutes.get("/:token/files/:fileId", async (c) => {
     "content-disposition",
     `attachment; filename="${encodeURIComponent(file.name)}"`,
   );
+  headers.set("x-content-type-options", "nosniff");
   return new Response(object.body, { headers });
 });

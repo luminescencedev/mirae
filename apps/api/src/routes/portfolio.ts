@@ -397,6 +397,7 @@ portfolioRoutes.get("/assets/:id/raw", async (c) => {
     headers: {
       "content-type": row.mimeType,
       "cache-control": "public, max-age=31536000, immutable",
+      "x-content-type-options": "nosniff",
     },
   });
 });

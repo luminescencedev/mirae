@@ -137,6 +137,7 @@ portalRoutes.get("/:token/files/:fileId", async (c) => {
   const headers = new Headers();
   object.writeHttpMetadata(headers);
   headers.set("etag", object.httpEtag);
+  headers.set("x-content-type-options", "nosniff");
   return new Response(object.body, { headers });
 });
 
