@@ -173,6 +173,128 @@ function Timeline({ status }: { status: PortalView["commission"]["status"] }) {
   );
 }
 
+const REVISION_META: Record<string, { label: string; cls: string }> = {
+  requested: { label: "Requested", cls: "bg-amber-50 text-amber-700" },
+  in_progress: { label: "In progress", cls: "bg-accent-50 text-accent-700" },
+  delivered: { label: "Delivered", cls: "bg-emerald-50 text-emerald-700" },
+};
+
+/** Revision rounds card — shows usage and lets the client request a round. */
+function Revisions({
+  token,
+  revisions,
+}: {
+  token: string;
+  revisions: PortalView["revisions"];
+}) {
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [note, setNote] = useState("");
+  const req = useMutation({
+    mutationFn: () => publicApi.requestRevision(token, note.trim()),
+    onSuccess: () => {
+      setNote("");
+      setOpen(false);
+      qc.invalidateQueries({ queryKey: ["portal", token] });
+    },
+  });
+  const unlimited = revisions.allowed === 0;
+  const remaining = unlimited ? null : revisions.allowed - revisions.used;
+  const canRequest = unlimited || revisions.used < revisions.allowed;
+
+  return (
+    <div className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft">
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-sm font-semibold text-fg">Revisions</p>
+        <span className="text-xs text-fg-subtle">
+          {unlimited
+            ? `${revisions.used} used`
+            : `${remaining} of ${revisions.allowed} left`}
+        </span>
+      </div>
+
+      {revisions.rounds.length > 0 && (
+        <ul className="mb-3 flex flex-col gap-2">
+          {revisions.rounds.map((r) => {
+            const meta = REVISION_META[r.status] ?? REVISION_META.requested;
+            return (
+              <li key={r.id} className="flex items-start gap-2.5">
+                <span className="mt-0.5 shrink-0 text-sm font-medium tabular-nums text-fg-muted">
+                  #{r.roundNumber}
+                </span>
+                <div className="min-w-0 flex-1">
+                  {r.note && <p className="text-sm text-fg">{r.note}</p>}
+                  <span className="text-[11px] text-fg-subtle">
+                    {fmtTime(r.createdAt)}
+                  </span>
+                </div>
+                <span
+                  className={cn(
+                    "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium",
+                    meta.cls,
+                  )}
+                >
+                  {meta.label}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {!canRequest ? (
+        <p className="text-sm text-fg-subtle">
+          You've used all included revisions. Message the artist to discuss
+          more.
+        </p>
+      ) : open ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            req.mutate();
+          }}
+        >
+          <Textarea
+            rows={3}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="What would you like changed?"
+            autoFocus
+          />
+          {req.isError && (
+            <p className="mt-2 text-sm text-red-600">
+              {(req.error as Error).message}
+            </p>
+          )}
+          <div className="mt-3 flex gap-2">
+            <Button type="submit" size="sm" disabled={req.isPending}>
+              {req.isPending ? "Requesting…" : "Request revision"}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="w-full"
+          onClick={() => setOpen(true)}
+        >
+          Request a revision
+        </Button>
+      )}
+    </div>
+  );
+}
+
 function fmtTime(iso: string): string {
   return new Date(iso).toLocaleString(undefined, {
     month: "short",
@@ -463,6 +585,8 @@ export function PortalPage({ token }: { token: string }) {
         <p className="mb-4 text-sm font-semibold text-fg">Progress</p>
         <Timeline status={commission.status} />
       </div>
+
+      <Revisions token={token} revisions={data.revisions} />
 
       {quote && (
         <div className="mt-3 rounded-xl border border-border bg-surface p-4 shadow-soft">

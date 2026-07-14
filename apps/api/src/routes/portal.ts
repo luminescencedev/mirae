@@ -9,6 +9,7 @@ import {
   portalMessages,
   portalThreads,
   quotes,
+  revisionRounds,
 } from "@mirae/db";
 import { type AuthEnv } from "../auth.ts";
 
@@ -58,6 +59,12 @@ portalRoutes.get("/:token", async (c) => {
 
   const threads = await loadThreads(db, commission.id);
 
+  const rounds = await db
+    .select()
+    .from(revisionRounds)
+    .where(eq(revisionRounds.commissionId, commission.id))
+    .orderBy(asc(revisionRounds.roundNumber));
+
   return c.json({
     commission: {
       title: commission.title,
@@ -69,7 +76,59 @@ portalRoutes.get("/:token", async (c) => {
     artist: artist ?? null,
     quote: quote ?? null,
     threads,
+    revisions: {
+      allowed: commission.revisionsAllowed,
+      used: rounds.length,
+      rounds: rounds.map((r) => ({
+        id: r.id,
+        roundNumber: r.roundNumber,
+        status: r.status,
+        note: r.note,
+        createdAt: r.createdAt,
+      })),
+    },
   });
+});
+
+// POST /api/portal/:token/revisions — client requests a revision round.
+portalRoutes.post("/:token/revisions", async (c) => {
+  const db = createDb(c.env.DATABASE_URL);
+  const [commission] = await db
+    .select({
+      id: commissions.id,
+      artistId: commissions.artistId,
+      revisionsAllowed: commissions.revisionsAllowed,
+    })
+    .from(commissions)
+    .where(eq(commissions.portalToken, c.req.param("token")))
+    .limit(1);
+  if (!commission) return c.json({ error: "not found" }, 404);
+
+  const used = (
+    await db
+      .select({ id: revisionRounds.id })
+      .from(revisionRounds)
+      .where(eq(revisionRounds.commissionId, commission.id))
+  ).length;
+  if (commission.revisionsAllowed > 0 && used >= commission.revisionsAllowed)
+    return c.json({ error: "No revision rounds remaining." }, 409);
+
+  const raw = (await c.req.json().catch(() => ({}))) as { note?: unknown };
+  const note = String(raw.note ?? "").trim() || null;
+
+  await db.insert(revisionRounds).values({
+    commissionId: commission.id,
+    roundNumber: used + 1,
+    status: "requested",
+    note,
+  });
+  await db.insert(activityLogs).values({
+    artistId: commission.artistId,
+    commissionId: commission.id,
+    type: "revision",
+    message: `Client requested revision #${used + 1}${note ? `: ${note}` : ""}`,
+  });
+  return c.json({ ok: true }, 201);
 });
 
 // Load a commission's feedback threads with their ordered messages.

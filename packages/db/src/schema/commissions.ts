@@ -40,6 +40,8 @@ export const commissions = pgTable("commissions", {
   paidCents: integer("paid_cents").notNull().default(0),
   deadline: timestamp("deadline", { withTimezone: true }),
   portalToken: text("portal_token").unique(),
+  // How many revision rounds the client is entitled to (0 = unlimited/none set).
+  revisionsAllowed: integer("revisions_allowed").notNull().default(2),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -140,6 +142,21 @@ export const portalMessages = pgTable("portal_messages", {
     .references(() => portalThreads.id, { onDelete: "cascade" }),
   authorRole: text("author_role").notNull(), // client | artist
   body: text("body").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+// Revision rounds requested by the client from the portal.
+export const revisionRounds = pgTable("revision_rounds", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  commissionId: uuid("commission_id")
+    .notNull()
+    .references(() => commissions.id, { onDelete: "cascade" }),
+  // 1-based round number within the commission.
+  roundNumber: integer("round_number").notNull(),
+  status: text("status").notNull().default("requested"), // requested | in_progress | delivered
+  note: text("note"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

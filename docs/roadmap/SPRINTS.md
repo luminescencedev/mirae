@@ -665,7 +665,7 @@ Goal: bring the client-facing experience to the quality of the public studio.
 - [x] CLIENTUX-002 Add artist branding
 - [x] CLIENTUX-003 Improve milestone timeline
 - [x] CLIENTUX-004 Add structured feedback threads
-- [ ] CLIENTUX-005 Add revision rounds
+- [x] CLIENTUX-005 Add revision rounds
 - [ ] CLIENTUX-006 Add artist responses
 - [ ] CLIENTUX-007 Add thread open and resolved states
 - [ ] CLIENTUX-008 Add quote acceptance

@@ -211,6 +211,17 @@ export type PortalView = {
   } | null;
   quote: { totalCents: number; status: QuoteStatus } | null;
   threads: PortalThread[];
+  revisions: {
+    allowed: number;
+    used: number;
+    rounds: {
+      id: string;
+      roundNumber: number;
+      status: "requested" | "in_progress" | "delivered";
+      note: string | null;
+      createdAt: string;
+    }[];
+  };
 };
 
 export type PortalMessage = {
@@ -280,6 +291,12 @@ export const publicApi = {
       `/api/portal/${encodeURIComponent(token)}/threads/${threadId}/messages`,
       { method: "POST", headers: jsonHeaders, body: JSON.stringify({ body }) },
     ).then(json<{ ok: true }>),
+  requestRevision: (token: string, note: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}/revisions`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ note }),
+    }).then(json<{ ok: true }>),
   studio: (handle: string) =>
     fetch(`/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}`).then(
       async (res) => {
