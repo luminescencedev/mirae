@@ -103,6 +103,7 @@ export const deliveries = pgTable("deliveries", {
   message: text("message"),
   deliveredAt: timestamp("delivered_at", { withTimezone: true }),
   acknowledgedAt: timestamp("acknowledged_at", { withTimezone: true }),
+  revokedAt: timestamp("revoked_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

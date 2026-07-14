@@ -21,7 +21,7 @@ async function resolve(db: ReturnType<typeof createDb>, token: string) {
     .from(deliveries)
     .where(eq(deliveries.token, token))
     .limit(1);
-  if (!delivery) return null;
+  if (!delivery || delivery.revokedAt) return null;
   const [commission] = await db
     .select()
     .from(commissions)

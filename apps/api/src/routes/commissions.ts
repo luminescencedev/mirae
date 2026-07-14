@@ -292,6 +292,37 @@ commissionsRoutes.post("/:id/portal/revoke", async (c) => {
   return c.json({ ok: true });
 });
 
+// POST /api/commissions/:id/delivery/revoke — disable the delivery link (owner).
+commissionsRoutes.post("/:id/delivery/revoke", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(db, c.req.param("id"), artist.id);
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+  await db
+    .update(deliveries)
+    .set({ revokedAt: new Date() })
+    .where(eq(deliveries.commissionId, commissionId));
+  return c.json({ ok: true });
+});
+
+// POST /api/commissions/:id/delivery/rotate — new delivery link (owner).
+commissionsRoutes.post("/:id/delivery/rotate", async (c) => {
+  const artist = await getArtist(c);
+  if (!artist) return c.json({ error: "unauthorized" }, 401);
+  const db = createDb(c.env.DATABASE_URL);
+  const commissionId = await ownedCommissionId(db, c.req.param("id"), artist.id);
+  if (!commissionId) return c.json({ error: "not found" }, 404);
+  const token = newToken();
+  const [row] = await db
+    .update(deliveries)
+    .set({ token, revokedAt: null })
+    .where(eq(deliveries.commissionId, commissionId))
+    .returning({ token: deliveries.token });
+  if (!row) return c.json({ error: "no delivery" }, 404);
+  return c.json({ token });
+});
+
 // --- Delivery (one per commission) ----------------------------------------
 
 // GET /api/commissions/:id/delivery — the delivery row (or null).

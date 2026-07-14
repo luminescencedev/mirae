@@ -689,7 +689,7 @@ Goal: prepare Mirae for real artists, real clients and real files.
 - [x] TRUST-006 Add global rate limiting
 - [x] TRUST-007 Audit Better Auth configuration
 - [x] TRUST-008 Audit portal-token entropy
-- [ ] TRUST-009 Add token revocation
+- [x] TRUST-009 Add token revocation
 - [ ] TRUST-010 Add data export
 - [ ] TRUST-011 Add account deletion
 - [ ] TRUST-012 Add privacy policy
