@@ -627,21 +627,30 @@ public UX contract.
 
 Goal: take a new user from signup to a published, shareable studio in one journey.
 
-- [ ] ONBOARD-001 Redesign signup-to-studio journey
-- [ ] ONBOARD-002 Add resumable onboarding state
-- [ ] ONBOARD-003 Add handle selection
-- [ ] ONBOARD-004 Add profile setup
-- [ ] ONBOARD-005 Add first commission type
-- [ ] ONBOARD-006 Add first portfolio upload
-- [ ] ONBOARD-007 Add first links
-- [ ] ONBOARD-008 Add appearance preset selection
-- [ ] ONBOARD-009 Add studio preview
-- [ ] ONBOARD-010 Add publish step
-- [ ] ONBOARD-011 Add copy-link and share step
-- [ ] ONBOARD-012 Add dashboard checklist
-- [ ] ONBOARD-013 Add dismissible dashboard tour
-- [ ] ONBOARD-014 Add contextual empty-state actions
-- [ ] ONBOARD-015 Add onboarding analytics
+- [ ] ONBOARD-001 Redesign signup-to-studio journey (slice 2 — full wizard; approach TBD, see note)
+- [ ] ONBOARD-002 Add resumable onboarding state (slice 2)
+- [ ] ONBOARD-003 Add handle selection (slice 2; basic handle set at signup today)
+- [ ] ONBOARD-004 Add profile setup (slice 2; via studio-page today, linked from checklist)
+- [ ] ONBOARD-005 Add first commission type (slice 2; linked from checklist)
+- [ ] ONBOARD-006 Add first portfolio upload (slice 2; linked from checklist)
+- [ ] ONBOARD-007 Add first links (slice 2; linked from checklist)
+- [ ] ONBOARD-008 Add appearance preset selection (slice 2)
+- [ ] ONBOARD-009 Add studio preview (slice 2; studio-page has a live preview today)
+- [ ] ONBOARD-010 Add publish step (slice 2)
+- [x] ONBOARD-011 Add copy-link and share step (in the dashboard launch checklist)
+- [x] ONBOARD-012 Add dashboard checklist
+- [ ] ONBOARD-013 Add dismissible dashboard tour (slice 2)
+- [~] ONBOARD-014 Add contextual empty-state actions (checklist links each step to studio-page; full per-page empty-state CTAs in slice 2)
+- [ ] ONBOARD-015 Add onboarding analytics (slice 2)
+
+Slice 1 (shipped): a dismissible **launch checklist** on the dashboard —
+photo+bio, a commission type, a published project, links, open-for-commissions —
+each linking to the studio page, with a live progress bar and a copy-studio-link
+action. Auto-hides when complete or dismissed. **Slice 2 (multi-step signup
+wizard, ONBOARD-001..010/013/015) is intentionally held** — the onboarding
+approach (guided wizard vs the checklist pattern shipped here) was flagged to
+discuss before building. Recommendation: keep the low-friction checklist as the
+default and only add a wizard if data shows drop-off.
 
 ## Sprint 21 — Premium client portal
 
