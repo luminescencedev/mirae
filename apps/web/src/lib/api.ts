@@ -210,6 +210,22 @@ export type PortalView = {
     hasCover: boolean;
   } | null;
   quote: { totalCents: number; status: QuoteStatus } | null;
+  threads: PortalThread[];
+};
+
+export type PortalMessage = {
+  id: string;
+  authorRole: "client" | "artist";
+  body: string;
+  createdAt: string;
+};
+
+export type PortalThread = {
+  id: string;
+  subject: string | null;
+  status: "open" | "resolved";
+  createdAt: string;
+  messages: PortalMessage[];
 };
 
 export type DeliveryFile = {
@@ -253,6 +269,17 @@ export const publicApi = {
       headers: jsonHeaders,
       body: JSON.stringify({ message }),
     }).then(json<{ ok: true }>),
+  createThread: (token: string, subject: string, body: string) =>
+    fetch(`/api/portal/${encodeURIComponent(token)}/threads`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ subject, body }),
+    }).then(json<{ ok: true; threadId: string }>),
+  replyThread: (token: string, threadId: string, body: string) =>
+    fetch(
+      `/api/portal/${encodeURIComponent(token)}/threads/${threadId}/messages`,
+      { method: "POST", headers: jsonHeaders, body: JSON.stringify({ body }) },
+    ).then(json<{ ok: true }>),
   studio: (handle: string) =>
     fetch(`/api/studio/${encodeURIComponent(handle.replace(/^@/, ""))}`).then(
       async (res) => {

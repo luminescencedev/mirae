@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Icon, Mark, Skeleton, Textarea, cn } from "@mirae/ui";
-import { Tick02Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { Link } from "@tanstack/react-router";
-import { publicApi, type PortalView } from "../../lib/api.ts";
+import {
+  publicApi,
+  type PortalThread,
+  type PortalView,
+} from "../../lib/api.ts";
 import {
   STATUS_META,
   dueLabel,
@@ -169,54 +173,204 @@ function Timeline({ status }: { status: PortalView["commission"]["status"] }) {
   );
 }
 
-function Feedback({
+function fmtTime(iso: string): string {
+  return new Date(iso).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+/** One conversation with its messages + an inline client reply box. */
+function ThreadCard({
   token,
-  artistName,
+  artist,
+  thread,
 }: {
   token: string;
-  artistName: string;
+  artist: PortalArtist;
+  thread: PortalThread;
 }) {
-  const [note, setNote] = useState("");
+  const qc = useQueryClient();
+  const [reply, setReply] = useState("");
   const send = useMutation({
-    mutationFn: () => publicApi.submitFeedback(token, note.trim()),
+    mutationFn: () => publicApi.replyThread(token, thread.id, reply.trim()),
+    onSuccess: () => {
+      setReply("");
+      qc.invalidateQueries({ queryKey: ["portal", token] });
+    },
+  });
+  const resolved = thread.status === "resolved";
+
+  return (
+    <div className="rounded-xl border border-border bg-surface p-4 shadow-soft">
+      <div className="mb-3 flex items-center gap-2">
+        <p className="min-w-0 flex-1 truncate text-sm font-semibold text-fg">
+          {thread.subject || "Conversation"}
+        </p>
+        <span
+          className={cn(
+            "rounded-full px-2 py-0.5 text-[11px] font-medium",
+            resolved
+              ? "bg-emerald-50 text-emerald-700"
+              : "bg-accent-50 text-accent-700",
+          )}
+        >
+          {resolved ? "Resolved" : "Open"}
+        </span>
+      </div>
+
+      <ul className="flex flex-col gap-3">
+        {thread.messages.map((m) => {
+          const mine = m.authorRole === "client";
+          return (
+            <li
+              key={m.id}
+              className={cn("flex flex-col gap-1", mine && "items-end")}
+            >
+              <div
+                className={cn(
+                  "max-w-[85%] rounded-2xl px-3.5 py-2 text-sm",
+                  mine
+                    ? "rounded-br-md bg-accent-500 text-white"
+                    : "rounded-bl-md bg-surface-muted text-fg",
+                )}
+              >
+                {m.body}
+              </div>
+              <span className="px-1 text-[11px] text-fg-subtle">
+                {mine ? "You" : (artist?.displayName ?? "Artist")} ·{" "}
+                {fmtTime(m.createdAt)}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+
+      <form
+        className="mt-3 flex items-end gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (reply.trim()) send.mutate();
+        }}
+      >
+        <Textarea
+          rows={1}
+          value={reply}
+          onChange={(e) => setReply(e.target.value)}
+          placeholder="Reply…"
+          className="min-h-10 flex-1 resize-none"
+        />
+        <Button
+          type="submit"
+          size="sm"
+          disabled={!reply.trim() || send.isPending}
+        >
+          {send.isPending ? "…" : "Send"}
+        </Button>
+      </form>
+    </div>
+  );
+}
+
+/** New-topic composer (subject optional). */
+function NewThread({ token }: { token: string }) {
+  const qc = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const create = useMutation({
+    mutationFn: () => publicApi.createThread(token, subject.trim(), body.trim()),
+    onSuccess: () => {
+      setSubject("");
+      setBody("");
+      setOpen(false);
+      qc.invalidateQueries({ queryKey: ["portal", token] });
+    },
   });
 
-  if (send.isSuccess) {
+  if (!open) {
     return (
-      <div className="mt-3 rounded-xl border border-border bg-surface p-5 text-center text-sm text-fg-muted shadow-soft">
-        Thanks — your note was shared with {artistName}.
-      </div>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="w-full"
+        onClick={() => setOpen(true)}
+      >
+        <Icon icon={Add01Icon} size={15} />
+        New message
+      </Button>
     );
   }
   return (
     <form
-      className="mt-3 rounded-xl border border-border bg-surface p-5 shadow-soft"
+      className="rounded-xl border border-border bg-surface p-4 shadow-soft"
       onSubmit={(e) => {
         e.preventDefault();
-        if (note.trim()) send.mutate();
+        if (body.trim()) create.mutate();
       }}
     >
-      <p className="mb-2 text-sm font-semibold text-fg">Leave a note</p>
+      <input
+        value={subject}
+        onChange={(e) => setSubject(e.target.value)}
+        placeholder="Subject (optional)"
+        className="mb-2 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-accent-500"
+      />
       <Textarea
         rows={3}
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
+        value={body}
+        onChange={(e) => setBody(e.target.value)}
         placeholder="A question or feedback for the artist…"
+        autoFocus
       />
-      {send.isError && (
+      {create.isError && (
         <p className="mt-2 text-sm text-red-600">
-          {(send.error as Error).message}
+          {(create.error as Error).message}
         </p>
       )}
-      <Button
-        type="submit"
-        size="sm"
-        className="mt-3"
-        disabled={!note.trim() || send.isPending}
-      >
-        {send.isPending ? "Sending…" : "Send note"}
-      </Button>
+      <div className="mt-3 flex gap-2">
+        <Button type="submit" size="sm" disabled={!body.trim() || create.isPending}>
+          {create.isPending ? "Sending…" : "Send"}
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setOpen(false)}
+        >
+          Cancel
+        </Button>
+      </div>
     </form>
+  );
+}
+
+function Threads({
+  token,
+  artist,
+  threads,
+}: {
+  token: string;
+  artist: PortalArtist;
+  threads: PortalThread[];
+}) {
+  return (
+    <section className="mt-6">
+      <h2 className="mb-3 text-sm font-semibold text-fg">Messages</h2>
+      <div className="flex flex-col gap-3">
+        {threads.map((t) => (
+          <ThreadCard key={t.id} token={token} artist={artist} thread={t} />
+        ))}
+        {threads.length === 0 && (
+          <p className="rounded-xl border border-dashed border-border bg-surface/50 px-4 py-6 text-center text-sm text-fg-subtle">
+            No messages yet. Ask the artist a question or share feedback.
+          </p>
+        )}
+        <NewThread token={token} />
+      </div>
+    </section>
   );
 }
 
@@ -324,7 +478,7 @@ export function PortalPage({ token }: { token: string }) {
         </div>
       )}
 
-      <Feedback token={token} artistName={artist?.displayName ?? "the artist"} />
+      <Threads token={token} artist={artist} threads={data.threads} />
     </Shell>
   );
 }

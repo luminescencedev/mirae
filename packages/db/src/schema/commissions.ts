@@ -115,6 +115,36 @@ export const portalFeedback = pgTable("portal_feedback", {
     .defaultNow(),
 });
 
+// Structured feedback threads between the client (portal) and the artist
+// (dashboard). Each thread has a status and an ordered list of messages.
+export const portalThreads = pgTable("portal_threads", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  commissionId: uuid("commission_id")
+    .notNull()
+    .references(() => commissions.id, { onDelete: "cascade" }),
+  subject: text("subject"),
+  status: text("status").notNull().default("open"), // open | resolved
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+export const portalMessages = pgTable("portal_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  threadId: uuid("thread_id")
+    .notNull()
+    .references(() => portalThreads.id, { onDelete: "cascade" }),
+  authorRole: text("author_role").notNull(), // client | artist
+  body: text("body").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 // Activity log — key changes on a commission.
 export const activityLogs = pgTable("activity_logs", {
   id: uuid("id").primaryKey().defaultRandom(),
