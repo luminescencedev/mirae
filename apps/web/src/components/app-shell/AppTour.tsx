@@ -53,56 +53,59 @@ export function AppTour({
   useEffect(() => {
     if (step.to) navigate({ to: step.to });
     setRect(null);
-    // Poll for the target — a route change may lazy-load the chunk + fetch data,
-    // so keep looking for up to ~5s (not just a few frames).
-    let tries = 0;
-    const id = setInterval(() => {
+    // Continuously track the target with rAF: a step may change route (lazy
+    // chunk + data fetch) so the element appears late and may shift while the
+    // page settles — the spotlight follows it the whole time.
+    let raf = 0;
+    let scrolled = false;
+    const loop = () => {
       const r = measure(step.target);
       if (r) {
-        setRect(r);
-        if (r.top < 0 || r.top > window.innerHeight) {
+        if (
+          !scrolled &&
+          (r.top < 60 || r.top + r.height > window.innerHeight - 60)
+        ) {
           document
             .querySelector(`[data-tour="${step.target}"]`)
             ?.scrollIntoView({ block: "center", behavior: "smooth" });
+          scrolled = true;
         }
-        clearInterval(id);
-      } else if (++tries > 60) {
-        clearInterval(id);
+        setRect((prev) =>
+          prev &&
+          prev.top === r.top &&
+          prev.left === r.left &&
+          prev.width === r.width &&
+          prev.height === r.height
+            ? prev
+            : r,
+        );
       }
-    }, 80);
-    const onMove = () => {
-      const r = measure(step.target);
-      if (r) setRect(r);
+      raf = requestAnimationFrame(loop);
     };
-    window.addEventListener("resize", onMove);
-    window.addEventListener("scroll", onMove, true);
-    return () => {
-      clearInterval(id);
-      window.removeEventListener("resize", onMove);
-      window.removeEventListener("scroll", onMove, true);
-    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
   }, [i]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const finish = () => onClose();
 
-  // Card position: below the target if room, else above; clamped to viewport.
+  // Card position: anchor above the target (via `bottom`) when it sits in the
+  // lower half or is flagged `top` — this never overlaps the target regardless
+  // of card height. Otherwise anchor below (via `top`).
   const vw = typeof window !== "undefined" ? window.innerWidth : 1024;
   const vh = typeof window !== "undefined" ? window.innerHeight : 768;
   const cardW = Math.min(320, vw - 24);
-  let cardTop = 0;
-  let cardLeft = 12;
-  if (rect) {
-    const below = rect.top + rect.height + PAD + 12;
-    const wantTop =
-      step.place === "top" || below > vh - 180
-        ? rect.top - PAD - 12 - 160
-        : below;
-    cardTop = Math.max(12, Math.min(wantTop, vh - 200));
-    cardLeft = Math.max(
-      12,
-      Math.min(rect.left + rect.width / 2 - cardW / 2, vw - cardW - 12),
-    );
-  }
+  const gap = PAD + 10;
+  const above = rect
+    ? step.place === "top" || rect.top + rect.height / 2 > vh / 2
+    : false;
+  const cardLeft = rect
+    ? Math.max(12, Math.min(rect.left + rect.width / 2 - cardW / 2, vw - cardW - 12))
+    : 12;
+  const cardStyle: React.CSSProperties = rect
+    ? above
+      ? { bottom: vh - rect.top + gap, left: cardLeft }
+      : { top: rect.top + rect.height + gap, left: cardLeft }
+    : { bottom: 24, left: 12 };
 
   return (
     <div className="fixed inset-0 z-[100]">
@@ -150,7 +153,7 @@ export function AppTour({
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2, ease: EASE }}
           className="absolute w-[min(20rem,calc(100vw-1.5rem))] rounded-xl border border-border bg-surface p-4 shadow-panel"
-          style={{ top: cardTop, left: cardLeft }}
+          style={cardStyle}
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium uppercase tracking-wide text-fg-subtle">

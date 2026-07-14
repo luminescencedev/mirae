@@ -16,18 +16,13 @@ import {
   portfolioApi,
 } from "../../lib/api.ts";
 
-const DISMISS_KEY = "mirae-onboarding-dismissed";
 const EASE = [0.23, 1, 0.32, 1] as const;
 
-/** Persistent floating onboarding widget (bottom-right): a green progress ring
- *  you can expand into the step list. Auto-hides when complete or dismissed. */
+/** Persistent floating onboarding widget (bottom-right): a gradient progress
+ *  ring you can expand into the step list. Stays until setup is complete;
+ *  collapse/expand only (no permanent dismiss). */
 export function OnboardingDock() {
   const { toast } = useToast();
-  const [dismissed, setDismissed] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      localStorage.getItem(DISMISS_KEY) === "1",
-  );
   const [open, setOpen] = useState(false);
 
   const profileQ = useQuery({ queryKey: ["artist", "me"], queryFn: artistApi.me });
@@ -42,7 +37,7 @@ export function OnboardingDock() {
   const linksQ = useQuery({ queryKey: ["artist-links"], queryFn: linksApi.list });
 
   const profile = profileQ.data;
-  if (dismissed || !profile) return null;
+  if (!profile) return null;
 
   const steps = [
     {
@@ -94,11 +89,8 @@ export function OnboardingDock() {
             <div className="relative border-b border-border p-5 text-center">
               <button
                 type="button"
-                aria-label="Dismiss"
-                onClick={() => {
-                  localStorage.setItem(DISMISS_KEY, "1");
-                  setDismissed(true);
-                }}
+                aria-label="Collapse"
+                onClick={() => setOpen(false)}
                 className="absolute right-3 top-3 grid size-7 place-items-center rounded-md text-fg-subtle transition-colors hover:bg-surface-muted hover:text-fg"
               >
                 <Icon icon={Cancel01Icon} size={15} />
@@ -237,7 +229,7 @@ function ProgressRing({ pct, size = 22 }: { pct: number; size?: number }) {
           r="15"
           fill="none"
           className="stroke-surface-muted"
-          strokeWidth="4"
+          strokeWidth="5.5"
         />
         <motion.circle
           cx="18"
@@ -245,7 +237,7 @@ function ProgressRing({ pct, size = 22 }: { pct: number; size?: number }) {
           r="15"
           fill="none"
           stroke="url(#mirae-dock-ring)"
-          strokeWidth="4"
+          strokeWidth="5.5"
           strokeLinecap="round"
           pathLength={100}
           initial={false}
