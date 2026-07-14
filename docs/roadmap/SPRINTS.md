@@ -738,6 +738,7 @@ Goal: improve the private workflow from validated beta feedback **and take the w
 - [ ] OPS-016 Brand motion & press-feedback pass (shared easing; reduced-motion safe)
 - [ ] OPS-017 Full accessibility + keyboard-navigation pass
 - [ ] OPS-018 Apply Mirae identity consistently in-app (sidebar, loaders, favicons, emails)
+- [ ] OPS-019 Account menu — make the sidebar footer avatar/name a dropdown (view public page, settings, sign out) instead of a lone sign-out button
 
 ## Sprint 25 — Subscription foundation
 
