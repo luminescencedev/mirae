@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Badge,
   Button,
   Dialog,
   DialogContent,
@@ -169,22 +168,20 @@ export function CommissionTypesEditor() {
                   <span className="truncate text-sm font-medium text-fg">
                     {t.name}
                   </span>
-                  {t.slots != null && (
-                    <Badge variant="emerald">{t.slots} slots</Badge>
-                  )}
+                  <span className="shrink-0 text-sm font-semibold tabular-nums text-fg">
+                    {euro(t.priceFromCents)}
+                  </span>
                 </div>
-                {t.blurb && (
-                  <p className="mt-0.5 truncate text-xs text-fg-muted">
-                    {t.blurb}
-                  </p>
-                )}
+                <p className="mt-0.5 truncate text-xs text-fg-subtle">
+                  {[
+                    t.turnaround,
+                    t.slots != null ? `${t.slots} slots` : null,
+                    t.blurb,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ") || "Fixed price"}
+                </p>
               </div>
-              <span className="w-24 text-right text-xs text-fg-muted">
-                {t.turnaround ?? "—"}
-              </span>
-              <span className="w-16 text-right text-sm font-semibold tabular-nums text-fg">
-                {euro(t.priceFromCents)}
-              </span>
               <button
                 onClick={() => openEdit(t)}
                 aria-label="Edit"

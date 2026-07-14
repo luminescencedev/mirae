@@ -215,6 +215,7 @@ function LinkRow({
 }) {
   const dragControls = useDragControls();
   const [dragging, setDragging] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [title, setTitle] = useState(link.title);
   const [url, setUrl] = useState(link.url);
 
@@ -246,99 +247,41 @@ function LinkRow({
       dragListener={false}
       dragControls={dragControls}
       className={cn(
-        "relative flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface p-2.5 transition-shadow",
+        "relative flex flex-col gap-2 rounded-xl border border-border bg-surface p-2.5 transition-shadow",
         dragging && "z-20 cursor-grabbing drag-lift",
       )}
     >
-      <button
-        type="button"
-        aria-label="Drag to reorder"
-        title="Drag to reorder"
-        onPointerDown={(e) => {
-          setDragging(true);
-          dragControls.start(e);
-        }}
-        className="grid size-8 shrink-0 cursor-grab touch-none place-items-center rounded-md text-fg-subtle hover:bg-surface-muted hover:text-fg active:cursor-grabbing"
-      >
-        <Icon icon={DragDropVerticalIcon} size={15} />
-      </button>
-      <span className="grid size-8 shrink-0 place-items-center rounded-md bg-surface-muted text-fg-subtle">
-        <Icon icon={linkIcon(link.platform, link.type)} size={15} />
-      </span>
-
-      <Input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        onBlur={() => {
-          if (title.trim() && title !== link.title)
-            patch.mutate({ title: title.trim() });
-        }}
-        className="h-8 min-w-32 flex-1"
-      />
-      <Input
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-        onBlur={() => {
-          if (url.trim() && url !== link.url) patch.mutate({ url: url.trim() });
-        }}
-        className="h-8 min-w-40 flex-[2]"
-      />
-
-      <Select
-        value={link.platform ?? "custom"}
-        onValueChange={(v) => patch.mutate({ platform: v })}
-      >
-        <SelectTrigger className="h-8 w-32">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {PLATFORMS.map((p) => (
-            <SelectItem key={p} value={p}>
-              {p}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Select
-        value={link.type}
-        onValueChange={(v) => patch.mutate({ type: v as LinkType })}
-      >
-        <SelectTrigger className="h-8 w-28">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {Object.entries(TYPE_LABELS).map(([v, label]) => (
-            <SelectItem key={v} value={v}>
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Select
-        value={link.style}
-        onValueChange={(v) => patch.mutate({ style: v as LinkStyle })}
-      >
-        <SelectTrigger className="h-8 w-28">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {Object.entries(STYLE_LABELS).map(([v, label]) => (
-            <SelectItem key={v} value={v}>
-              {label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <div className="ml-auto flex items-center gap-1.5">
-        <label className="flex items-center gap-1.5 text-xs text-fg-subtle">
-          <Switch
-            checked={link.enabled}
-            onCheckedChange={(v) => patch.mutate({ enabled: v })}
-          />
-        </label>
+      {/* Header — drag, icon, title, quick actions */}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          aria-label="Drag to reorder"
+          title="Drag to reorder"
+          onPointerDown={(e) => {
+            setDragging(true);
+            dragControls.start(e);
+          }}
+          className="grid size-8 shrink-0 cursor-grab touch-none place-items-center rounded-md text-fg-subtle hover:bg-surface-muted hover:text-fg active:cursor-grabbing"
+        >
+          <Icon icon={DragDropVerticalIcon} size={15} />
+        </button>
+        <span className="grid size-8 shrink-0 place-items-center rounded-md bg-surface-muted text-fg-subtle">
+          <Icon icon={linkIcon(link.platform, link.type)} size={15} />
+        </span>
+        <Input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          onBlur={() => {
+            if (title.trim() && title !== link.title)
+              patch.mutate({ title: title.trim() });
+          }}
+          placeholder="Label"
+          className="h-8 min-w-0 flex-1"
+        />
+        <Switch
+          checked={link.enabled}
+          onCheckedChange={(v) => patch.mutate({ enabled: v })}
+        />
         <IconBtn
           label={link.featured ? "Unfeature" : "Feature"}
           active={link.featured}
@@ -346,16 +289,10 @@ function LinkRow({
           onClick={() => patch.mutate({ featured: !link.featured })}
         />
         <IconBtn
-          label="Move up"
-          icon={ArrowUp01Icon}
-          onClick={onMoveUp}
-          disabled={!onMoveUp}
-        />
-        <IconBtn
-          label="Move down"
+          label={expanded ? "Hide options" : "More options"}
           icon={ArrowDown01Icon}
-          onClick={onMoveDown}
-          disabled={!onMoveDown}
+          onClick={() => setExpanded((v) => !v)}
+          className={cn("transition-transform", expanded && "rotate-180")}
         />
         <AlertDialog>
           <AlertDialogTrigger asChild>
@@ -363,7 +300,7 @@ function LinkRow({
               type="button"
               aria-label="Delete link"
               title="Delete link"
-              className="grid size-8 place-items-center rounded-md text-fg-subtle outline-none transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:ring-2 focus-visible:ring-accent-500"
+              className="grid size-8 shrink-0 place-items-center rounded-md text-fg-subtle outline-none transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:ring-2 focus-visible:ring-accent-500"
             >
               <Icon icon={Delete02Icon} size={15} />
             </button>
@@ -388,6 +325,93 @@ function LinkRow({
           </AlertDialogContent>
         </AlertDialog>
       </div>
+
+      {/* URL — always visible */}
+      <Input
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        onBlur={() => {
+          if (url.trim() && url !== link.url) patch.mutate({ url: url.trim() });
+        }}
+        placeholder="https://…"
+        className="h-8"
+      />
+
+      {/* Advanced — collapsed by default. CSS grid-rows animates height with
+         no JS/layout conflict inside the Reorder.Item. */}
+      <div
+        className={cn(
+          "grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none",
+          expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        )}
+      >
+        <div className="overflow-hidden">
+          <div className="flex flex-col gap-2 border-t border-border pt-2">
+          <div className="grid grid-cols-3 gap-2">
+            <Select
+              value={link.platform ?? "custom"}
+              onValueChange={(v) => patch.mutate({ platform: v })}
+            >
+              <SelectTrigger className="h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PLATFORMS.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {p}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={link.type}
+              onValueChange={(v) => patch.mutate({ type: v as LinkType })}
+            >
+              <SelectTrigger className="h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(TYPE_LABELS).map(([v, label]) => (
+                  <SelectItem key={v} value={v}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={link.style}
+              onValueChange={(v) => patch.mutate({ style: v as LinkStyle })}
+            >
+              <SelectTrigger className="h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(STYLE_LABELS).map(([v, label]) => (
+                  <SelectItem key={v} value={v}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-1">
+            <IconBtn
+              label="Move up"
+              icon={ArrowUp01Icon}
+              onClick={onMoveUp}
+              disabled={!onMoveUp}
+            />
+            <IconBtn
+              label="Move down"
+              icon={ArrowDown01Icon}
+              onClick={onMoveDown}
+              disabled={!onMoveDown}
+            />
+            <span className="text-xs text-fg-subtle">Platform · type · card style</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </Reorder.Item>
   );
 }
@@ -398,12 +422,14 @@ function IconBtn({
   onClick,
   disabled,
   active,
+  className,
 }: {
   label: string;
   icon: Parameters<typeof Icon>[0]["icon"];
   onClick?: () => void;
   disabled?: boolean;
   active?: boolean;
+  className?: string;
 }) {
   return (
     <button
@@ -413,10 +439,11 @@ function IconBtn({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "grid size-8 place-items-center rounded-md outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-30",
+        "grid size-8 shrink-0 place-items-center rounded-md outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent-500 disabled:opacity-30",
         active
           ? "text-accent-600"
           : "text-fg-subtle hover:bg-surface-muted hover:text-fg",
+        className,
       )}
     >
       <Icon icon={icon} size={15} />
