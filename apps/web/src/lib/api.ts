@@ -261,6 +261,15 @@ export type DeliveryView = {
   files: DeliveryFile[];
 };
 
+export const feedbackApi = {
+  submit: (message: string, sentiment: string | null, page: string) =>
+    fetch("/api/feedback", {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ message, sentiment, page }),
+    }).then(json<{ ok: true }>),
+};
+
 export const waitlistApi = {
   join: (email: string) =>
     fetch("/api/waitlist", {

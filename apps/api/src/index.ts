@@ -13,6 +13,7 @@ import { deliveryRoutes } from "./routes/delivery.ts";
 import { portfolioRoutes } from "./routes/portfolio.ts";
 import { linksRoutes } from "./routes/links.ts";
 import { analyticsRoutes } from "./routes/analytics.ts";
+import { feedbackRoutes } from "./routes/feedback.ts";
 import { injectStudioMeta } from "./lib/og.ts";
 import { studioOgResponse } from "./lib/og-card.ts";
 import { sweepOrphans } from "./lib/cleanup.ts";
@@ -187,6 +188,8 @@ app.route("/api/portfolio", portfolioRoutes);
 app.route("/api/artist-links", linksRoutes);
 // Studio insights (owner-scoped, privacy-friendly analytics).
 app.route("/api/analytics", analyticsRoutes);
+// In-app beta feedback (owner-scoped).
+app.route("/api/feedback", feedbackRoutes);
 
 // Branded OG social card (PNG, 1200×630) for a studio. Public + cacheable;
 // referenced by og:image on /@handle. Versioned via ?v so scrapers refetch.

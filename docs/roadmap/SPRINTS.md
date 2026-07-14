@@ -709,7 +709,7 @@ Goal: validate the complete experience with working artists before expanding fea
 - [x] BETA-001 Define tester profiles
 - [~] BETA-002 Recruit 5–10 artists (outreach messages ready → docs/beta/OUTREACH.md; sending is manual)
 - [x] BETA-003 Create interview script
-- [ ] BETA-004 Add in-app feedback capture
+- [x] BETA-004 Add in-app feedback capture
 - [ ] BETA-005 Observe studio setup
 - [ ] BETA-006 Observe mobile setup
 - [ ] BETA-007 Observe a real request workflow

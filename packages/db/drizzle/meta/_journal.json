@@ -127,6 +127,13 @@
       "when": 1784059719883,
       "tag": "0017_delivery_revoked",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1784066098516,
+      "tag": "0018_beta_feedback",
+      "breakpoints": true
     }
   ]
 }
