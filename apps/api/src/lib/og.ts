@@ -25,13 +25,14 @@ export type StudioMeta = {
   coverR2Key: string | null;
   metaTitle?: string | null;
   metaDescription?: string | null;
+  updatedAt?: Date | string | null;
 };
 
+// Branded, composited OG card served by the Worker. Versioned by updatedAt so
+// social scrapers refetch after a profile edit.
 function studioImageUrl(profile: StudioMeta, origin: string): string {
-  if (profile.coverR2Key) return `${origin}/api/studio/${profile.handle}/cover`;
-  if (profile.avatarR2Key)
-    return `${origin}/api/studio/${profile.handle}/avatar`;
-  return `${origin}/og-default.png`;
+  const v = profile.updatedAt ? new Date(profile.updatedAt).getTime() : 0;
+  return `${origin}/og/studio/${profile.handle}?v=${v}`;
 }
 
 /** Rewrite the base index.html <head> with this studio's SEO/OG metadata. */
@@ -41,8 +42,7 @@ export function injectStudioMeta(
   origin: string,
 ): string {
   const title =
-    profile.metaTitle?.trim() ||
-    `${profile.displayName} · Commissions · Mirae`;
+    profile.metaTitle?.trim() || `${profile.displayName} · Commissions · Mirae`;
   const rawDesc =
     profile.metaDescription?.trim() ||
     profile.tagline ||
@@ -51,7 +51,6 @@ export function injectStudioMeta(
   const desc = rawDesc.length > 200 ? `${rawDesc.slice(0, 197)}…` : rawDesc;
   const url = `${origin}/@${profile.handle}`;
   const image = studioImageUrl(profile, origin);
-  const hasImage = !!(profile.coverR2Key || profile.avatarR2Key);
   const closed = profile.status === "closed";
 
   const t = escapeAttr(title);
@@ -67,7 +66,7 @@ export function injectStudioMeta(
       name: profile.displayName,
       description: desc,
       url,
-      ...(hasImage ? { image } : {}),
+      image,
     },
   });
 
@@ -75,7 +74,11 @@ export function injectStudioMeta(
   const inject = [
     `<link rel="canonical" href="${u}" />`,
     `<meta name="robots" content="${closed ? "noindex, follow" : "index, follow"}" />`,
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
+    `<meta property="og:image:type" content="image/png" />`,
     `<meta property="og:image:alt" content="${escapeAttr(profile.displayName)}" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:image" content="${img}" />`,
     `<script type="application/ld+json">${ld}</script>`,
   ].join("\n    ");

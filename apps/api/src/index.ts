@@ -14,6 +14,7 @@ import { portfolioRoutes } from "./routes/portfolio.ts";
 import { linksRoutes } from "./routes/links.ts";
 import { analyticsRoutes } from "./routes/analytics.ts";
 import { injectStudioMeta } from "./lib/og.ts";
+import { studioOgResponse } from "./lib/og-card.ts";
 import { log, serializeError } from "./lib/log.ts";
 
 type Bindings = AuthEnv & {
@@ -184,6 +185,32 @@ app.route("/api/portfolio", portfolioRoutes);
 app.route("/api/artist-links", linksRoutes);
 // Studio insights (owner-scoped, privacy-friendly analytics).
 app.route("/api/analytics", analyticsRoutes);
+
+// Branded OG social card (PNG, 1200×630) for a studio. Public + cacheable;
+// referenced by og:image on /@handle. Versioned via ?v so scrapers refetch.
+app.get("/og/studio/:handle", async (c) => {
+  const handle = c.req.param("handle").toLowerCase();
+  const db = createDb(c.env.DATABASE_URL);
+  const [profile] = await db
+    .select()
+    .from(artistProfiles)
+    .where(eq(artistProfiles.handle, handle))
+    .limit(1);
+  if (!profile) return c.notFound();
+  try {
+    return await studioOgResponse(c.env.FILES, profile);
+  } catch (err) {
+    // Never leave og:image broken — fall back to a plain image.
+    log("warn", "og_card_failed", { handle, error: serializeError(err) });
+    const origin = new URL(c.req.url).origin;
+    const fallback = profile.coverR2Key
+      ? `${origin}/api/studio/${handle}/cover`
+      : profile.avatarR2Key
+        ? `${origin}/api/studio/${handle}/avatar`
+        : `${origin}/og-default.png`;
+    return c.redirect(fallback, 302);
+  }
+});
 
 // Public studio pages (/@handle): serve the real SPA index.html with per-studio
 // SEO + Open Graph metadata injected, so humans boot the app and crawlers /

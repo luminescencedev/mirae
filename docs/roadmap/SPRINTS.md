@@ -299,7 +299,7 @@ Goal: backend foundation for real artist work, profile imagery and public media.
 - [x] PORTFOLIO-009 Add project asset upload API
 - [x] PORTFOLIO-010 Add direct or controlled R2 upload flow
 - [x] PORTFOLIO-011 Add MIME and size validation
-- [ ] PORTFOLIO-012 Add image dimension metadata (deferred → media-pipeline; = DEBT-017)
+- [x] PORTFOLIO-012 Add image dimension metadata (done in media-pipeline MEDIA-002; = DEBT-017)
 - [x] PORTFOLIO-013 Add asset deletion
 - [x] PORTFOLIO-014 Add orphan asset cleanup
 - [x] PORTFOLIO-015 Extend public studio response
@@ -482,7 +482,7 @@ Appearance visual wiring
 
 Data
 
-- [ ] DEBT-017 (PORTFOLIO-012) Add image dimension metadata (deferred → media-pipeline: width/height columns exist but need Worker-side decode to populate)
+- [x] DEBT-017 (PORTFOLIO-012) Add image dimension metadata (done in media-pipeline MEDIA-002: header-parse decode populates width/height on upload)
 - [x] DEBT-018 (PORTFOLIO-016) Add migration and demo seed
 
 Completion notes (Sprint 17.5): burned down deferred polish debt. Shipped —
@@ -542,27 +542,28 @@ Goal: make the private app and public experience genuinely mobile-first **and po
 
 Completion notes (Sprint 18): mobile-first shell + premium on both platforms.
 Shipped — bottom nav, mobile header (mark + page), safe-area (viewport-fit=cover
-+ insets), mobile overflow menu (search/sign-out), mobile-adapted dialogs,
-virtual-keyboard handling, removal of hover-only controls, tighter global mobile
-gutter (px-4→sm:px-6). Page work: Overview dashboard (KPI cards with real
-sublabels + highlighted actionable stat); Queue defaults to grouped list on
-phones (board optional); Requests/Clients/Deliveries responsive; commission +
-request detail as full-screen sheets with safe-area sticky actions; quote /
-payment / portal / delivery mobile-optimized. Touch drag reordering (motion
-Reorder), gallery/camera upload, studio-page Edit/Preview switch (folds
-CUSTOM-010 + LINKS-017), persistent public request CTA (folds STUDIO-013), swipe
-lightbox. Perf: lazy loading + CLS-safe aspect containers. Polish: global Button
-press feedback (reduced-motion safe), unified density via shared PageHeader /
-cards / gutters, error+loading+empty states across list screens and managers.
-Deferred → media-pipeline: MOBILE-026 responsive R2 images (with DEBT-013/017).
-Pending manual device QA: MOBILE-029..034 (slow connections, thumb reach, iPhone
-Safari, Android Chrome, 320px, landscape).
+
+- insets), mobile overflow menu (search/sign-out), mobile-adapted dialogs,
+  virtual-keyboard handling, removal of hover-only controls, tighter global mobile
+  gutter (px-4→sm:px-6). Page work: Overview dashboard (KPI cards with real
+  sublabels + highlighted actionable stat); Queue defaults to grouped list on
+  phones (board optional); Requests/Clients/Deliveries responsive; commission +
+  request detail as full-screen sheets with safe-area sticky actions; quote /
+  payment / portal / delivery mobile-optimized. Touch drag reordering (motion
+  Reorder), gallery/camera upload, studio-page Edit/Preview switch (folds
+  CUSTOM-010 + LINKS-017), persistent public request CTA (folds STUDIO-013), swipe
+  lightbox. Perf: lazy loading + CLS-safe aspect containers. Polish: global Button
+  press feedback (reduced-motion safe), unified density via shared PageHeader /
+  cards / gutters, error+loading+empty states across list screens and managers.
+  Deferred → media-pipeline: MOBILE-026 responsive R2 images (with DEBT-013/017).
+  Pending manual device QA: MOBILE-029..034 (slow connections, thumb reach, iPhone
+  Safari, Android Chrome, 320px, landscape).
 
 ## Sprint 19 — Sharing, SEO & analytics
 
 Goal: make each public studio attractive to share and measurable without invasive tracking.
 
-- [~] SHARE-001 Generate dynamic artist OG images (og:image = cover/avatar now; composited card → media-pipeline)
+- [x] SHARE-001 Generate dynamic artist OG images (done in media-pipeline MEDIA-005: composited branded card at /og/studio/:handle)
 - [ ] SHARE-002 Generate project OG images (→ media-pipeline, needs image renderer)
 - [x] SHARE-003 Add canonical URLs
 - [x] SHARE-004 Add structured metadata
@@ -583,15 +584,16 @@ Completion notes (Sprint 19): public studios are now discoverable + shareable.
 Worker injects per-studio SEO/OG metadata into the real index.html (title,
 description, canonical, robots noindex-when-closed, Open Graph, Twitter card,
 ProfilePage JSON-LD); og:image = artist cover/avatar/default. Added /robots.txt
-+ dynamic /sitemap.xml (non-closed studios). Landing/base document got proper
-default OG tags. Privacy-friendly analytics (no cookies/PII): studio_events +
-ingestion (view/link/request funnel, daily IP+UA hash for unique views, referrer
-host only) + owner GET /api/analytics + an Insights tab (KPIs, 14-day chart, top
-referrers). Custom social title/description per studio (override defaults) with a
-live share-preview card in the profile editor. Deferred → media-pipeline:
-SHARE-001/002 composited OG image cards. Deferred: SHARE-014 most-viewed
-projects (needs per-project view events). Migrations 0010 (events) + 0011
-(meta_title/meta_description).
+
+- dynamic /sitemap.xml (non-closed studios). Landing/base document got proper
+  default OG tags. Privacy-friendly analytics (no cookies/PII): studio_events +
+  ingestion (view/link/request funnel, daily IP+UA hash for unique views, referrer
+  host only) + owner GET /api/analytics + an Insights tab (KPIs, 14-day chart, top
+  referrers). Custom social title/description per studio (override defaults) with a
+  live share-preview card in the profile editor. Deferred → media-pipeline:
+  SHARE-001/002 composited OG image cards. Deferred: SHARE-014 most-viewed
+  projects (needs per-project view events). Migrations 0010 (events) + 0011
+  (meta_title/meta_description).
 
 ## Sprint 19.6 — Media pipeline (deferred image work)
 
@@ -609,19 +611,19 @@ everything deferred with the note "→ media-pipeline" across Sprints 12/15/17.5
 
 Tickets
 
-- [ ] MEDIA-001 Decide pipeline approach (Cloudflare Images vs Worker wasm) + record in DECISIONS.md
-- [ ] MEDIA-002 Extract + persist image dimensions on upload (= PORTFOLIO-012 / DEBT-017; `width`/`height` columns already exist on `portfolio_assets`)
-- [ ] MEDIA-003 Generate tiny blur placeholders (`blurData`) on upload for blur-up loading
-- [ ] MEDIA-004 Serve responsive variants (srcset) for portfolio, cover, avatar + commission images (= STUDIO-019 / DEBT-013 / MOBILE-026)
-- [ ] MEDIA-005 Composited artist OG card — name + avatar + tagline on brand ground (= SHARE-001), wire to `og:image`
-- [ ] MEDIA-006 Composited project OG card (= SHARE-002)
-- [ ] MEDIA-007 Cache + invalidation for generated images (bust on media/profile update)
-- [ ] MEDIA-008 Blur-up + `width`/`height` on `<img>` everywhere to kill remaining CLS
+- [x] MEDIA-001 Decide pipeline approach — **Worker-side wasm, no paid add-on** (user: "no extra cost"). OG cards via `workers-og` (satori + resvg-wasm); dimensions via header parse; responsive variants deferred (revisit with Cloudflare Images only if we accept its cost). Recorded in DECISIONS.md.
+- [x] MEDIA-002 Extract + persist image dimensions on upload — `apps/api/src/lib/image-size.ts` header parser (PNG/GIF/JPEG/WebP, zero dep) wired into portfolio asset upload; new uploads populate `width`/`height`.
+- [ ] MEDIA-003 Generate tiny blur placeholders (`blurData`) on upload for blur-up loading (deferred — needs pixel decode; not worth the wasm for beta)
+- [ ] MEDIA-004 Serve responsive variants (srcset) (= STUDIO-019 / DEBT-013 / MOBILE-026) — **deferred**: full-size R2 + `loading="lazy"` + `width`/`height` (no CLS) is acceptable for beta; add Cloudflare Images `/cdn-cgi/image/` resize when we accept the cost
+- [x] MEDIA-005 Composited artist OG card — light studio-branded card: name + URL + bio + "Open for commissions" chip + "Powered by Mirae" mark (left), studio logo (avatar) in a rounded-square frame (right) (= SHARE-001), `apps/api/src/lib/og-card.ts` served at `/og/studio/:handle`, wired to `og:image` (1200×630 PNG, verified rendering)
+- [ ] MEDIA-006 Composited project OG card (= SHARE-002) — deferred: no per-project public URL yet (projects open in an in-page lightbox), so no target for a project-specific `og:image`
+- [x] MEDIA-007 Cache + invalidation — OG card served with workers-og's long immutable cache; `og:image` URL versioned `?v={updatedAt}` so scrapers refetch after a profile edit; fonts cached per colo via `caches.default`
+- [x] MEDIA-008 `width`/`height` on `<img>` (lightbox + gallery) + natural aspect-ratio for editorial single-image to kill CLS (blur-up folded into MEDIA-003, deferred)
 
-Notes: current fallbacks in place — `og:image` uses the raw cover/avatar (not a
-composited card); images serve at original size with `loading="lazy"` + fixed
-aspect-ratio containers. This sprint upgrades quality without changing the
-public UX contract.
+Notes: shipped the no-cost slice — branded composited OG cards + image
+dimensions + CLS hints. Responsive resize (MEDIA-004), blur placeholders
+(MEDIA-003) and project OG cards (MEDIA-006) stay deferred (cost / missing
+per-project route). Public UX contract unchanged.
 
 ## Sprint 20 — Onboarding & guided launch
 

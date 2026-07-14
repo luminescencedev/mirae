@@ -9,6 +9,7 @@ import {
 import { PROJECT_TYPES, PROJECT_VISIBILITIES } from "@mirae/shared";
 import { type AuthEnv } from "../auth.ts";
 import { getArtist } from "../lib/session.ts";
+import { imageSize } from "../lib/image-size.ts";
 
 type Bindings = AuthEnv & { ASSETS: Fetcher; FILES: R2Bucket };
 
@@ -173,7 +174,9 @@ portfolioRoutes.patch("/projects/:id", async (c) => {
       const [a] = await db
         .select({ id: portfolioAssets.id })
         .from(portfolioAssets)
-        .where(and(eq(portfolioAssets.id, cid), eq(portfolioAssets.projectId, id)))
+        .where(
+          and(eq(portfolioAssets.id, cid), eq(portfolioAssets.projectId, id)),
+        )
         .limit(1);
       if (a) set.coverAssetId = cid;
     }
@@ -304,7 +307,9 @@ portfolioRoutes.post("/projects/:id/assets", async (c) => {
     return c.json({ error: "Image exceeds 10 MB." }, 413);
 
   const key = `artists/${artist.id}/portfolio/${projectId}/${crypto.randomUUID()}`;
-  await c.env.FILES.put(key, await file.arrayBuffer(), {
+  const bytes = await file.arrayBuffer();
+  const dims = imageSize(bytes);
+  await c.env.FILES.put(key, bytes, {
     httpMetadata: { contentType: file.type },
   });
   const count = (
@@ -320,6 +325,8 @@ portfolioRoutes.post("/projects/:id/assets", async (c) => {
       r2Key: key,
       mimeType: file.type,
       sizeBytes: file.size,
+      width: dims?.width ?? null,
+      height: dims?.height ?? null,
       position: count,
     })
     .returning();
