@@ -713,9 +713,9 @@ Goal: validate the complete experience with working artists before expanding fea
 - [ ] BETA-005 Observe studio setup
 - [ ] BETA-006 Observe mobile setup
 - [ ] BETA-007 Observe a real request workflow
-- [ ] BETA-008 Measure activation
-- [ ] BETA-009 Measure portfolio-to-request conversion
-- [ ] BETA-010 Classify issues by severity and frequency
+- [x] BETA-008 Measure activation (defined → docs/beta/METRICS.md)
+- [x] BETA-009 Measure portfolio-to-request conversion (defined → docs/beta/METRICS.md; uses existing analytics)
+- [x] BETA-010 Classify issues by severity and frequency (→ docs/beta/BUG_TRIAGE.md)
 - [ ] BETA-011 Run prioritized beta-fix sprint
 - [ ] BETA-012 Ask permission for testimonials
 - [ ] BETA-013 Identify paid-plan boundaries
