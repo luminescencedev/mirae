@@ -27,6 +27,62 @@ import { CommandPalette } from "./CommandPalette.tsx";
 import { NotificationsMenu } from "./NotificationsMenu.tsx";
 import { BottomNav } from "./BottomNav.tsx";
 import { MobileMenu } from "./MobileMenu.tsx";
+import { AppTour, type TourStep } from "./AppTour.tsx";
+import { OnboardingDock } from "./OnboardingDock.tsx";
+
+const TOUR_KEY = "mirae-tour-done";
+const TOUR_STEPS: TourStep[] = [
+  {
+    target: "nav-overview",
+    to: "/app/overview",
+    title: "This is your Overview",
+    body: "Your studio at a glance — active work, new requests, earnings. You always land here.",
+  },
+  {
+    target: "onboarding-dock",
+    to: "/app/overview",
+    title: "Your setup progress",
+    body: "This ring tracks your studio setup. Open it anytime to see what's left and jump straight there.",
+    place: "top",
+  },
+  {
+    target: "nav-studio-page",
+    to: "/app/overview",
+    title: "Your public studio",
+    body: "The Studio page is everything visitors see at usemirae.com/@you — let's open it.",
+  },
+  {
+    target: "studio-tabs",
+    to: "/app/studio-page",
+    title: "Set it all up here",
+    body: "Profile, portfolio, links, commissions, appearance — switch tabs and the preview updates live.",
+  },
+  {
+    target: "studio-view",
+    to: "/app/studio-page",
+    title: "Share your studio",
+    body: "Preview it or open your public page anytime, then drop the link in your bio.",
+  },
+  {
+    target: "nav-requests",
+    to: "/app/overview",
+    title: "Requests land here",
+    body: "When someone requests a commission from your page, you'll manage it here — from brief to delivery.",
+  },
+  {
+    target: "search",
+    to: "/app/overview",
+    title: "Find anything fast",
+    body: "Press ⌘K (or tap here) for the command palette — jump to any commission, client or page.",
+  },
+  {
+    target: "notifications",
+    to: "/app/overview",
+    title: "Stay in the loop",
+    body: "New requests and studio activity show up here so nothing slips.",
+    place: "bottom",
+  },
+];
 
 const NAV_ROW = 36; // h-9
 const NAV_STEP = NAV_ROW + 2; // + gap-0.5
@@ -100,6 +156,7 @@ function NavList({
         <Link
           key={item.label}
           to={item.to}
+          data-tour={`nav-${item.to.replace("/app/", "")}`}
           onMouseEnter={() => {
             setHovered(i);
             move(i);
@@ -134,6 +191,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const collapsed = !open;
   const [paletteOpen, setPaletteOpen] = useState(false);
+  // First-run guided tour (skippable, shown once).
+  const [tourOpen, setTourOpen] = useState(
+    () => typeof window !== "undefined" && !localStorage.getItem(TOUR_KEY),
+  );
 
   // Start collapsed on small screens so the sidebar doesn't crowd the content.
   useEffect(() => {
@@ -199,6 +260,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <div className="px-4">
           <button
+            data-tour="search"
             onClick={() => setPaletteOpen(true)}
             className="flex h-9 w-full items-center rounded-md text-sm text-fg-subtle outline-none ring-1 ring-inset ring-border transition-[color,box-shadow] hover:text-fg hover:ring-border-strong focus-visible:ring-2 focus-visible:ring-accent-500"
           >
@@ -280,7 +342,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="hidden text-fg-subtle md:inline">/</span>
           <span className="hidden text-fg md:inline">{current}</span>
           <div className="ml-auto flex items-center gap-1">
-            <NotificationsMenu />
+            <span data-tour="notifications" className="inline-flex">
+              <NotificationsMenu />
+            </span>
             <MobileMenu
               userName={userName}
               userEmail={userEmail}
@@ -306,6 +370,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       />
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+
+      <OnboardingDock />
+
+      {tourOpen && (
+        <AppTour
+          steps={TOUR_STEPS}
+          onClose={() => {
+            localStorage.setItem(TOUR_KEY, "1");
+            setTourOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -627,30 +627,33 @@ public UX contract.
 
 Goal: take a new user from signup to a published, shareable studio in one journey.
 
-- [ ] ONBOARD-001 Redesign signup-to-studio journey (slice 2 — full wizard; approach TBD, see note)
-- [ ] ONBOARD-002 Add resumable onboarding state (slice 2)
-- [ ] ONBOARD-003 Add handle selection (slice 2; basic handle set at signup today)
-- [ ] ONBOARD-004 Add profile setup (slice 2; via studio-page today, linked from checklist)
-- [ ] ONBOARD-005 Add first commission type (slice 2; linked from checklist)
-- [ ] ONBOARD-006 Add first portfolio upload (slice 2; linked from checklist)
-- [ ] ONBOARD-007 Add first links (slice 2; linked from checklist)
-- [ ] ONBOARD-008 Add appearance preset selection (slice 2)
-- [ ] ONBOARD-009 Add studio preview (slice 2; studio-page has a live preview today)
-- [ ] ONBOARD-010 Add publish step (slice 2)
-- [x] ONBOARD-011 Add copy-link and share step (in the dashboard launch checklist)
-- [x] ONBOARD-012 Add dashboard checklist
-- [ ] ONBOARD-013 Add dismissible dashboard tour (slice 2)
-- [~] ONBOARD-014 Add contextual empty-state actions (checklist links each step to studio-page; full per-page empty-state CTAs in slice 2)
-- [ ] ONBOARD-015 Add onboarding analytics (slice 2)
+- [~] ONBOARD-001 Redesign signup-to-studio journey (guided tour + progress dock; signup still sets handle/name, then the app is the "wizard")
+- [~] ONBOARD-002 Add resumable onboarding state (progress derived live from real data — always resumes; no separate wizard state)
+- [ ] ONBOARD-003 Add handle selection (basic handle at signup today; richer availability UX pending)
+- [~] ONBOARD-004 Add profile setup (guided to it via tour + dock; edited on studio-page)
+- [~] ONBOARD-005 Add first commission type (guided via dock step)
+- [~] ONBOARD-006 Add first portfolio upload (guided via dock step)
+- [~] ONBOARD-007 Add first links (guided via dock step)
+- [ ] ONBOARD-008 Add appearance preset selection (pending)
+- [~] ONBOARD-009 Add studio preview (studio-page live preview + tour highlights it)
+- [~] ONBOARD-010 Add publish step ("Open for commissions" dock step; explicit publish flow pending)
+- [x] ONBOARD-011 Add copy-link and share step (copy studio link in the dock)
+- [x] ONBOARD-012 Add dashboard checklist (now a floating progress dock)
+- [x] ONBOARD-013 Add dismissible dashboard tour (first-run spotlight tour, skippable)
+- [~] ONBOARD-014 Add contextual empty-state actions (dock steps deep-link to each section; full per-page empty-state CTAs pending)
+- [ ] ONBOARD-015 Add onboarding analytics (pending)
 
-Slice 1 (shipped): a dismissible **launch checklist** on the dashboard —
-photo+bio, a commission type, a published project, links, open-for-commissions —
-each linking to the studio page, with a live progress bar and a copy-studio-link
-action. Auto-hides when complete or dismissed. **Slice 2 (multi-step signup
-wizard, ONBOARD-001..010/013/015) is intentionally held** — the onboarding
-approach (guided wizard vs the checklist pattern shipped here) was flagged to
-discuss before building. Recommendation: keep the low-friction checklist as the
-default and only add a wizard if data shows drop-off.
+Approach (shipped + approved): rather than a forced data-collection wizard,
+onboarding = a **first-run spotlight tour** (8 steps — dims the app, tracks +
+highlights nav / setup dock / studio tabs / view-page / requests / search /
+notifications with an explanatory card; navigates across routes; always
+skippable) + a **persistent floating progress dock** (bottom-right, gradient
+ring; expands to the step list with checked/struck states, brand mark, segmented
+gradient progress bar + copy-link; stays until setup is complete, collapse/expand
+only). The user drives the real app, guided, instead of a separate wizard.
+Still open (post-beta): richer handle selection (003), appearance preset (008),
+explicit publish flow (010), onboarding analytics (015) — beta will decide what
+to add/trim.
 
 ## Sprint 21 — Premium client portal
 
@@ -737,6 +740,7 @@ Goal: improve the private workflow from validated beta feedback **and take the w
 - [ ] OPS-016 Brand motion & press-feedback pass (shared easing; reduced-motion safe)
 - [ ] OPS-017 Full accessibility + keyboard-navigation pass
 - [ ] OPS-018 Apply Mirae identity consistently in-app (sidebar, loaders, favicons, emails)
+- [ ] OPS-019 Account menu — make the sidebar footer avatar/name a dropdown (view public page, settings, sign out) instead of a lone sign-out button
 
 ## Sprint 25 — Subscription foundation
 

@@ -68,7 +68,7 @@ function StudioPage() {
         subtitle="Everything a visitor sees at your public page."
         action={
           handle && (
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline" size="sm" data-tour="studio-view">
               <a href={`/@${handle}`} target="_blank" rel="noreferrer">
                 <Icon icon={LinkSquare02Icon} size={15} />
                 View page
@@ -102,6 +102,7 @@ function StudioPage() {
         </div>
 
         <div
+          data-tour="studio-tabs"
           className={cn(
             "relative min-w-0 max-w-full self-start",
             mobileView === "preview" && "hidden lg:block",

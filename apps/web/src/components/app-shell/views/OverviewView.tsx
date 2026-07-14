@@ -10,7 +10,6 @@ import {
 } from "@hugeicons/core-free-icons";
 import { commissionsApi, requestsApi } from "../../../lib/api.ts";
 import { STATUS_META, dueLabel, euro } from "../../../lib/commissions.ts";
-import { LaunchChecklist } from "../LaunchChecklist.tsx";
 
 const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 
@@ -91,7 +90,6 @@ export function OverviewView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <LaunchChecklist />
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {stats.map((s, i) => (
           <motion.div
