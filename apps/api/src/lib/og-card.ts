@@ -110,7 +110,7 @@ function cardHtml(profile: StudioMeta, avatarUri: string | null): string {
 
     <div style="display:flex;flex-direction:column;justify-content:center;flex:1;padding-left:72px;padding-right:40px;">
       <div style="display:flex;align-items:center;gap:16px;">
-        <span style="display:flex;font-size:64px;font-weight:700;line-height:1;color:#0f1320;white-space:nowrap;margin-left:-18px;">${name}</span>
+        <span style="font-size:64px;font-weight:700;line-height:1;color:#0f1320;white-space:nowrap;margin-left:-18px;">${name}</span>
         ${statusDot}
       </div>
       <div style="display:flex;margin-top:14px;">
