@@ -10,18 +10,57 @@ import {
   milestones,
 } from "../../lib/commissions.ts";
 
-type PortalArtist = { displayName: string; handle: string } | null;
+type PortalArtist = {
+  displayName: string;
+  handle: string;
+  tagline: string | null;
+  hasAvatar: boolean;
+  hasCover: boolean;
+} | null;
+
+const avatarUrl = (handle: string) =>
+  `/api/studio/${encodeURIComponent(handle)}/avatar`;
+const coverUrl = (handle: string) =>
+  `/api/studio/${encodeURIComponent(handle)}/cover`;
+
+/** Studio avatar disc — real image when set, else an initial gradient. */
+function StudioAvatar({
+  artist,
+  size,
+}: {
+  artist: PortalArtist;
+  size: number;
+}) {
+  const initial = (artist?.displayName ?? "·").slice(0, 1).toUpperCase();
+  if (artist?.hasAvatar) {
+    return (
+      <img
+        src={avatarUrl(artist.handle)}
+        alt={artist.displayName}
+        width={size}
+        height={size}
+        style={{ width: size, height: size }}
+        className="shrink-0 rounded-full object-cover ring-1 ring-black/5"
+      />
+    );
+  }
+  return (
+    <span
+      style={{ width: size, height: size }}
+      className="grid shrink-0 place-items-center rounded-full bg-linear-to-br from-accent-300 to-accent-500 font-semibold text-white"
+    >
+      {initial}
+    </span>
+  );
+}
 
 /** Slim brand bar — anchors the client in the artist's studio, credits Mirae. */
 function BrandBar({ artist }: { artist: PortalArtist }) {
-  const initial = (artist?.displayName ?? "·").slice(0, 1).toUpperCase();
   return (
     <header className="sticky top-0 z-10 border-b border-border/70 bg-canvas/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-xl items-center justify-between px-5 sm:px-6">
         <div className="flex min-w-0 items-center gap-2.5">
-          <span className="grid size-7 shrink-0 place-items-center rounded-full bg-linear-to-br from-accent-300 to-accent-500 text-xs font-semibold text-white">
-            {initial}
-          </span>
+          <StudioAvatar artist={artist} size={28} />
           <span className="truncate text-sm font-medium text-fg">
             {artist ? `${artist.displayName}'s studio` : "Commission"}
           </span>
@@ -159,6 +198,18 @@ export function PortalPage({ token }: { token: string }) {
 
   return (
     <Shell artist={artist}>
+      {artist?.hasCover && (
+        <div className="mb-5 h-28 overflow-hidden rounded-2xl border border-border bg-surface-muted shadow-soft sm:h-32">
+          <img
+            src={coverUrl(artist.handle)}
+            alt=""
+            className="size-full object-cover"
+          />
+        </div>
+      )}
+      {artist?.tagline && (
+        <p className="mb-1.5 text-sm text-fg-subtle">{artist.tagline}</p>
+      )}
       <h1 className="text-2xl font-semibold tracking-tight text-fg">
         {commission.title}
       </h1>

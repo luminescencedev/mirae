@@ -27,14 +27,26 @@ portalRoutes.get("/:token", async (c) => {
     .limit(1);
   if (!commission) return c.json({ error: "not found" }, 404);
 
-  const [artist] = await db
+  const [artistRow] = await db
     .select({
       displayName: artistProfiles.displayName,
       handle: artistProfiles.handle,
+      tagline: artistProfiles.tagline,
+      avatarR2Key: artistProfiles.avatarR2Key,
+      coverR2Key: artistProfiles.coverR2Key,
     })
     .from(artistProfiles)
     .where(eq(artistProfiles.id, commission.artistId))
     .limit(1);
+  const artist = artistRow
+    ? {
+        displayName: artistRow.displayName,
+        handle: artistRow.handle,
+        tagline: artistRow.tagline,
+        hasAvatar: !!artistRow.avatarR2Key,
+        hasCover: !!artistRow.coverR2Key,
+      }
+    : null;
 
   const [quote] = await db
     .select({ totalCents: quotes.totalCents, status: quotes.status })

@@ -202,7 +202,13 @@ export type PortalView = {
     priceCents: number | null;
     paidCents: number;
   };
-  artist: { displayName: string; handle: string } | null;
+  artist: {
+    displayName: string;
+    handle: string;
+    tagline: string | null;
+    hasAvatar: boolean;
+    hasCover: boolean;
+  } | null;
   quote: { totalCents: number; status: QuoteStatus } | null;
 };
 
