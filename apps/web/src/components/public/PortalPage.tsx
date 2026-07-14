@@ -62,7 +62,10 @@ function StudioAvatar({
 /** Slim brand bar — anchors the client in the artist's studio, credits Mirae. */
 function BrandBar({ artist }: { artist: PortalArtist }) {
   return (
-    <header className="sticky top-0 z-10 border-b border-border/70 bg-canvas/80 backdrop-blur-md">
+    <header
+      className="sticky top-0 z-10 border-b border-border/70 bg-canvas/80 backdrop-blur-md"
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
+    >
       <div className="mx-auto flex h-14 max-w-xl items-center justify-between px-5 sm:px-6">
         <div className="flex min-w-0 items-center gap-2.5">
           <StudioAvatar artist={artist} size={28} />
@@ -90,7 +93,7 @@ function Shell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-surface-sunken">
+    <div className="flex min-h-dvh flex-col overflow-x-hidden bg-surface-sunken">
       <BrandBar artist={artist ?? null} />
       <main className="mx-auto w-full max-w-xl flex-1 px-5 py-8 sm:px-6 sm:py-10">
         {children}
