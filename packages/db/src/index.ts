@@ -1,5 +1,9 @@
 export { createDb, type Database } from "./client.ts";
 
+// Re-export the drizzle query operators so consumers (e.g. admin scripts that
+// can't resolve `drizzle-orm` directly) get them from the single db entrypoint.
+export { and, eq, isNull, sql } from "drizzle-orm";
+
 // Tables + enums (named), and the whole schema namespace for the client.
 export * from "./schema/index.ts";
 export * as schema from "./schema/index.ts";

@@ -8,6 +8,7 @@ import {
 import { Button, Input } from "@mirae/ui";
 import { AuthLayout, Field } from "../components/marketing/AuthLayout.tsx";
 import { authClient, signUp } from "../lib/auth-client.ts";
+import { betaApi } from "../lib/api.ts";
 
 function Signup() {
   const navigate = useNavigate();
@@ -22,11 +23,15 @@ function Signup() {
     setLoading(true);
     setError(null);
     const res = await signUp.email({ name, email, password });
-    setLoading(false);
     if (res.error) {
+      setLoading(false);
       setError(res.error.message ?? "Could not create your account.");
       return;
     }
+    // Redeem the pending invite now that the account exists (no-op if the gate
+    // is off). A failure here shouldn't strand the new account on this page.
+    await betaApi.redeem().catch(() => undefined);
+    setLoading(false);
     navigate({ to: "/onboarding" });
   }
 
@@ -84,6 +89,11 @@ export const Route = createFileRoute("/signup")({
   beforeLoad: async () => {
     const { data } = await authClient.getSession();
     if (data) throw redirect({ to: "/app" });
+    // Closed beta: no invitation → send back to the access gate. The server
+    // enforces this too (403 on signup) — this is just the friendly redirect.
+    const status = await betaApi.status().catch(() => null);
+    if (status?.closedBeta && !status.pendingInvite)
+      throw redirect({ to: "/beta-access" });
   },
   component: Signup,
 });

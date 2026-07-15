@@ -89,6 +89,39 @@ Operational runbook for Mirae in production. Pairs with
 - **Secrets rotation**: rotate the affected Worker secret + redeploy; rotating
   `BETTER_AUTH_SECRET` invalidates all sessions (forces re-login).
 
+## Closed-beta access administration (Sprint 23)
+
+Signup is gated to invited artists (see the gate design in
+[`SECURITY.md`](./SECURITY.md)). This is how you run it.
+
+**Secrets / config (one-time):**
+
+- `wrangler secret put BETA_CODE_PEPPER` — a strong random value
+  (`openssl rand -hex 32`). Salts every code hash. **Changing it invalidates
+  every existing code.** Keep it backed up; it is never printed anywhere.
+- `CLOSED_BETA_ENABLED` — a plain `[vars]` value in `apps/api/wrangler.toml`
+  (`"true"`). ON unless set to exactly `"false"`. Flip to `"false"` + redeploy
+  to open signup to everyone at public launch.
+
+**Invitation codes** (run locally with `.env` holding `DATABASE_URL` +
+`BETA_CODE_PEPPER` pointed at the target DB):
+
+```txt
+pnpm beta:code:create -- --label "Rain Aoki" --uses 1 --expires-days 14
+pnpm beta:code:list
+pnpm beta:code:revoke -- <id>
+```
+
+- `create` prints the plaintext code **once** — copy it into the invite email
+  immediately; it cannot be recovered (only its hash is stored). One code per
+  tester, single-use by default.
+- `list` shows id / uses / expiry / status / label (never the code).
+- `revoke` disables a code immediately (existing members keep access; revoke a
+  _member_ directly in the DB via `beta_members.revoked_at` if needed).
+
+Invite the first 3 testers before widening. To revoke a member's access, set
+`beta_members.revoked_at`; the private API 403s them on the next request.
+
 ### Contacts
 
 - Infra: Cloudflare dashboard (Worker, R2, WAF).

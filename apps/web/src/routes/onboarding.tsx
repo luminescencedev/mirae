@@ -2,8 +2,7 @@ import { useState } from "react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { Button, Input } from "@mirae/ui";
 import { AuthLayout, Field } from "../components/marketing/AuthLayout.tsx";
-import { authClient } from "../lib/auth-client.ts";
-import { artistApi } from "../lib/api.ts";
+import { betaApi } from "../lib/api.ts";
 
 function Onboarding() {
   const navigate = useNavigate();
@@ -77,11 +76,20 @@ function Onboarding() {
 // Must be signed in to onboard.
 export const Route = createFileRoute("/onboarding")({
   beforeLoad: async () => {
-    const { data } = await authClient.getSession();
-    if (!data) throw redirect({ to: "/login" });
+    // One status call reports auth + membership + whether onboarding is still
+    // needed (avoids extra /api/auth/get-session hits during navigation).
+    const status = await betaApi.status().catch(() => null);
+    if (!status?.authenticated) throw redirect({ to: "/login" });
+    // Closed beta, no membership yet → redeem the pending invite, else back to
+    // the gate. Redemption tells us whether a studio already exists.
+    if (status.closedBeta && !status.hasBetaAccess) {
+      const redeemed = await betaApi.redeem().catch(() => null);
+      if (!redeemed) throw redirect({ to: "/beta-access" });
+      if (redeemed.next === "app") throw redirect({ to: "/app" });
+      return;
+    }
     // Already have a studio → straight to the app.
-    const profile = await artistApi.me();
-    if (profile) throw redirect({ to: "/app" });
+    if (!status.needsOnboarding) throw redirect({ to: "/app" });
   },
   component: Onboarding,
 });

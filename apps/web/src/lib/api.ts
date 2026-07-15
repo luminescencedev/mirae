@@ -267,6 +267,28 @@ export const feedbackApi = {
     }).then(json<{ ok: true }>),
 };
 
+export type BetaStatus = {
+  authenticated: boolean;
+  hasBetaAccess: boolean;
+  needsOnboarding?: boolean;
+  pendingInvite?: boolean;
+  closedBeta: boolean;
+};
+
+export const betaApi = {
+  status: () => fetch("/api/beta/status").then(json<BetaStatus>),
+  verify: (code: string) =>
+    fetch("/api/beta/verify", {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({ code }),
+    }).then(json<{ ok: true; next: "signup" | "app" | "onboarding" }>),
+  redeem: () =>
+    fetch("/api/beta/redeem", { method: "POST" }).then(
+      json<{ ok: true; next: "app" | "onboarding" }>,
+    ),
+};
+
 export const waitlistApi = {
   join: (email: string) =>
     fetch("/api/waitlist", {

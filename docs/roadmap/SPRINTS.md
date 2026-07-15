@@ -2,9 +2,31 @@
 
 > Ticket queue and completion tracker. Update checkboxes as tickets complete. Source of truth for "next ticket".
 
-## Current sprint
+## Current phase
 
-Sprints 11 (identity), 12 (portfolio backend), 13 (portfolio manager UI) and 14 (artist links: data + API + manager) ✅ shipped. `@mirae/ui` expanded with Select/Switch/Avatar/Skeleton/Progress/Separator/Accordion/AlertDialog. **Next sprint: Sprint 15 — Creative public studio (the flagship `/@handle` redesign)**, which also lands the deferred link render pieces (cards/icons/mobile preview) + the Fiverr-like request drawer. Component adoption across existing screens folded into Sprint 24 (OPS-014). Full detail in docs/roadmap/POST_MVP_ROADMAP.md.
+**Closed artist beta — preparation & validation.** Sprints 11–23 are shipped/
+deployed (public studio, request flow, client portal, media pipeline, trust &
+security, beta prep). The product build is paused: **no new product sprint
+begins** until
+
+- production migrations are verified against Neon (not just "migration successful");
+- the critical artist + client flows are runtime-tested end to end;
+- the first invited testers have completed onboarding;
+- beta feedback has been triaged (`docs/beta/BUG_TRIAGE.md`).
+
+The **closed-beta access gate** (invite codes; server-enforced signup block) is
+✅ built — see Sprint 23 below, and design/ops in
+[`SECURITY.md`](../architecture/SECURITY.md) /
+[`OPERATIONS.md`](../architecture/OPERATIONS.md). Migration `0020_beta_access.sql`
+is generated but **not yet applied to prod** (awaiting explicit approval).
+Everything else this phase is manual: recruit testers (`docs/beta/OUTREACH.md`),
+observe sessions, interview (`docs/beta/INTERVIEW_SCRIPT.md`), measure
+(`docs/beta/METRICS.md`).
+
+Sprint status (11–23): all ✅ shipped except items explicitly marked
+`(deferred)` / `(manual — during beta)` in their sections below. Post-beta work
+resumes from the prioritized beta-fix sprint (BETA-011) then the remaining
+POST_MVP roadmap.
 
 ## Sprint 0 — Repository foundation ✅ complete
 
@@ -710,6 +732,7 @@ Goal: validate the complete experience with working artists before expanding fea
 - [~] BETA-002 Recruit 5–10 artists (outreach messages ready → docs/beta/OUTREACH.md; sending is manual)
 - [x] BETA-003 Create interview script
 - [x] BETA-004 Add in-app feedback capture
+- [x] BETA-004b Closed-beta access gate — hashed single-use invite codes, server-side signup block (403, no row inserted), signed short-lived pending invite, atomic redemption, `betaGate` on private API, `CLOSED_BETA_ENABLED` kill-switch, admin CLI (`beta:code:*`). Migration `0020` generated (apply to prod pending approval).
 - [ ] BETA-005 Observe studio setup (manual — during beta; script in INTERVIEW_SCRIPT.md §2)
 - [ ] BETA-006 Observe mobile setup (manual — during beta)
 - [ ] BETA-007 Observe a real request workflow (manual — during beta)

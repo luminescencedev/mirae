@@ -20,7 +20,10 @@
     "db:migrate": "pnpm --filter @mirae/db db:migrate",
     "db:studio": "pnpm --filter @mirae/db db:studio",
     "db:check": "node --env-file=.env packages/db/src/check.ts",
-    "db:seed": "pnpm --filter @mirae/db db:seed"
+    "db:seed": "pnpm --filter @mirae/db db:seed",
+    "beta:code:create": "node --env-file=.env scripts/beta-code.mjs create",
+    "beta:code:list": "node --env-file=.env scripts/beta-code.mjs list",
+    "beta:code:revoke": "node --env-file=.env scripts/beta-code.mjs revoke"
   },
   "devDependencies": {
     "@mirae/config": "workspace:*",
