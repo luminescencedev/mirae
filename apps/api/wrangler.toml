@@ -43,5 +43,11 @@ simple = { limit = 20, period = 60 }
 [triggers]
 crons = ["0 3 * * *"]
 
+# Closed-beta gate (see src/lib/beta.ts). ON unless set to exactly "false".
+# Flip to "false" at public launch. The BETA_CODE_PEPPER secret is set with
+# `wrangler secret put BETA_CODE_PEPPER` (never commit it).
+[vars]
+CLOSED_BETA_ENABLED = "true"
+
 [dev]
 port = 8787

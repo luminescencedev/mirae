@@ -33,6 +33,23 @@ deliveries
 activity_logs
 ```
 
+## Closed-beta tables (Sprint 23, shipped)
+
+```txt
+beta_access_codes     -- salted-hash invite codes (code_hash unique, max_uses,
+                         uses, expires_at, revoked_at, last_used_at). Plaintext
+                         is never stored.
+beta_invite_sessions  -- short-lived pending invite (30 min) created at verify,
+                         consumed at signup. The signed HttpOnly cookie holds
+                         only this row's id. FK → beta_access_codes (cascade).
+beta_members          -- one row per authorized user (user_id unique, granted_at,
+                         revoked_at). Account existence ≠ membership; this is.
+beta_feedback         -- in-app artist feedback (sentiment, message, page).
+```
+
+See the gate design in [`SECURITY.md`](./SECURITY.md), admin in
+[`OPERATIONS.md`](./OPERATIONS.md). Migration `0020_beta_access.sql`.
+
 ## Future tables (post-MVP)
 
 ```txt

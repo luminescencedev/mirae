@@ -115,6 +115,43 @@ bits) base64url-encoded via `crypto.getRandomValues`. Unguessable; the token is
 the sole credential for the page, so it's treated as a secret (not logged, not
 indexed). Rotation/revocation: TRUST-009.
 
+## Closed-beta access gate (Sprint 23)
+
+Signup is gated to invited artists only. The gate is **server-enforced** — a
+frontend `/beta-access` page is convenience, not the control.
+
+- **Codes are never stored in plaintext.** Only a salted `SHA-256` hash is
+  persisted (`beta_access_codes.code_hash`), salted with the `BETA_CODE_PEPPER`
+  secret. The plaintext is shown once at creation (`pnpm beta:code:create`) and
+  is unrecoverable. Codes are `MIRAE-XXXX-XXXX-XXXX`, ~60 bits, single-use by
+  default (`max_uses`), and expirable/revocable.
+- **Account creation is blocked before validation.** A signup guard runs
+  _before_ the Better Auth handler (`apps/api/src/index.ts`): a POST to
+  `/api/auth/sign-up/*` without a valid pending invite returns **403 and
+  inserts no user/account/session/verification row** — bots can't flood the DB
+  by hitting the endpoint directly.
+- **Flow:** `/beta-access` → `POST /api/beta/verify` validates the code and,
+  for a logged-out visitor, reserves a short-lived (30 min) server-side
+  `beta_invite_sessions` row bound to an **HttpOnly, SameSite=Lax, HMAC-signed**
+  cookie (signed with `BETTER_AUTH_SECRET`; holds only the row id). Signup is
+  then allowed; after the account exists, `POST /api/beta/redeem` consumes the
+  invite and writes `beta_members`.
+- **No use is spent on mere verification.** A code's `uses` counter increments
+  only at atomic redemption via a conditional `UPDATE … WHERE uses < max_uses
+AND not revoked AND not expired`, which is the concurrency guard — racing
+  redemptions can't overshoot `max_uses`. Redemption is idempotent for existing
+  members.
+- **Errors are generic.** Verify never reveals whether a code is unknown,
+  expired, exhausted, or revoked — all read "invalid".
+- **Private API is gated too.** `betaGate` middleware returns 403 for an
+  authenticated non-member on every artist-management surface (artists,
+  portfolio, commissions, requests, links, analytics, feedback). Public studio
+  pages, request intake, client portals and deliveries stay open — the gate
+  only touches account creation and artist tooling.
+- **Reversible for launch.** `CLOSED_BETA_ENABLED="false"` disables the gate
+  everywhere (signup opens to all, `betaGate` becomes a no-op). Fails **closed**
+  when unset. Ops: see [`OPERATIONS.md`](./OPERATIONS.md).
+
 ## Operational
 
 - **Backups & recovery** — see [`OPERATIONS.md`](./OPERATIONS.md) (TRUST-019).

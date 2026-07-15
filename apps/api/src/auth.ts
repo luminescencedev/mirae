@@ -9,6 +9,10 @@ export type AuthEnv = {
   // Optional — notification emails no-op when unset (see lib/mail.ts).
   RESEND_API_KEY?: string;
   MAIL_FROM?: string;
+  // Closed-beta gate (see lib/beta.ts). Pepper salts invite-code hashes;
+  // CLOSED_BETA_ENABLED="false" disables the gate for public launch.
+  BETA_CODE_PEPPER?: string;
+  CLOSED_BETA_ENABLED?: string;
 };
 
 // Better Auth is built per request (Workers have no long-lived globals; env
@@ -34,12 +38,22 @@ export function makeAuth(env: AuthEnv) {
     session: {
       expiresIn: 60 * 60 * 24 * 30,
       updateAge: 60 * 60 * 24,
+      // Serve getSession() from a short-lived signed cookie instead of a
+      // server round-trip on every call. Route guards (app/onboarding/signup/
+      // beta) call getSession on each navigation; without this the shared
+      // /get-session rate limit trips and the client reads 429 as "logged out".
+      cookieCache: { enabled: true, maxAge: 5 * 60 },
     },
-    // Throttle auth endpoints (login/signup/reset) against brute force.
+    // Throttle auth endpoints (login/signup/reset) against brute force. The
+    // read-only /get-session is called on every guarded navigation, so it gets
+    // a much higher ceiling than the write/auth endpoints.
     rateLimit: {
       enabled: true,
       window: 60,
       max: 20,
+      customRules: {
+        "/get-session": { window: 60, max: 300 },
+      },
     },
     advanced: {
       // Secure, httpOnly cookies over HTTPS; cross-subdomain so app. + apex

@@ -14,6 +14,7 @@ import { portfolioRoutes } from "./routes/portfolio.ts";
 import { linksRoutes } from "./routes/links.ts";
 import { analyticsRoutes } from "./routes/analytics.ts";
 import { feedbackRoutes } from "./routes/feedback.ts";
+import { betaRoutes, betaGate, signupAllowed } from "./routes/beta.ts";
 import { injectStudioMeta } from "./lib/og.ts";
 import { studioOgResponse } from "./lib/og-card.ts";
 import { sweepOrphans } from "./lib/cleanup.ts";
@@ -128,10 +129,38 @@ app.get("/sitemap.xml", async (c) => {
 });
 app.get("/api/health", (c) => c.json({ status: "ok" }));
 
+// Closed-beta signup gate — block account creation unless a valid pending
+// invitation exists. Registered BEFORE the Better Auth handler so a bot hitting
+// the signup endpoint directly never inserts a user/session row.
+app.post("/api/auth/sign-up/*", async (c, next) => {
+  if (!(await signupAllowed(c)))
+    return c.json({ error: "An invitation is required to sign up." }, 403);
+  return next();
+});
+
 // Better Auth — handles /api/auth/* (sign-up, sign-in, session, …).
 app.on(["GET", "POST"], "/api/auth/*", (c) =>
   makeAuth(c.env).handler(c.req.raw),
 );
+
+// Closed-beta invitation gate (verify / redeem / status). Public — its own
+// rate limiting inside.
+app.route("/api/beta", betaRoutes);
+
+// Require beta membership on every private artist-management surface (no-op
+// when the gate is off; never touches public studio/portal/delivery routes).
+for (const prefix of [
+  "/api/artists/*",
+  "/api/commission-types/*",
+  "/api/requests/*",
+  "/api/commissions/*",
+  "/api/portfolio/*",
+  "/api/artist-links/*",
+  "/api/analytics/*",
+  "/api/feedback/*",
+]) {
+  app.use(prefix, betaGate);
+}
 
 // Public waitlist capture (landing page, no auth).
 app.post("/api/waitlist", rateLimit(), async (c) => {

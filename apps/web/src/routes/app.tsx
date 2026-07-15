@@ -1,17 +1,20 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { AppShell } from "../components/app-shell/AppShell.tsx";
-import { authClient } from "../lib/auth-client.ts";
-import { artistApi } from "../lib/api.ts";
+import { betaApi } from "../lib/api.ts";
 
 // /app layout. In dev this lives at /app; in production the Worker serves it
 // on app.usemirae.com. Child screens render into the AppShell's Outlet.
-// Protected — no session → /login; no studio profile yet → /onboarding.
+// Protected — no session → /login; no beta access → /beta-access; no studio
+// profile yet → /onboarding. A single /api/beta/status call answers all three
+// (it reports auth + membership + onboarding), so guarded navigation doesn't
+// hammer /api/auth/get-session.
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
-    const { data } = await authClient.getSession();
-    if (!data) throw redirect({ to: "/login" });
-    const profile = await artistApi.me();
-    if (!profile) throw redirect({ to: "/onboarding" });
+    const status = await betaApi.status().catch(() => null);
+    if (!status?.authenticated) throw redirect({ to: "/login" });
+    if (status.closedBeta && !status.hasBetaAccess)
+      throw redirect({ to: "/beta-access" });
+    if (status.needsOnboarding) throw redirect({ to: "/onboarding" });
   },
   component: () => (
     <div className="h-dvh">
