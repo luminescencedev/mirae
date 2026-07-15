@@ -188,16 +188,16 @@ export function AppearanceEditor() {
         </Row>
         <div className="py-3">
           <p className="mb-2 text-sm text-fg">Background</p>
-          <div className="grid grid-cols-5 gap-2">
-            {APPEARANCE_BACKGROUNDS.map((b) => (
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+            {APPEARANCE_BACKGROUNDS.map((b, i) => (
               <button
                 key={b}
                 type="button"
-                aria-label={`Background ${b}`}
+                aria-label={`Background ${i + 1}`}
                 aria-pressed={cfg.background === b}
                 onClick={() => set("background", b)}
                 className={cn(
-                  "aspect-square overflow-hidden rounded-lg border-2 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent-500",
+                  "aspect-video overflow-hidden rounded-lg border-2 bg-canvas outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent-500",
                   cfg.background === b
                     ? "border-accent-500"
                     : "border-transparent ring-1 ring-border hover:ring-border-strong",
@@ -206,7 +206,7 @@ export function AppearanceEditor() {
                 <img
                   src={BG_THUMBS[b]}
                   alt=""
-                  className="size-full bg-canvas object-cover"
+                  className="size-full object-cover"
                 />
               </button>
             ))}
