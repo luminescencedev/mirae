@@ -30,7 +30,6 @@ export const artistProfiles = pgTable("artist_profiles", {
   metaDescription: text("meta_description"),
   // Profile media (R2 object keys; served via the API). Nullable until set.
   avatarR2Key: text("avatar_r2_key"),
-  coverR2Key: text("cover_r2_key"),
   // Public-studio appearance config (validated in the app layer via
   // normalizeAppearance). Null → defaults.
   appearance: jsonb("appearance").$type<StudioAppearance>(),

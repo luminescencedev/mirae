@@ -1,0 +1,1 @@
+ALTER TABLE "artist_profiles" DROP COLUMN "cover_r2_key";

@@ -42,7 +42,6 @@ portalRoutes.get("/:token", async (c) => {
       handle: artistProfiles.handle,
       tagline: artistProfiles.tagline,
       avatarR2Key: artistProfiles.avatarR2Key,
-      coverR2Key: artistProfiles.coverR2Key,
     })
     .from(artistProfiles)
     .where(eq(artistProfiles.id, commission.artistId))
@@ -53,7 +52,6 @@ portalRoutes.get("/:token", async (c) => {
         handle: artistRow.handle,
         tagline: artistRow.tagline,
         hasAvatar: !!artistRow.avatarR2Key,
-        hasCover: !!artistRow.coverR2Key,
       }
     : null;
 

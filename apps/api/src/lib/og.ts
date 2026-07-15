@@ -22,7 +22,6 @@ export type StudioMeta = {
   bio: string | null;
   status: string;
   avatarR2Key: string | null;
-  coverR2Key: string | null;
   metaTitle?: string | null;
   metaDescription?: string | null;
   updatedAt?: Date | string | null;

@@ -18,7 +18,6 @@ import {
 } from "../schema/index.ts";
 import {
   AVATAR,
-  COVER,
   DELIVERABLE,
   DEMO_HANDLE,
   PROJECTS,
@@ -82,7 +81,6 @@ const [artist] = await db
       "Character illustration, key visuals and emote sets — open for commissions.",
     status: "open",
     avatarR2Key: AVATAR.key,
-    coverR2Key: COVER.key,
   })
   .returning();
 

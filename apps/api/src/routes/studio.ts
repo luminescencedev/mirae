@@ -149,9 +149,6 @@ studioRoutes.get("/:handle", async (c) => {
       avatarUrl: profile.avatarR2Key
         ? `/api/studio/${profile.handle}/avatar`
         : null,
-      coverUrl: profile.coverR2Key
-        ? `/api/studio/${profile.handle}/cover`
-        : null,
     },
     commissionTypes: types.map((t) => ({
       id: t.id,
@@ -169,20 +166,16 @@ studioRoutes.get("/:handle", async (c) => {
   });
 });
 
-// GET /api/studio/:handle/avatar|cover — public profile media stream.
-studioRoutes.get("/:handle/:kind{avatar|cover}", async (c) => {
+// GET /api/studio/:handle/avatar — public profile photo stream.
+studioRoutes.get("/:handle/avatar", async (c) => {
   const handle = c.req.param("handle").replace(/^@/, "").trim().toLowerCase();
-  const kind = c.req.param("kind");
   const db = createDb(c.env.DATABASE_URL);
   const [profile] = await db
-    .select({
-      avatarR2Key: artistProfiles.avatarR2Key,
-      coverR2Key: artistProfiles.coverR2Key,
-    })
+    .select({ avatarR2Key: artistProfiles.avatarR2Key })
     .from(artistProfiles)
     .where(eq(artistProfiles.handle, handle))
     .limit(1);
-  const key = kind === "avatar" ? profile?.avatarR2Key : profile?.coverR2Key;
+  const key = profile?.avatarR2Key;
   if (!key) return c.json({ error: "not found" }, 404);
   const obj = await c.env.FILES.get(key);
   if (!obj) return c.json({ error: "not found" }, 404);

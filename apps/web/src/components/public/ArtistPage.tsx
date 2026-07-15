@@ -20,7 +20,22 @@ import {
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { RequestDrawer } from "./RequestDrawer.tsx";
 import { linkIcon } from "../../lib/platform-icons.ts";
-import demoBg from "../../assets/studio-demo-bg.png";
+import bgOne from "../../assets/bg/one.png";
+import bgTwo from "../../assets/bg/two.png";
+import bgThree from "../../assets/bg/three.png";
+import bgFour from "../../assets/bg/four.png";
+import bgFive from "../../assets/bg/five.png";
+
+// Predefined background themes — dithered-character art shown full-bleed
+// (cover), like the reference portfolio. Keyed by StudioAppearance.background.
+// Artwork lives only in the portfolio; this is decorative.
+const BACKGROUNDS: Record<string, string> = {
+  one: bgOne,
+  two: bgTwo,
+  three: bgThree,
+  four: bgFour,
+  five: bgFive,
+};
 import {
   publicApi,
   trackLinkClick,
@@ -335,10 +350,10 @@ function StudioView({
       )
     : projects;
 
-  // Cover art → the fixed full-bleed background (falls back to the demo image
-  // so every page has atmosphere). Same technique as the reference portfolio:
-  // background-size:cover, centered, fixed.
-  const cover = profile.coverUrl ?? demoBg;
+  // Background = the artist's chosen theme (dithered-character art), shown
+  // full-bleed like the reference portfolio. Decoupled from the cover so
+  // artwork lives only in the portfolio section.
+  const themeBg = BACKGROUNDS[ap.background] ?? BACKGROUNDS.one;
   const heroMode = ap.heroLayout; // "cover" | "split" | "minimal"
 
   // Group links by how they render: hero cards (featured), quieter cards
@@ -552,20 +567,21 @@ function StudioView({
       className="relative min-h-dvh bg-canvas"
       style={ACCENT_VARS[ap.accent] as React.CSSProperties}
     >
-      {/* Fixed background art — only in the full-bleed "cover" hero */}
+      {/* Fixed full-bleed background art (like the reference portfolio) — only
+          in the "cover" hero. */}
       {heroMode === "cover" && (
         <>
           <div
             className="pointer-events-none fixed inset-0 z-0"
             style={{
-              backgroundImage: `url(${cover})`,
+              backgroundImage: `url(${themeBg})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
             }}
           />
-          {/* Soft scrim keeps the column readable over any image */}
-          <div className="pointer-events-none fixed inset-0 z-0 bg-canvas/55" />
+          {/* Soft scrim keeps the reading column legible */}
+          <div className="pointer-events-none fixed inset-0 z-0 bg-canvas/40" />
         </>
       )}
 
@@ -585,12 +601,12 @@ function StudioView({
           )}
           data-studio-typo={ap.typography}
         >
-          {/* Split hero — cover art as a contained banner above the identity */}
+          {/* Split hero — the theme art as a contained banner */}
           {heroMode === "split" && (
             <img
-              src={cover}
+              src={themeBg}
               alt=""
-              className="mb-8 h-44 w-full rounded-xl border border-border/70 object-cover shadow-soft"
+              className="mb-8 h-44 w-full rounded-xl border border-border/70 bg-canvas object-cover shadow-soft"
             />
           )}
           {/* Identity */}

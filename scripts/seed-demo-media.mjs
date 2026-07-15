@@ -16,7 +16,6 @@ import { join } from "node:path";
 import sharp from "sharp";
 import {
   AVATAR,
-  COVER,
   DELIVERABLE,
   allMedia,
 } from "../packages/db/src/seed/demo-media.ts";
@@ -55,7 +54,6 @@ function svg({ w, h, hue, label, big }) {
 // Avatar gets the initial; everything else gets a small label.
 const items = allMedia().map((m) => {
   if (m.key === AVATAR.key) return { ...m, label: "R", big: true };
-  if (m.key === COVER.key) return { ...m, label: "" };
   if (m.key === DELIVERABLE.key) return { ...m, label: "Sticker sheet" };
   return m; // portfolio assets already carry `label`
 });

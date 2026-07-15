@@ -10,15 +10,30 @@ import {
   SelectTrigger,
   SelectValue,
   Switch,
+  cn,
 } from "@mirae/ui";
 import { DragDropVerticalIcon } from "@hugeicons/core-free-icons";
 import {
+  APPEARANCE_BACKGROUNDS,
   DEFAULT_APPEARANCE,
   normalizeAppearance,
   type AppearanceSection,
   type StudioAppearance,
 } from "@mirae/shared";
 import { artistApi } from "../../lib/api.ts";
+import bgOne from "../../assets/bg/one.png";
+import bgTwo from "../../assets/bg/two.png";
+import bgThree from "../../assets/bg/three.png";
+import bgFour from "../../assets/bg/four.png";
+import bgFive from "../../assets/bg/five.png";
+
+const BG_THUMBS: Record<StudioAppearance["background"], string> = {
+  one: bgOne,
+  two: bgTwo,
+  three: bgThree,
+  four: bgFour,
+  five: bgFive,
+};
 
 const SECTION_LABELS: Record<AppearanceSection, string> = {
   links: "Featured links",
@@ -171,6 +186,32 @@ export function AppearanceEditor() {
             onChange={(v) => set("imageRadius", v)}
           />
         </Row>
+        <div className="py-3">
+          <p className="mb-2 text-sm text-fg">Background</p>
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+            {APPEARANCE_BACKGROUNDS.map((b, i) => (
+              <button
+                key={b}
+                type="button"
+                aria-label={`Background ${i + 1}`}
+                aria-pressed={cfg.background === b}
+                onClick={() => set("background", b)}
+                className={cn(
+                  "aspect-video overflow-hidden rounded-lg border-2 bg-canvas outline-none transition-colors focus-visible:ring-2 focus-visible:ring-accent-500",
+                  cfg.background === b
+                    ? "border-accent-500"
+                    : "border-transparent ring-1 ring-border hover:ring-border-strong",
+                )}
+              >
+                <img
+                  src={BG_THUMBS[b]}
+                  alt=""
+                  className="size-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
         <Row label="Show bio">
           <Switch
             checked={cfg.showBio}
