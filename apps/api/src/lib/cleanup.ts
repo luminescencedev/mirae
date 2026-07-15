@@ -30,11 +30,9 @@ export async function sweepOrphans(env: Env): Promise<number> {
     .from(portfolioAssets))
     add(r.k);
   for (const r of await db
-    .select({ a: artistProfiles.avatarR2Key, c: artistProfiles.coverR2Key })
-    .from(artistProfiles)) {
+    .select({ a: artistProfiles.avatarR2Key })
+    .from(artistProfiles))
     add(r.a);
-    add(r.c);
-  }
   for (const r of await db
     .select({ k: commissionTypes.imageR2Key })
     .from(commissionTypes))

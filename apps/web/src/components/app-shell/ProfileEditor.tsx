@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Avatar, Button, Icon, Input, Textarea, cn } from "@mirae/ui";
-import { Image01Icon, Upload01Icon } from "@hugeicons/core-free-icons";
+import { Upload01Icon } from "@hugeicons/core-free-icons";
 import { artistApi, type StudioStatus } from "../../lib/api.ts";
 
 const KEY = ["artist", "me"];
@@ -63,17 +63,15 @@ export function ProfileEditor() {
     `Request a commission from ${displayName || "this artist"} on Mirae.`;
 
   const avatarInput = useRef<HTMLInputElement>(null);
-  const coverInput = useRef<HTMLInputElement>(null);
   const upload = useMutation({
-    mutationFn: ({ kind, file }: { kind: "avatar" | "cover"; file: File }) =>
-      artistApi.uploadMedia(kind, file),
+    mutationFn: (file: File) => artistApi.uploadAvatar(file),
     onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
     onError: (e: Error) => alert(e.message),
   });
-  // Cache-bust the served media when it changes.
-  const mediaUrl = (kind: "avatar" | "cover") =>
+  // Cache-bust the served photo when it changes.
+  const avatarUrl = () =>
     profile
-      ? `/api/studio/${profile.handle}/${kind}?v=${profile.updatedAt ?? ""}`
+      ? `/api/studio/${profile.handle}/avatar?v=${profile.updatedAt ?? ""}`
       : undefined;
 
   if (isLoading) {
@@ -101,7 +99,7 @@ export function ProfileEditor() {
         )}
       </p>
 
-      {/* Avatar + cover */}
+      {/* Studio photo (the public page background is a theme — see Appearance) */}
       <div className="mt-4 flex items-center gap-4">
         <button
           type="button"
@@ -110,7 +108,7 @@ export function ProfileEditor() {
           aria-label="Change photo"
         >
           <Avatar
-            src={profile?.avatarR2Key ? mediaUrl("avatar") : null}
+            src={profile?.avatarR2Key ? avatarUrl() : null}
             name={displayName}
             size={64}
             className="rounded-2xl"
@@ -120,28 +118,16 @@ export function ProfileEditor() {
           </span>
         </button>
         <div className="flex flex-col gap-1.5">
-          <Label>Photo &amp; cover</Label>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => avatarInput.current?.click()}
-              disabled={upload.isPending}
-            >
-              <Icon icon={Upload01Icon} size={15} /> Photo
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => coverInput.current?.click()}
-              disabled={upload.isPending}
-            >
-              <Icon icon={Image01Icon} size={15} />
-              {profile?.coverR2Key ? "Change cover" : "Add cover"}
-            </Button>
-          </div>
+          <Label>Studio photo</Label>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => avatarInput.current?.click()}
+            disabled={upload.isPending}
+          >
+            <Icon icon={Upload01Icon} size={15} /> Change photo
+          </Button>
         </div>
         <input
           ref={avatarInput}
@@ -150,18 +136,7 @@ export function ProfileEditor() {
           hidden
           onChange={(e) => {
             const f = e.target.files?.[0];
-            if (f) upload.mutate({ kind: "avatar", file: f });
-            e.target.value = "";
-          }}
-        />
-        <input
-          ref={coverInput}
-          type="file"
-          accept="image/png,image/jpeg,image/webp,image/avif"
-          hidden
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) upload.mutate({ kind: "cover", file: f });
+            if (f) upload.mutate(f);
             e.target.value = "";
           }}
         />
@@ -254,11 +229,9 @@ export function ProfileEditor() {
           <div className="aspect-[1.91/1] bg-surface-muted">
             <img
               src={
-                profile?.coverR2Key
-                  ? mediaUrl("cover")
-                  : profile?.avatarR2Key
-                    ? mediaUrl("avatar")
-                    : "/og-default.png"
+                profile
+                  ? `/og/studio/${profile.handle}?v=${profile.updatedAt ?? ""}`
+                  : "/og-default.png"
               }
               alt=""
               className="size-full object-cover"

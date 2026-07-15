@@ -26,7 +26,6 @@ export const DEMO_HANDLE = "rainaoki";
 
 const base = `demo/${DEMO_HANDLE}`;
 export const AVATAR = { key: `${base}/avatar.png`, w: 512, h: 512, hue: 250 };
-export const COVER = { key: `${base}/cover.png`, w: 1600, h: 500, hue: 235 };
 export const DELIVERABLE = {
   key: `${base}/sticker-sheet.png`,
   w: 1200,
@@ -87,7 +86,7 @@ export const PROJECTS: Project[] = [
 
 /** Flattened list of every generated image (for the uploader). */
 export function allMedia(): MediaSpec[] {
-  const items: MediaSpec[] = [AVATAR, COVER, DELIVERABLE];
+  const items: MediaSpec[] = [AVATAR, DELIVERABLE];
   for (const p of PROJECTS) {
     p.assets.forEach((a, i) => {
       items.push({ ...a, key: `${base}/portfolio/${p.slug}-${i}.png` });

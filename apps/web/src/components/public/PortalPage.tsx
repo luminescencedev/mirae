@@ -20,13 +20,10 @@ type PortalArtist = {
   handle: string;
   tagline: string | null;
   hasAvatar: boolean;
-  hasCover: boolean;
 } | null;
 
 const avatarUrl = (handle: string) =>
   `/api/studio/${encodeURIComponent(handle)}/avatar`;
-const coverUrl = (handle: string) =>
-  `/api/studio/${encodeURIComponent(handle)}/cover`;
 
 /** Studio avatar disc — real image when set, else an initial gradient. */
 function StudioAvatar({
@@ -658,15 +655,6 @@ export function PortalPage({ token }: { token: string }) {
 
   return (
     <Shell artist={artist}>
-      {artist?.hasCover && (
-        <div className="mb-5 h-28 overflow-hidden rounded-2xl border border-border bg-surface-muted shadow-soft sm:h-32">
-          <img
-            src={coverUrl(artist.handle)}
-            alt=""
-            className="size-full object-cover"
-          />
-        </div>
-      )}
       {artist?.tagline && (
         <p className="mb-1.5 text-sm text-fg-subtle">{artist.tagline}</p>
       )}

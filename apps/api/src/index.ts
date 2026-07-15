@@ -208,11 +208,9 @@ app.get("/og/studio/:handle", async (c) => {
     // Never leave og:image broken — fall back to a plain image.
     log("warn", "og_card_failed", { handle, error: serializeError(err) });
     const origin = new URL(c.req.url).origin;
-    const fallback = profile.coverR2Key
-      ? `${origin}/api/studio/${handle}/cover`
-      : profile.avatarR2Key
-        ? `${origin}/api/studio/${handle}/avatar`
-        : `${origin}/og-default.png`;
+    const fallback = profile.avatarR2Key
+      ? `${origin}/api/studio/${handle}/avatar`
+      : `${origin}/og-default.png`;
     return c.redirect(fallback, 302);
   }
 });

@@ -50,7 +50,6 @@ export type ArtistProfile = {
   metaDescription: string | null;
   status: StudioStatus;
   avatarR2Key: string | null;
-  coverR2Key: string | null;
   appearance: StudioAppearance | null;
   updatedAt?: string;
 };
@@ -78,10 +77,10 @@ export const artistApi = {
       headers: jsonHeaders,
       body: JSON.stringify(body),
     }).then(json<{ profile: ArtistProfile }>),
-  uploadMedia: (kind: "avatar" | "cover", file: File) => {
+  uploadAvatar: (file: File) => {
     const fd = new FormData();
     fd.append("file", file);
-    return fetch(`/api/artists/me/${kind}`, {
+    return fetch("/api/artists/me/avatar", {
       method: "POST",
       body: fd,
     }).then(json<{ profile: ArtistProfile }>);
@@ -99,7 +98,6 @@ export type PublicProfile = {
   faq: FaqItem[];
   status: StudioStatus;
   avatarUrl: string | null;
-  coverUrl: string | null;
 };
 
 export type PublicAsset = {
@@ -206,7 +204,6 @@ export type PortalView = {
     handle: string;
     tagline: string | null;
     hasAvatar: boolean;
-    hasCover: boolean;
   } | null;
   quote: {
     totalCents: number;
