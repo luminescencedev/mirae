@@ -42,6 +42,7 @@ portalRoutes.get("/:token", async (c) => {
       handle: artistProfiles.handle,
       tagline: artistProfiles.tagline,
       avatarR2Key: artistProfiles.avatarR2Key,
+      updatedAt: artistProfiles.updatedAt,
     })
     .from(artistProfiles)
     .where(eq(artistProfiles.id, commission.artistId))
@@ -51,7 +52,9 @@ portalRoutes.get("/:token", async (c) => {
         displayName: artistRow.displayName,
         handle: artistRow.handle,
         tagline: artistRow.tagline,
-        hasAvatar: !!artistRow.avatarR2Key,
+        avatarUrl: artistRow.avatarR2Key
+          ? `/api/studio/${artistRow.handle}/avatar?v=${new Date(artistRow.updatedAt).getTime()}`
+          : null,
       }
     : null;
 

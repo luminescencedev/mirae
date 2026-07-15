@@ -203,7 +203,7 @@ export type PortalView = {
     displayName: string;
     handle: string;
     tagline: string | null;
-    hasAvatar: boolean;
+    avatarUrl: string | null;
   } | null;
   quote: {
     totalCents: number;
