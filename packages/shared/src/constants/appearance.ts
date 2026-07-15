@@ -17,6 +17,16 @@ export const APPEARANCE_PORTFOLIO_LAYOUTS = [
   "compact",
 ] as const;
 export const APPEARANCE_IMAGE_RADII = ["soft", "medium", "minimal"] as const;
+// Predefined public-page background themes — a dithered black character on a
+// white ground (position varies per character). Artists pick one; artwork /
+// projects live only in the portfolio section.
+export const APPEARANCE_BACKGROUNDS = [
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+] as const;
 
 // Orderable public-page blocks (identity + powered-by are fixed top/bottom).
 export const APPEARANCE_SECTIONS = [
@@ -35,6 +45,7 @@ export type AppearanceHeroLayout = (typeof APPEARANCE_HERO_LAYOUTS)[number];
 export type AppearancePortfolioLayout =
   (typeof APPEARANCE_PORTFOLIO_LAYOUTS)[number];
 export type AppearanceImageRadius = (typeof APPEARANCE_IMAGE_RADII)[number];
+export type AppearanceBackground = (typeof APPEARANCE_BACKGROUNDS)[number];
 
 export type StudioAppearance = {
   accent: AppearanceAccent;
@@ -42,6 +53,7 @@ export type StudioAppearance = {
   heroLayout: AppearanceHeroLayout;
   portfolioLayout: AppearancePortfolioLayout;
   imageRadius: AppearanceImageRadius;
+  background: AppearanceBackground;
   sectionOrder: AppearanceSection[];
   showBio: boolean;
   showSocials: boolean;
@@ -54,6 +66,7 @@ export const DEFAULT_APPEARANCE: StudioAppearance = {
   heroLayout: "cover",
   portfolioLayout: "editorial",
   imageRadius: "soft",
+  background: "one",
   sectionOrder: [...APPEARANCE_SECTIONS],
   showBio: true,
   showSocials: true,
@@ -109,6 +122,7 @@ export function normalizeAppearance(input: unknown): StudioAppearance {
       d.portfolioLayout,
     ),
     imageRadius: pick(APPEARANCE_IMAGE_RADII, c.imageRadius, d.imageRadius),
+    background: pick(APPEARANCE_BACKGROUNDS, c.background, d.background),
     sectionOrder: normalizeSectionOrder(c.sectionOrder),
     showBio: bool(c.showBio, d.showBio),
     showSocials: bool(c.showSocials, d.showSocials),
