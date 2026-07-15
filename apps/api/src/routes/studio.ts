@@ -147,7 +147,7 @@ studioRoutes.get("/:handle", async (c) => {
       faq: normalizeFaq(profile.faq),
       status: profile.status,
       avatarUrl: profile.avatarR2Key
-        ? `/api/studio/${profile.handle}/avatar`
+        ? `/api/studio/${profile.handle}/avatar?v=${new Date(profile.updatedAt).getTime()}`
         : null,
     },
     commissionTypes: types.map((t) => ({

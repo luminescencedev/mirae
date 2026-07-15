@@ -19,13 +19,10 @@ type PortalArtist = {
   displayName: string;
   handle: string;
   tagline: string | null;
-  hasAvatar: boolean;
+  avatarUrl: string | null;
 } | null;
 
-const avatarUrl = (handle: string) =>
-  `/api/studio/${encodeURIComponent(handle)}/avatar`;
-
-/** Studio avatar disc — real image when set, else an initial gradient. */
+/** Studio avatar tile — real image when set, else an initial gradient. */
 function StudioAvatar({
   artist,
   size,
@@ -34,10 +31,10 @@ function StudioAvatar({
   size: number;
 }) {
   const initial = (artist?.displayName ?? "·").slice(0, 1).toUpperCase();
-  if (artist?.hasAvatar) {
+  if (artist?.avatarUrl) {
     return (
       <img
-        src={avatarUrl(artist.handle)}
+        src={artist.avatarUrl}
         alt={artist.displayName}
         width={size}
         height={size}
