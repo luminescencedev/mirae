@@ -13,15 +13,15 @@
   "dependencies": {
     "@mirae/db": "workspace:*",
     "@mirae/shared": "workspace:*",
-    "better-auth": "1.6.23",
+    "better-auth": "1.7.1",
     "drizzle-orm": "0.45.2",
-    "hono": "4.12.28",
+    "hono": "4.13.3",
     "workers-og": "0.0.27"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "5.20260708.1",
+    "@cloudflare/workers-types": "5.20260822.1",
     "typescript": "6.0.3",
     "vitest": "3.2.7",
-    "wrangler": "4.107.1"
+    "wrangler": "4.125.0"
   }
 }
